@@ -15,4 +15,5 @@ export const apiRoutes = {
   data_packages: '/api/data_packages',
   download_data_packages: '/api/data_packages/download',
   assign_eud_to_user: '/api/user/assign_eud',
+  status: '/api/status',
 };

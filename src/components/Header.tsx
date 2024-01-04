@@ -2,20 +2,14 @@ import React from 'react';
 import {
     Group,
     Button,
-    Divider,
     Box,
-    Burger,
-    Drawer,
-    ScrollArea,
-    rem, ActionIcon, useComputedColorScheme, useMantineColorScheme, Image,
+    ActionIcon, useComputedColorScheme, useMantineColorScheme, Image,
 } from '@mantine/core';
-import { MantineLogo } from '@mantinex/mantine-logo';
-import Logo from '../assets/ots-logo.png';
-import { useDisclosure } from '@mantine/hooks';
 import { IconSun, IconMoon } from '@tabler/icons-react';
 import cx from 'clsx';
 
-import {Link, useLocation, useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import Logo from '../assets/ots-logo.png';
 import classes from './Header.module.css';
 import axios from '../axios_config';
 import { apiRoutes } from '@/config';
@@ -42,7 +36,7 @@ export const Header = () => {
         <Box pb={0}>
             <header className={classes.header}>
                 <Group justify="space-between" h="100%">
-                    <Image src={Logo} h={50} w='auto' />
+                    <Image src={Logo} h={50} w="auto" />
 
                     <Group>
                         <Button
