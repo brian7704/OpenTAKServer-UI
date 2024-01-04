@@ -8,6 +8,7 @@ import {
     IconDashboard,
     IconUsers,
     IconUserPlus,
+    IconMap,
 } from '@tabler/icons-react';
 import { NavLink, Title } from '@mantine/core';
 import { useLocation } from 'react-router-dom';
@@ -15,6 +16,7 @@ import classes from './Navbar.module.css';
 
 const navbarLinks = [
     { link: '/dashboard', label: 'Dashboard', icon: IconDashboard },
+    { link: '/map', label: 'Map', icon: IconMap },
     { link: '/euds', label: 'EUDs', icon: IconDeviceMobile },
     { link: '/alerts', label: 'Alerts', icon: IconAlertTriangle },
     { link: '/casevac', label: 'Casevac', icon: IconHeartbeat },
