@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
     Group,
     Button,
@@ -7,20 +7,20 @@ import {
     Burger,
     Drawer,
     ScrollArea,
-    rem, ActionIcon, useComputedColorScheme, useMantineColorScheme,
+    rem, ActionIcon, useComputedColorScheme, useMantineColorScheme, Image,
 } from '@mantine/core';
 import { MantineLogo } from '@mantinex/mantine-logo';
+import Logo from '../assets/ots-logo.png';
 import { useDisclosure } from '@mantine/hooks';
 import { IconSun, IconMoon } from '@tabler/icons-react';
 import cx from 'clsx';
 
-import { useLocation, useNavigate } from 'react-router-dom';
+import {Link, useLocation, useNavigate} from 'react-router-dom';
 import classes from './Header.module.css';
 import axios from '../axios_config';
 import { apiRoutes } from '@/config';
 
 export const Header = () => {
-    const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
     const { setColorScheme } = useMantineColorScheme();
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
     const loggedIn = localStorage.getItem('loggedIn') === 'true';
@@ -39,12 +39,12 @@ export const Header = () => {
     };
 
     return (
-        <Box pb={120}>
+        <Box pb={0}>
             <header className={classes.header}>
                 <Group justify="space-between" h="100%">
-                    <MantineLogo size={30} />
+                    <Image src={Logo} h={50} w='auto' />
 
-                    <Group visibleFrom="sm">
+                    <Group>
                         <Button
                           style={loggedIn ? { display: 'block' } : { display: 'none' }}
                           variant="default"
@@ -63,29 +63,8 @@ export const Header = () => {
                             <IconMoon className={cx(classes.icon, classes.dark)} stroke={1.5} />
                         </ActionIcon>
                     </Group>
-
-                    <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
                 </Group>
             </header>
-
-            <Drawer
-              opened={drawerOpened}
-              onClose={closeDrawer}
-              size="100%"
-              padding="md"
-              title="Navigation"
-              hiddenFrom="sm"
-              zIndex={1000000}
-            >
-                <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
-                    <Divider my="sm" />
-
-                    <Group justify="center" grow pb="xl" px="md">
-                        <Button variant="default">Log in</Button>
-                        <Button>Sign up</Button>
-                    </Group>
-                </ScrollArea>
-            </Drawer>
         </Box>
     );
 };

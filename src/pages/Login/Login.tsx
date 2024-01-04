@@ -8,14 +8,15 @@ import {
     Text,
     Container,
     Group,
-    Button, Alert,
+    Button, Alert, Image, Center,
 } from '@mantine/core';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import classes from './Login.module.css';
 import { Header } from '../../components/Header';
 import { apiRoutes } from '../../config';
 import axios from '../../axios_config';
+import Logo from '../../assets/ots-logo.png';
 
 export default function Login() {
     const navigate = useNavigate();
@@ -97,6 +98,9 @@ export default function Login() {
         <div>
             <Header />
             <Container size={420} my={40}>
+                <Center>
+                    <Image src={Logo} h={250} w='auto' />
+                </Center>
                 <Title ta="center" className={classes.title}>
                     Welcome back!
                 </Title>
