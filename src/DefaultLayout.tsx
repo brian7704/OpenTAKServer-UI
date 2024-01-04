@@ -54,13 +54,13 @@ export function DefaultLayout() {
             padding="md"
         >
             <AppShell.Header>
-                <Group justify="space-between" h="100%" pl={5} pr={5}>
-
-                    <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm"/>
-                    <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm"/>
-
-                    <Group>
+                <Group justify="space-between" pl={5} pr={5}>
+                    <Group h="100%">
+                        <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm"/>
+                        <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm"/>
                         <Image src={Logo} h={50} w='auto' />
+                    </Group>
+                    <Group>
                         <Button
                             style={loggedIn ? { display: 'block' } : { display: 'none' }}
                             variant="default"
