@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     ActionIcon,
     AppShell,
@@ -6,7 +6,7 @@ import {
     Button,
     Group,
     Image,
-    Skeleton, useComputedColorScheme,
+    useComputedColorScheme,
     useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -18,6 +18,7 @@ import Logo from './assets/ots-logo.png';
 import { AppContent } from './components/AppContent';
 import axios from '@/axios_config';
 import { apiRoutes } from '@/config';
+import Navbar from '@/components/Navbar/Navbar';
 
 export function DefaultLayout() {
     const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
@@ -78,11 +79,7 @@ export function DefaultLayout() {
                 </Group>
             </AppShell.Header>
             <AppShell.Navbar p="md">
-                {Array(15)
-                    .fill(0)
-                    .map((_, index) => (
-                        <Skeleton key={index} h={28} mt="sm" animate={false} />
-                    ))}
+                <Navbar />
             </AppShell.Navbar>
             <AppShell.Main><AppContent /></AppShell.Main>
         </AppShell>

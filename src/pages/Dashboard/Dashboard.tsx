@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, Alert, Grid, Center, Title, Divider } from '@mantine/core';
+import { Text, Alert, Grid, Center, Title, Divider, Paper } from '@mantine/core';
 import axios from '../../axios_config';
 import { apiRoutes } from '../../config';
 
@@ -29,13 +29,13 @@ export default function Dashboard() {
                 if (r.status === 200) {
                     const ots_alerts = [];
                     ots_alerts.push(
-                            <Alert radius="md" p="xl" color={r.data.cot_router ? 'green' : 'red'} title="CoT Router" mr="md" mb="md">
+                            <Alert radius="md" p="xl" color={r.data.cot_router ? 'green' : 'red'} mr="md" mb="md" title="CoT Router">
                                 <Center><Text>{r.data.cot_router ? 'Online' : 'Offline'}</Text></Center>
                             </Alert>
                     );
 
                     ots_alerts.push(
-                        <Alert radius="md" p="xl" color={r.data.tcp ? 'green' : 'red'} title="TCP" mr="md" mb="md">
+                        <Alert radius="md" p="xl" color={r.data.tcp ? 'green' : 'red'} mr="md" mb="md" title="TCP">
                             <Center><Text>{r.data.tcp ? 'Online' : 'Offline'}</Text></Center>
                         </Alert>
                     );
