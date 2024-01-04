@@ -2307,6 +2307,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mantinex/mantine-logo@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@mantinex/mantine-logo@npm:1.0.1"
+  peerDependencies:
+    "@mantine/core": ">=7.0.0"
+    "@mantine/hooks": ">=7.0.0"
+    react: ^18.2.0
+    react-dom: ^18.2.0
+  checksum: d1628195eaf6681c4366c0154ee2e3adf1b863432ab15e6285a3f33ffbb33a17ec0b5a90a9ced2429cbf2841d4de11f72320ca3d37578d6908a5b9f194fea2d3
+  languageName: node
+  linkType: hard
+
 "@mdx-js/react@npm:^2.1.5":
   version: 2.3.0
   resolution: "@mdx-js/react@npm:2.3.0"
@@ -3984,6 +3996,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tabler/icons-react@npm:^2.45.0":
+  version: 2.45.0
+  resolution: "@tabler/icons-react@npm:2.45.0"
+  dependencies:
+    "@tabler/icons": "npm:2.45.0"
+    prop-types: "npm:^15.7.2"
+  peerDependencies:
+    react: ^16.5.1 || ^17.0.0 || ^18.0.0
+  checksum: a153d30d88b87489b44af9dc73e82bc13a9ae18ba33c47e73b8efbe6b36e5a9e61c924aa4f297f6e0a238b630c5b2ade77db2dcad8b1f21c43b356d3ad38086b
+  languageName: node
+  linkType: hard
+
+"@tabler/icons@npm:2.45.0":
+  version: 2.45.0
+  resolution: "@tabler/icons@npm:2.45.0"
+  checksum: e221e091554839771774d0d8438d434987fcc7096892b24e53ef4fc78fe3b8087cc047293e3eb2084b3b5b9173c39dbf5aaff8cbbe78be142bc2bf55cf178ec2
+  languageName: node
+  linkType: hard
+
 "@testing-library/dom@npm:^9.0.0, @testing-library/dom@npm:^9.3.3":
   version: 9.3.3
   resolution: "@testing-library/dom@npm:9.3.3"
@@ -5150,6 +5181,17 @@ __metadata:
   version: 4.7.0
   resolution: "axe-core@npm:4.7.0"
   checksum: 89ac5712b5932ac7d23398b4cb5ba081c394a086e343acc68ba49c83472706e18e0799804e8388c779dcdacc465377deb29f2714241d3fbb389cf3a6b275c9ba
+  languageName: node
+  linkType: hard
+
+"axios@npm:^1.6.3":
+  version: 1.6.3
+  resolution: "axios@npm:1.6.3"
+  dependencies:
+    follow-redirects: "npm:^1.15.0"
+    form-data: "npm:^4.0.0"
+    proxy-from-env: "npm:^1.1.0"
+  checksum: dcc6d982353db33e6893ef01cdf81d0a0548dbd8fba0cb046dc4aee1a6a16226721faa4c2a13b2673d47130509629cdb93bb991b3a2bd4ef17a5ac27a8bba0da
   languageName: node
   linkType: hard
 
@@ -7295,6 +7337,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"follow-redirects@npm:^1.15.0":
+  version: 1.15.4
+  resolution: "follow-redirects@npm:1.15.4"
+  peerDependenciesMeta:
+    debug:
+      optional: true
+  checksum: 5f37ed9170c9eb19448c5418fdb0f2b73f644b5364834e70791a76ecc7db215246f9773bbef4852cfae4067764ffc852e047f744b661b0211532155b73556a6a
+  languageName: node
+  linkType: hard
+
 "for-each@npm:^0.3.3":
   version: 0.3.3
   resolution: "for-each@npm:0.3.3"
@@ -9012,57 +9064,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mantine-vite-template@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "mantine-vite-template@workspace:."
-  dependencies:
-    "@mantine/core": "npm:7.4.0"
-    "@mantine/hooks": "npm:7.4.0"
-    "@storybook/addon-essentials": "npm:^7.6.6"
-    "@storybook/addon-interactions": "npm:^7.6.6"
-    "@storybook/addon-links": "npm:^7.6.6"
-    "@storybook/blocks": "npm:^7.6.6"
-    "@storybook/react": "npm:^7.6.6"
-    "@storybook/react-vite": "npm:^7.6.6"
-    "@storybook/testing-library": "npm:^0.2.2"
-    "@testing-library/dom": "npm:^9.3.3"
-    "@testing-library/jest-dom": "npm:^6.1.5"
-    "@testing-library/react": "npm:^14.1.2"
-    "@testing-library/user-event": "npm:^14.5.1"
-    "@types/react": "npm:^18.2.36"
-    "@types/react-dom": "npm:^18.2.14"
-    "@typescript-eslint/eslint-plugin": "npm:^6.9.1"
-    "@typescript-eslint/parser": "npm:^6.9.1"
-    "@vitejs/plugin-react": "npm:^4.2.1"
-    eslint: "npm:^8.53.0"
-    eslint-config-airbnb: "npm:19.0.4"
-    eslint-config-airbnb-typescript: "npm:^17.1.0"
-    eslint-config-mantine: "npm:3.0.0"
-    eslint-plugin-import: "npm:^2.29.0"
-    eslint-plugin-jsx-a11y: "npm:^6.7.0"
-    eslint-plugin-react: "npm:^7.33.2"
-    eslint-plugin-react-hooks: "npm:^4.6.0"
-    identity-obj-proxy: "npm:^3.0.0"
-    jsdom: "npm:^23.0.1"
-    postcss: "npm:^8.4.32"
-    postcss-preset-mantine: "npm:1.12.3"
-    postcss-simple-vars: "npm:^7.0.1"
-    prettier: "npm:^3.1.1"
-    prop-types: "npm:^15.8.1"
-    react: "npm:^18.2.0"
-    react-dom: "npm:^18.2.0"
-    react-router-dom: "npm:^6.21.0"
-    storybook: "npm:^7.6.6"
-    storybook-dark-mode: "npm:^3.0.3"
-    stylelint: "npm:^16.0.2"
-    stylelint-config-standard-scss: "npm:^12.0.0"
-    typescript: "npm:^5.3.3"
-    vite: "npm:^5.0.10"
-    vite-tsconfig-paths: "npm:^4.2.2"
-    vitest: "npm:^1.1.0"
-  languageName: unknown
-  linkType: soft
-
 "map-or-similar@npm:^1.5.0":
   version: 1.5.0
   resolution: "map-or-similar@npm:1.5.0"
@@ -9718,6 +9719,60 @@ __metadata:
   languageName: node
   linkType: hard
 
+"opentakserver-ui@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "opentakserver-ui@workspace:."
+  dependencies:
+    "@mantine/core": "npm:7.4.0"
+    "@mantine/hooks": "npm:7.4.0"
+    "@mantinex/mantine-logo": "npm:^1.0.1"
+    "@storybook/addon-essentials": "npm:^7.6.6"
+    "@storybook/addon-interactions": "npm:^7.6.6"
+    "@storybook/addon-links": "npm:^7.6.6"
+    "@storybook/blocks": "npm:^7.6.6"
+    "@storybook/react": "npm:^7.6.6"
+    "@storybook/react-vite": "npm:^7.6.6"
+    "@storybook/testing-library": "npm:^0.2.2"
+    "@tabler/icons-react": "npm:^2.45.0"
+    "@testing-library/dom": "npm:^9.3.3"
+    "@testing-library/jest-dom": "npm:^6.1.5"
+    "@testing-library/react": "npm:^14.1.2"
+    "@testing-library/user-event": "npm:^14.5.1"
+    "@types/react": "npm:^18.2.36"
+    "@types/react-dom": "npm:^18.2.14"
+    "@typescript-eslint/eslint-plugin": "npm:^6.9.1"
+    "@typescript-eslint/parser": "npm:^6.9.1"
+    "@vitejs/plugin-react": "npm:^4.2.1"
+    axios: "npm:^1.6.3"
+    eslint: "npm:^8.53.0"
+    eslint-config-airbnb: "npm:19.0.4"
+    eslint-config-airbnb-typescript: "npm:^17.1.0"
+    eslint-config-mantine: "npm:3.0.0"
+    eslint-plugin-import: "npm:^2.29.0"
+    eslint-plugin-jsx-a11y: "npm:^6.7.0"
+    eslint-plugin-react: "npm:^7.33.2"
+    eslint-plugin-react-hooks: "npm:^4.6.0"
+    identity-obj-proxy: "npm:^3.0.0"
+    jsdom: "npm:^23.0.1"
+    postcss: "npm:^8.4.32"
+    postcss-preset-mantine: "npm:1.12.3"
+    postcss-simple-vars: "npm:^7.0.1"
+    prettier: "npm:^3.1.1"
+    prop-types: "npm:^15.8.1"
+    react: "npm:^18.2.0"
+    react-dom: "npm:^18.2.0"
+    react-router-dom: "npm:^6.21.0"
+    storybook: "npm:^7.6.6"
+    storybook-dark-mode: "npm:^3.0.3"
+    stylelint: "npm:^16.0.2"
+    stylelint-config-standard-scss: "npm:^12.0.0"
+    typescript: "npm:^5.3.3"
+    vite: "npm:^5.0.10"
+    vite-tsconfig-paths: "npm:^4.2.2"
+    vitest: "npm:^1.1.0"
+  languageName: unknown
+  linkType: soft
+
 "optionator@npm:^0.9.3":
   version: 0.9.3
   resolution: "optionator@npm:0.9.3"
@@ -10276,7 +10331,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"proxy-from-env@npm:^1.0.0":
+"proxy-from-env@npm:^1.0.0, proxy-from-env@npm:^1.1.0":
   version: 1.1.0
   resolution: "proxy-from-env@npm:1.1.0"
   checksum: fe7dd8b1bdbbbea18d1459107729c3e4a2243ca870d26d34c2c1bcd3e4425b7bcc5112362df2d93cc7fb9746f6142b5e272fd1cc5c86ddf8580175186f6ad42b
