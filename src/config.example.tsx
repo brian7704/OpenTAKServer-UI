@@ -3,8 +3,8 @@ export const config = {
 };
 
 export const apiRoutes = {
-  login: '/login',
-  logout: '/logout',
+  login: '/api/login',
+  logout: '/api/logout',
   eud: '/api/eud',
   users: '/api/users',
   alerts: '/api/alerts',

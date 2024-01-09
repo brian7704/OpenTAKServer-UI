@@ -35,7 +35,7 @@ export default function Login() {
                 },
             ).then(r => {
                 axios.interceptors.request.use((config) => {
-                    if (['post', 'delete', 'patch', 'put'].includes(config.method)) {
+                    if (['post', 'delete', 'patch', 'put'].includes(config.method!)) {
                         if (r.data.response.csrf_token !== '') {
                             config.headers['X-XSRF-Token'] = r.data.response.csrf_token;
                             axios.defaults.headers.common = { 'X-XSRF-Token': r.data.response.csrf_token };
@@ -71,7 +71,7 @@ export default function Login() {
         });
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e:any) => {
         e.preventDefault();
         setErrorVisible(false);
 
@@ -87,7 +87,7 @@ export default function Login() {
                     // socket.connect();
                 }
             });
-        } catch (err) {
+        } catch (err:any) {
             setErrorVisible(true);
             setErrorMessage(err.response.data.response.errors[0]);
             console.log(err);
