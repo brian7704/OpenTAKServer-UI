@@ -1,5 +1,8 @@
+const protocol = location.protocol;
+const port = location.port;
+
 export const config = {
-  apiUrl: 'http://example.com:8080',
+  apiUrl: `${protocol}//example.com:${port}`,
 };
 
 export const apiRoutes = {
@@ -16,4 +19,5 @@ export const apiRoutes = {
   download_data_packages: '/api/data_packages/download',
   assign_eud_to_user: '/api/user/assign_eud',
   status: '/api/status',
+  casevac: '/api/casevac'
 };

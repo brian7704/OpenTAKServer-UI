@@ -90,7 +90,6 @@ export default function Login() {
         } catch (err:any) {
             setErrorVisible(true);
             setErrorMessage(err.response.data.response.errors[0]);
-            console.log(err);
         }
     };
 
