@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Text, Alert, Grid, Center, Title, Divider, Paper } from '@mantine/core';
 import axios from '../../axios_config';
 import { apiRoutes } from '../../config';
+import tools from '../../tools';
 
 export default function Dashboard() {
     const [alerts, setAlerts] = useState({
@@ -26,18 +27,6 @@ export default function Dashboard() {
         total: 0,
         percent: 0
     });
-
-    function formatBytes(bytes:number, decimals = 2) {
-        if (!+bytes) return '0 Bytes';
-
-        const k = 1024;
-        const dm = decimals < 0 ? 0 : decimals;
-        const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
-
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-        return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
-    }
 
     useEffect(() => {
             axios.get(
@@ -99,13 +88,13 @@ export default function Dashboard() {
                             <Center>{`${serverStatus.cpu_percent}%`}</Center>
                         </Alert>
                         <Alert radius="md" mr="md" mb="md" title="Disk Free Space">
-                            <Center>{`${formatBytes(disk.free)}`}</Center>
+                            <Center>{`${tools(disk.free)}`}</Center>
                         </Alert>
                         <Alert radius="md" mr="md" mb="md" title="Disk Used Space">
-                            <Center>{`${formatBytes(disk.used)}`}</Center>
+                            <Center>{`${tools(disk.used)}`}</Center>
                         </Alert>
                         <Alert radius="md" mr="md" mb="md" title="Disk Total Space">
-                            <Center>{`${formatBytes(disk.total)}`}</Center>
+                            <Center>{`${tools(disk.total)}`}</Center>
                         </Alert>
                         <Alert radius="md" mr="md" mb="md" title="Disk Used Percentage">
                             <Center>{`${disk.percent}%`}</Center>
@@ -115,16 +104,16 @@ export default function Dashboard() {
             <Center>
                 <Grid>
                         <Alert radius="md" mr="md" mb="md" title="Memory Available">
-                            <Center>{`${formatBytes(memory.available)}`}</Center>
+                            <Center>{`${tools(memory.available)}`}</Center>
                         </Alert>
                         <Alert radius="md" mr="md" mb="md" title="Free Memory">
-                            <Center>{`${formatBytes(memory.free)}`}</Center>
+                            <Center>{`${tools(memory.free)}`}</Center>
                         </Alert>
                         <Alert radius="md" mr="md" mb="md" title="Memory Used">
-                            <Center>{`${formatBytes(memory.used)}`}</Center>
+                            <Center>{`${tools(memory.used)}`}</Center>
                         </Alert>
                         <Alert radius="md" mr="md" mb="md" title="Memory Total">
-                            <Center>{`${formatBytes(memory.total)}`}</Center>
+                            <Center>{`${tools(memory.total)}`}</Center>
                         </Alert>
                         <Alert radius="md" mr="md" mb="md" title="Memory Used Percentage">
                             <Center>{`${memory.percent}%`}</Center>

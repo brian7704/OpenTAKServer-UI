@@ -7,6 +7,7 @@ const Dashboard = React.lazy(() => import('./pages/Dashboard/Dashboard'));
 const Map = React.lazy(() => import('./pages/Map/Map'));
 const EUDs = React.lazy(() => import('./pages/EUDs'));
 const Casevac = React.lazy(() => import('./pages/Casevac'));
+const DataPackages = React.lazy(() => import('./pages/DataPackages'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -17,6 +18,7 @@ const routes = [
   { path: '/map', name: 'Map', element: Map },
   { path: '/alerts', name: 'Alerts', element: Alerts },
   { path: '/casevac', name: 'Casevac', element: Casevac },
+  { path: '/data_packages', name: 'DataPackages', element: DataPackages },
 ];
 
 export default routes;

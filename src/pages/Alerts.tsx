@@ -1,7 +1,7 @@
-import {Center, Pagination, Table, TableData} from '@mantine/core';
-import React, {useEffect, useState} from "react";
-import axios from "@/axios_config";
-import {apiRoutes} from "@/config";
+import { Center, Pagination, Table, TableData } from '@mantine/core';
+import React, { useEffect, useState } from 'react';
+import axios from '@/axios_config';
+import { apiRoutes } from '@/config';
 
 interface alert {
     callsign: string;
@@ -15,37 +15,37 @@ export default function Alerts() {
     const [alerts, setAlerts] = useState<TableData>({
         caption: '',
         head: ['Callsign', 'Type', 'Start Time', 'Cancel Time'],
-        body: []
+        body: [],
     });
     const [activePage, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1)
-
+    const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
         axios.get(
             apiRoutes.alerts,
-            {params: {
-                    page: activePage
-                }}
+            { params: {
+                    page: activePage,
+                } }
         ).then(r => {
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
                     head: ['Callsign', 'Type', 'Start Time', 'Cancel Time'],
-                    body: []
-                }
+                    body: [],
+                };
 
                 r.data.results.map((row:any) => {
                     if (tableData.body !== undefined) {
-                        tableData.body.push([row.eud.callsign, row.alert_type, row.start_time, row.cancel_time])
+                        tableData.body.push([row.eud.callsign, row.alert_type, row.start_time, row.cancel_time]);
                     }
-                })
-
+                });
 
                 setPage(r.data.current_page);
-                setTotalPages(r.data.total_pages)
+                setTotalPages(r.data.total_pages);
                 setAlerts(tableData);
-            }})}, [activePage])
+            }
+});
+}, [activePage]);
     return (
         <>
             <Table data={alerts} striped highlightOnHover withTableBorder mb="md" />

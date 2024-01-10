@@ -1,7 +1,7 @@
-import {Center, Pagination, Table, TableData} from '@mantine/core';
-import React, {useEffect, useState} from "react";
-import axios from "@/axios_config";
-import {apiRoutes} from "@/config";
+import { Center, Pagination, Table, TableData } from '@mantine/core';
+import React, { useEffect, useState } from 'react';
+import axios from '@/axios_config';
+import { apiRoutes } from '@/config';
 
 interface alert {
     callsign: string;
@@ -48,18 +48,17 @@ export default function Casevac() {
         'Coalition Civilian', 'Non-Coalition Military', 'Non-Coalition Civilian', 'Opposing Force or Detainee',
         'Children', 'Terrain Slope Direction', 'Rough Terrain', 'Loose Terrain', 'Terrain Remarks', 'Remarks',
         'Injuries Sustained', 'Mechanism of Injury', 'Symptoms and Signs', 'Treatment Given'],
-        body: []
+        body: [],
     });
     const [activePage, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1)
-
+    const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
         axios.get(
             apiRoutes.casevac,
-            {params: {
-                    page: activePage
-                }}
+            { params: {
+                    page: activePage,
+                } }
         ).then(r => {
             if (r.status === 200) {
                 const tableData: TableData = {
@@ -69,12 +68,12 @@ export default function Casevac() {
                         'Coalition Civilian', 'Non-Coalition Military', 'Non-Coalition Civilian', 'Opposing Force or Detainee',
                         'Children', 'Terrain Slope Direction', 'Rough Terrain', 'Loose Terrain', 'Terrain Remarks', 'Remarks',
                         'Injuries Sustained', 'Mechanism of Injury', 'Symptoms and Signs', 'Treatment Given', 'Title', 'Zap Number'],
-                    body: []
-                }
+                    body: [],
+                };
 
                 r.data.results.map((row:any) => {
                     if (tableData.body !== undefined) {
-                        let zmist = row.zmist;
+                        const { zmist } = row;
 
                         tableData.body.push([row.eud.callsign, row.casevac, row.urgent,
                             row.priority, row.routine, row.hoist, row.extraction_equipment,
@@ -84,19 +83,20 @@ export default function Casevac() {
                         row.child, row.terrain_slope_dir, row.terrain_rough, row.terrain_loose,
                         row.terrain_other_detail, row.medline_remarks, (zmist ? zmist.i : ''),
                         (zmist ? zmist.m : ''), (zmist ? zmist.s : ''), (zmist ? zmist.t : ''), (zmist ? zmist.title : ''),
-                        (zmist ? zmist.z : '')])
+                        (zmist ? zmist.z : '')]);
                     }
-                })
-
+                });
 
                 setPage(r.data.current_page);
-                setTotalPages(r.data.total_pages)
+                setTotalPages(r.data.total_pages);
                 setCasevacs(tableData);
-            }})}, [activePage])
+            }
+});
+}, [activePage]);
     return (
         <>
             <Table data={casevacs} striped highlightOnHover withTableBorder mb="md" />
     <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
-    </>
+        </>
 );
 }

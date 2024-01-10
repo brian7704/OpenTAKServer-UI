@@ -1,5 +1,5 @@
-const protocol = location.protocol;
-const port = location.port;
+const { protocol } = location;
+const { port } = location;
 
 export const config = {
   apiUrl: `${protocol}//example.com:${port}`,
@@ -19,5 +19,7 @@ export const apiRoutes = {
   download_data_packages: '/api/data_packages/download',
   assign_eud_to_user: '/api/user/assign_eud',
   status: '/api/status',
-  casevac: '/api/casevac'
+  casevac: '/api/casevac',
+  deleteDataPackage: '/api/data_packages/delete',
+  downloadDataPackage: '/api/data_packages/download',
 };

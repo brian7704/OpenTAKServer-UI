@@ -28,6 +28,7 @@
     "screenfull": "^6.0.2"
   },
   "devDependencies": {
+    "@mantine/notifications": "^7.4.1",
     "@mantinex/mantine-logo": "^1.0.1",
     "@storybook/addon-essentials": "^7.6.6",
     "@storybook/addon-interactions": "^7.6.6",
