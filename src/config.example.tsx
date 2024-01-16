@@ -25,4 +25,9 @@ export const apiRoutes = {
   addVideoStream: '/api/mediamtx/stream/add',
   deleteVideoStream: '/api/mediamtx/stream/delete',
   updateVideoStream: '/api/mediamtx/stream/update',
+  addUser: '/api/user/add',
+  changeRole: '/api/user/role',
+  deactivateUser: '/api/user/deactivate',
+  activateUser: '/api/user/activate',
+  resetPassword: '/api/user/password/reset',
 };

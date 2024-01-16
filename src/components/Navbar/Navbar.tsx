@@ -26,7 +26,6 @@ const navbarLinks = [
 
 const adminLinks = [
     { link: '/users', label: 'Users', icon: IconUsers },
-    { link: '/users/create', label: 'Create User', icon: IconUserPlus },
 ];
 
 export default function Navbar() {

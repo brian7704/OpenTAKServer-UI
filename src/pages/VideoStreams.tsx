@@ -128,7 +128,6 @@ export default function VideoStreams() {
             apiRoutes.addVideoStream,
             { path, source, sourceOnDemand: true }
         ).then(r => {
-            console.log(r);
             if (r.status === 200) {
                 setAddVideoOpened(false);
                 getVideoStreams();
@@ -147,8 +146,8 @@ export default function VideoStreams() {
             <Button onClick={() => { setAddVideoOpened(true); }} mb="md" leftSection={<IconPlus size={14} />}>Add Video</Button>
             <Table data={videoStreams} striped highlightOnHover withTableBorder mb="md" />
             <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
-            <Modal opened={addVideoOpened} onClose={() => setAddVideoOpened(false)} title="Authentication">
-                <TextInput label="Path" onChange={e => { setPath(e.target.value); }} />
+            <Modal opened={addVideoOpened} onClose={() => setAddVideoOpened(false)} title="Add Video">
+                <TextInput required label="Path" onChange={e => { setPath(e.target.value); }} />
                 <TextInput label="Source" onChange={e => { setSource(e.target.value); }} mb="md" />
                 <Button onClick={(e) => { addVideo(e); }}>Add Video Stream</Button>
             </Modal>
