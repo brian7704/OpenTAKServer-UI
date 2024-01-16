@@ -8,6 +8,7 @@ const Map = React.lazy(() => import('./pages/Map/Map'));
 const EUDs = React.lazy(() => import('./pages/EUDs'));
 const Casevac = React.lazy(() => import('./pages/Casevac'));
 const DataPackages = React.lazy(() => import('./pages/DataPackages'));
+const VideoStreams = React.lazy(() => import('./pages/VideoStreams'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -19,6 +20,7 @@ const routes = [
   { path: '/alerts', name: 'Alerts', element: Alerts },
   { path: '/casevac', name: 'Casevac', element: Casevac },
   { path: '/data_packages', name: 'DataPackages', element: DataPackages },
+  { path: '/video_streams', name: 'VideoStreams', element: VideoStreams },
 ];
 
 export default routes;

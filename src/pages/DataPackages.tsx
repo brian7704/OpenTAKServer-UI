@@ -4,14 +4,14 @@ import {
     FileButton,
     Pagination,
     Table,
-    TableData
+    TableData,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import React, { useEffect, useState } from 'react';
+import { IconDownload, IconCircleMinus, IconX, IconCheck } from '@tabler/icons-react';
 import axios from '@/axios_config';
 import { apiRoutes } from '@/config';
-import tools from "@/tools";
-import {IconDownload, IconCircleMinus, IconX, IconCheck} from "@tabler/icons-react";
+import tools from '@/tools';
 
 interface data_package {
     filename: string;
@@ -44,32 +44,31 @@ export default function DataPackages() {
     useEffect(() => {
         if (file) {
             const formData = new FormData();
-            formData.append("file", file);
-            axios.post(`/api/data_packages/upload`, formData, {headers: {"Content-Type": "multipart/form-data"}}).then(r => {
+            formData.append('file', file);
+            axios.post('/api/data_packages/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } }).then(r => {
                 if (r.status === 200) {
                     getDatapackages();
                     notifications.show({
                         title: 'Success',
                         message: 'Data package successfully uploaded',
                         icon: <IconCheck />,
-                        color: 'green'
-                    })
-                }
-                else {
+                        color: 'green',
+                    });
+                } else {
                     notifications.show({
                         title: 'Failed to upload data package',
                         message: r.data.error,
                         icon: <IconX />,
-                        color: 'red'
-                    })
+                        color: 'red',
+                    });
                 }
             }).catch(err => {
                 notifications.show({
                     title: 'Failed to upload data package',
                     message: err.response.data.error,
                     icon: <IconX />,
-                    color: 'red'
-                })
+                    color: 'red',
+                });
             });
         }
     }, [file]);
@@ -80,26 +79,25 @@ export default function DataPackages() {
 
     function deleteDataPackage(hash:string) {
         axios.delete(apiRoutes.deleteDataPackage,
-            {params: {
-                    'hash': hash
-                }}).then(r => {
+            { params: {
+                    hash,
+                } }).then(r => {
                     if (r.status === 200) {
                         getDatapackages();
                         notifications.show({
                             title: 'Success',
                             message: 'Successfully deleted data package',
                             icon: <IconCheck />,
-                            color: 'green'
-                        })
-                    }
-                    else {
+                            color: 'green',
+                        });
+                    } else {
                         notifications.show({
                             title: 'Delete Failed',
                             message: r.data.error,
                             icon: <IconX />,
                             autoClose: false,
-                            color: 'red'
-                        })
+                            color: 'red',
+                        });
                     }
         }).catch(err => {
             console.log(err);
@@ -108,9 +106,9 @@ export default function DataPackages() {
                 message: err.response.data.error,
                 icon: <IconX />,
                 autoClose: false,
-                color: 'red'
-            })
-        })
+                color: 'red',
+            });
+        });
     }
 
     function getDatapackages() {
@@ -129,11 +127,11 @@ export default function DataPackages() {
 
                 r.data.results.map((row:any) => {
                     if (tableData.body !== undefined) {
-                        const link = `${apiRoutes.deleteDataPackage}?hash=${row.hash}`
-                        const download = <Button component="a" href={link} key={row.hash} rightSection={<IconDownload size={14}/>}>Download</Button>
+                        const link = `${apiRoutes.deleteDataPackage}?hash=${row.hash}`;
+                        const download = <Button component="a" href={link} key={row.hash} rightSection={<IconDownload size={14} />}>Download</Button>;
 
-                        const delete_button = <Button onClick={() => deleteDataPackage(row.hash)} key={row.hash + "_delete"} rightSection={<IconCircleMinus size={14}/>}>Delete</Button>
-                        let callsign = row.eud ? row.eud.callsign : ''
+                        const delete_button = <Button onClick={() => deleteDataPackage(row.hash)} key={`${row.hash}_delete`} rightSection={<IconCircleMinus size={14} />}>Delete</Button>;
+                        const callsign = row.eud ? row.eud.callsign : '';
                         tableData.body.push([row.filename, tools(row.size), row.submission_user, callsign, row.submission_time, download, delete_button]);
                     }
                 });

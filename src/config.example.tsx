@@ -22,4 +22,7 @@ export const apiRoutes = {
   casevac: '/api/casevac',
   deleteDataPackage: '/api/data_packages/delete',
   downloadDataPackage: '/api/data_packages/download',
+  addVideoStream: '/api/mediamtx/stream/add',
+  deleteVideoStream: '/api/mediamtx/stream/delete',
+  updateVideoStream: '/api/mediamtx/stream/update',
 };

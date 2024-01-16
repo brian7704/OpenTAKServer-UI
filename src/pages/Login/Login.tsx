@@ -52,16 +52,15 @@ export default function Login() {
     }, []);
 
     const getUser = () => {
-        console.log(axios);
         axios.get(
             apiRoutes.me
         ).then(r => {
             if (r.status === 200) {
-                const { user } = r.data;
+                const user = r.data;
                 const { roles } = user;
 
                 for (let i = 0; i < roles.length; i += 1) {
-                    if (roles[i].role.name === 'administrator') {
+                    if (roles[i].name === 'administrator') {
                         localStorage.setItem('administrator', 'true');
                         break;
                     }
@@ -98,7 +97,7 @@ export default function Login() {
             <Header />
             <Container size={420} my={40}>
                 <Center>
-                    <Image src={Logo} h={250} w='auto' />
+                    <Image src={Logo} h={250} w="auto" />
                 </Center>
                 <Title ta="center" className={classes.title}>
                     Welcome back!
@@ -136,7 +135,7 @@ export default function Login() {
                         Sign in
                     </Button>
                 </Paper>
-                <Alert style={errorVisible ? { display: 'block' } : { display: 'none' }} radius='md' variant="light" color="red" title="Login Failed">
+                <Alert style={errorVisible ? { display: 'block' } : { display: 'none' }} radius="md" variant="light" color="red" title="Login Failed">
                     {errorMessage}
                 </Alert>
             </Container>
