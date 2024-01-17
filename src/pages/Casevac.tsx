@@ -1,4 +1,4 @@
-import { Center, Pagination, Table, TableData } from '@mantine/core';
+import {Center, Pagination, Table, TableData, useComputedColorScheme} from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import axios from '@/axios_config';
 import { apiRoutes } from '@/config';
@@ -52,6 +52,7 @@ export default function Casevac() {
     });
     const [activePage, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
 
     useEffect(() => {
         axios.get(
@@ -95,7 +96,7 @@ export default function Casevac() {
 }, [activePage]);
     return (
         <>
-            <Table data={casevacs} striped highlightOnHover withTableBorder mb="md" />
+            <Table data={casevacs} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.4'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mb="md" />
     <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
         </>
 );

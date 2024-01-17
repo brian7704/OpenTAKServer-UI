@@ -6,14 +6,23 @@ import {
     Paper,
     Container,
     Group,
-    Button, Image, Center, Stack, PaperProps, PinInput, Text,
+    Button,
+    Image,
+    Center,
+    Stack,
+    PaperProps,
+    PinInput,
+    Text,
+    Title,
+    rem,
+    Box,
+    useComputedColorScheme,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { upperFirst } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import { IconCheck, IconX } from '@tabler/icons-react';
-import classes from './Login.module.css';
+import { IconArrowLeft, IconCheck, IconX } from '@tabler/icons-react';
 import { Header } from '../../components/Header';
 import { apiRoutes } from '../../config';
 import axios from '../../axios_config';
@@ -28,6 +37,7 @@ export default function Login(props: PaperProps) {
     const [email, setEmail] = useState('');
     const [emailEnabled, setEmailEnabled] = useState(false);
     const [authCode, setAuthCode] = useState<string>();
+    const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
 
     useEffect(() => {
         try {
@@ -154,17 +164,46 @@ export default function Login(props: PaperProps) {
         });
     }
 
+    function handleReset(e:any) {
+        e.preventDefault();
+        axios.post(
+            apiRoutes.resetPassword,
+            { email }
+        ).then(r => {
+            if (r.status === 200) {
+                notifications.show({
+                    message: `Password reset instructions have been sent to ${email}`,
+                    color: 'green',
+                    icon: <IconCheck />,
+                });
+            }
+        }).catch(err => {
+            notifications.show({
+                message: 'Failed to send password reset instructions',
+                color: 'red',
+                icon: <IconX />,
+            });
+        });
+    }
+
     return (
-        <div>
+        <Box bg={computedColorScheme === 'light' ? 'gray.1' : 'dark.5'} h="100vh">
             <Header />
             <Container size={420} my={40}>
                 <Center>
                     <Image src={Logo} h={250} w="auto" />
                 </Center>
 
-                <Paper radius="md" p="xl" withBorder {...props}>
+                {type === 'Reset Password' && (
+                    <Stack align="center">
+                        <Title order={2}>Forgot your password?</Title>
+                        <Text>Enter your email to get a reset link</Text>
+                    </Stack>
+                )}
+
+                <Paper radius="md" p="xl" withBorder {...props} bg={computedColorScheme === 'light' ? 'white' : 'dark.8'}>
                     <Stack>
-                        {type === 'register' && emailEnabled && (
+                        {(type === 'register' || type === 'Reset Password') && emailEnabled && (
                             <TextInput
                               required
                               label="Email"
@@ -227,9 +266,10 @@ export default function Login(props: PaperProps) {
                     {type === 'login' ?
                         <Group justify="space-between" mt="lg">
                             <Checkbox label="Remember me" />
-                            <Anchor component="button" size="sm">
+                            {emailEnabled ?
+                            <Anchor component="button" size="sm" onClick={() => setType('Reset Password')}>
                                 Forgot password?
-                            </Anchor>
+                            </Anchor> : ''}
                         </Group>
                     : ''}
                     <Group justify="space-between" mt="xl">
@@ -239,28 +279,32 @@ export default function Login(props: PaperProps) {
                           c="dimmed"
                           onClick={() => {
                             if (type === 'login') setType('register');
-                            else if (type === 'register') {
-                                setType('login');
-                            }
+                            else if (type === 'register') setType('login');
+                            else if (type === 'Reset Password') setType('login');
                         }}
                           size="xs"
                         >
                             {type === 'register' && 'Already have an account? Login'}
                             {type === 'login' && "Don't have an account? Register"}
+                            {type === 'Reset Password' && <Center inline>
+                                <IconArrowLeft style={{ width: rem(12), height: rem(12) }} stroke={1.5} />
+                                <Box ml={5}>Back to the login page</Box>
+                                                          </Center>}
                         </Anchor>
                         <Button
                           radius="xl"
                           onClick={(e) => {
                             if (type === 'login') handleLogin(e);
                             else if (type === 'register') handleRegister(e);
+                            else if (type === 'Reset Password') handleReset(e);
                           }}
-                          display={type === 'login' || type === 'register' ? 'block' : 'None'}
+                          display={type === 'login' || type === 'register' || type === 'Reset Password' ? 'block' : 'None'}
                         >
                             {upperFirst(type)}
                         </Button>
                     </Group>
                 </Paper>
             </Container>
-        </div>
+        </Box>
     );
 }

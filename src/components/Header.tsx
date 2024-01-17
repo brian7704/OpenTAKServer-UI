@@ -3,7 +3,7 @@ import {
     Group,
     Button,
     Box,
-    ActionIcon, useComputedColorScheme, useMantineColorScheme, Image
+    ActionIcon, useComputedColorScheme, useMantineColorScheme, Image,
 } from '@mantine/core';
 import {
     IconSun,
@@ -36,7 +36,7 @@ export const Header = () => {
     };
 
     return (
-        <Box pb={0}>
+        <Box pb={0} bg={computedColorScheme === 'light' ? 'white' : 'dark.4'}>
             <header className={classes.header}>
                 <Group justify="space-between" h="100%">
                     <Image src={Logo} h={50} w="auto" />

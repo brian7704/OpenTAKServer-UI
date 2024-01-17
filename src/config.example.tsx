@@ -29,8 +29,9 @@ export const apiRoutes = {
   changeRole: '/api/user/role',
   deactivateUser: '/api/user/deactivate',
   activateUser: '/api/user/activate',
-  resetPassword: '/api/user/password/reset',
+  adminResetPassword: '/api/user/password/reset', //Allows admins to change any user's password
   register: '/api/register',
   tfValidate: '/api/tf-validate',
   tfSetup: '/api/tf-setup',
+  resetPassword: '/api/password/reset', //Allows users to reset their own password if they forgot it
 };

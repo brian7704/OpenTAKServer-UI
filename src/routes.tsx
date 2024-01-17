@@ -11,6 +11,7 @@ const VideoStreams = React.lazy(() => import('./pages/VideoStreams'));
 const Users = React.lazy(() => import('./pages/Users'));
 const TFASetup = React.lazy(() => import('./pages/TFASetup'));
 const Alerts = React.lazy(() => import('./pages/Alerts'));
+const PasswordReset = React.lazy(() => import('./pages/PasswordReset'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -25,6 +26,7 @@ const routes = [
   { path: '/video_streams', name: 'VideoStreams', element: VideoStreams },
   { path: '/users', name: 'Users', element: Users },
   { path: '/tfa_setup', name: '2FA Setup', element: TFASetup },
+  { path: '/reset', name: 'Password Reset', element: PasswordReset },
 ];
 
 export default routes;

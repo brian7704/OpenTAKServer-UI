@@ -1,4 +1,14 @@
-import { Button, Center, Modal, Pagination, Switch, Table, TableData, TextInput } from '@mantine/core';
+import {
+    Button,
+    Center,
+    Modal,
+    Pagination,
+    Switch,
+    Table,
+    TableData,
+    TextInput,
+    useComputedColorScheme,
+} from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import { IconCheck, IconCircleMinus, IconPlus, IconX } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
@@ -18,6 +28,7 @@ export default function VideoStreams() {
     const [deletePath, setDeletePath] = useState('');
     const [path, setPath] = useState('');
     const [source, setSource] = useState('');
+    const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
 
     function setRecord(path:string, record:boolean) {
         axios.patch(
@@ -83,7 +94,6 @@ export default function VideoStreams() {
                         }
 
                         const record = <Switch checked={row.record} onChange={(e) => { setRecord(row.path, e.target.checked); getVideoStreams(); }} />;
-
                         tableData.body.push([row.username, row.path, row.rtsp_link, row.webrtc_link, row.source, online_icon, record, watch_button, delete_button]);
                     }
                 });
@@ -144,7 +154,7 @@ export default function VideoStreams() {
     return (
         <>
             <Button onClick={() => { setAddVideoOpened(true); }} mb="md" leftSection={<IconPlus size={14} />}>Add Video</Button>
-            <Table data={videoStreams} striped highlightOnHover withTableBorder mb="md" />
+            <Table stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.4'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" data={videoStreams} highlightOnHover withTableBorder mb="md" />
             <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
             <Modal opened={addVideoOpened} onClose={() => setAddVideoOpened(false)} title="Add Video">
                 <TextInput required label="Path" onChange={e => { setPath(e.target.value); }} />

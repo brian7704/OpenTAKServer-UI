@@ -1,7 +1,7 @@
-import { Center, Pagination, Table, TableData } from '@mantine/core';
+import { Center, Pagination, Table, TableData, useComputedColorScheme } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
-import axios from '@/axios_config';
-import { apiRoutes } from '@/config';
+import axios from '../axios_config';
+import { apiRoutes } from '../config';
 
 interface alert {
     callsign: string;
@@ -19,6 +19,7 @@ export default function Alerts() {
     });
     const [activePage, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
 
     useEffect(() => {
         axios.get(
@@ -48,7 +49,7 @@ export default function Alerts() {
 }, [activePage]);
     return (
         <>
-            <Table data={alerts} striped highlightOnHover withTableBorder mb="md" />
+            <Table stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.4'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" data={alerts} highlightOnHover withTableBorder mb="md" />
             <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
         </>
     );

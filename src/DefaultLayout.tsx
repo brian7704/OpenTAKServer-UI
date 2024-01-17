@@ -6,6 +6,7 @@ import {
     Image,
     Menu,
     rem,
+    useComputedColorScheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
@@ -23,6 +24,7 @@ import Navbar from './components/Navbar/Navbar';
 export function DefaultLayout() {
     const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
     const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
+    const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
 
     const navigate = useNavigate();
 
@@ -88,7 +90,7 @@ export function DefaultLayout() {
             <AppShell.Navbar p="md">
                 <Navbar />
             </AppShell.Navbar>
-            <AppShell.Main><AppContent /></AppShell.Main>
+            <AppShell.Main bg={computedColorScheme === 'light' ? 'gray.1' : 'dark.5'}><AppContent /></AppShell.Main>
         </AppShell>
     );
 }

@@ -4,7 +4,7 @@ import {
     FileButton,
     Pagination,
     Table,
-    TableData,
+    TableData, useComputedColorScheme,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import React, { useEffect, useState } from 'react';
@@ -38,8 +38,7 @@ export default function DataPackages() {
     const [activePage, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [file, setFile] = useState<File | null>(null);
-    const [errorVisible, setErrorVisible] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
+    const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
 
     useEffect(() => {
         if (file) {
@@ -148,7 +147,7 @@ export default function DataPackages() {
             <FileButton onChange={setFile}>
                 {(props) => <Button {...props}>Upload Data Package</Button>}
             </FileButton>
-            <Table data={dataPackages} striped highlightOnHover withTableBorder mt="md" mb="md" />
+            <Table data={dataPackages} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.4'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mt="md" mb="md" />
             <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
         </>
     );

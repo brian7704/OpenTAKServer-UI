@@ -1,7 +1,13 @@
-import {Container, Title, Text, Button, Group, Table, TableData, Pagination, Center} from '@mantine/core';
-import React, {useEffect, useState} from "react";
-import axios from "@/axios_config";
-import {apiRoutes} from "@/config";
+import {
+    Table,
+    TableData,
+    Pagination,
+    Center,
+    useComputedColorScheme
+} from '@mantine/core';
+import React, { useEffect, useState } from 'react';
+import axios from '../axios_config';
+import { apiRoutes } from '../config';
 
 interface eud {
     callsign: string;
@@ -20,41 +26,43 @@ export default function EUDs() {
     const [euds, setEuds] = useState<TableData>({
         caption: '',
         head: ['Callsign', 'Device', 'Platform', 'OS', 'Phone Number', 'Username', 'UID', 'Version', 'Last Event Time', 'Last Event'],
-        body: []
+        body: [],
     });
     const [activePage, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1)
-
+    const [totalPages, setTotalPages] = useState(1);
+    const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
 
     useEffect(() => {
         axios.get(
             apiRoutes.eud,
-            {params: {
-                    page: activePage
-                }}
+            { params: {
+                    page: activePage,
+                } }
         ).then(r => {
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
                     head: ['Callsign', 'Device', 'Platform', 'OS', 'Phone Number', 'Username', 'UID', 'Version', 'Last Event Time', 'Last Event'],
-                    body: []
-                }
+                    body: [],
+                };
 
                 r.data.results.map((row:any) => {
                     if (tableData.body !== undefined) {
                         tableData.body.push([row.callsign, row.device, row.platform, row.os, row.phone_number,
-                            row.username, row.uid, row.version, row.last_event_time, row.last_status])
+                            row.username, row.uid, row.version, row.last_event_time, row.last_status]);
                     }
-                })
-
+                });
 
                 setPage(r.data.current_page);
-                setTotalPages(r.data.total_pages)
+                setTotalPages(r.data.total_pages);
                 setEuds(tableData);
-    }})}, [activePage])
+            }
+        });
+    }, [activePage]);
+
     return (
         <>
-            <Table data={euds} striped highlightOnHover withTableBorder mb="md" />
+            <Table data={euds} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.4'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mb="md" />
             <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
         </>
     );
