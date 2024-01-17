@@ -30,4 +30,7 @@ export const apiRoutes = {
   deactivateUser: '/api/user/deactivate',
   activateUser: '/api/user/activate',
   resetPassword: '/api/user/password/reset',
+  register: '/api/register',
+  tfValidate: '/api/tf-validate',
+  tfSetup: '/api/tf-setup',
 };

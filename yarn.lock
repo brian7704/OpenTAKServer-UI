@@ -9870,6 +9870,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     react-leaflet: "npm:^4.2.1"
     react-leaflet-fullscreen: "npm:^4.1.1"
+    react-qr-code: "npm:^2.0.12"
     react-router-dom: "npm:^6.21.0"
     screenfull: "npm:^6.0.2"
     storybook: "npm:^7.6.6"
@@ -10511,6 +10512,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"qr.js@npm:0.0.0":
+  version: 0.0.0
+  resolution: "qr.js@npm:0.0.0"
+  checksum: 1c6a4c7a58d04e52ec2fee99e39b680fdc5b2a510a981df42c36b716a8eac6634d130fc4d65af8f030f2a07dbf5fa046b97cdfa7456c250ebb50a73916efdcb5
+  languageName: node
+  linkType: hard
+
 "qs@npm:6.11.0":
   version: 6.11.0
   resolution: "qs@npm:6.11.0"
@@ -10693,6 +10701,22 @@ __metadata:
     react: ^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
     react-dom: ^0.14 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
   checksum: 9e37698ab3d8224fd6cf5a69845c0308720d04de8459757031de0304379cfd2c0c897834cc9f62869933c4702a97888ba51abeb6490b7282e237a4c19a5fab04
+  languageName: node
+  linkType: hard
+
+"react-qr-code@npm:^2.0.12":
+  version: 2.0.12
+  resolution: "react-qr-code@npm:2.0.12"
+  dependencies:
+    prop-types: "npm:^15.8.1"
+    qr.js: "npm:0.0.0"
+  peerDependencies:
+    react: ^16.x || ^17.x || ^18.x
+    react-native-svg: "*"
+  peerDependenciesMeta:
+    react-native-svg:
+      optional: true
+  checksum: e02896764b7ff88fb1b8eb1d8ae7201f862a459ebc97732a8a18171c3d47a51a32341906fb673d9304d0d4dc4fd90093b1ebe42f428bb148f299d2929e2399ef
   languageName: node
   linkType: hard
 

@@ -4,27 +4,30 @@ import {
     Checkbox,
     Anchor,
     Paper,
-    Title,
-    Text,
     Container,
     Group,
-    Button, Alert, Image, Center,
+    Button, Image, Center, Stack, PaperProps, PinInput, Text,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { upperFirst } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
+import { IconCheck, IconX } from '@tabler/icons-react';
 import classes from './Login.module.css';
 import { Header } from '../../components/Header';
 import { apiRoutes } from '../../config';
 import axios from '../../axios_config';
 import Logo from '../../assets/ots-logo.png';
 
-export default function Login() {
+export default function Login(props: PaperProps) {
     const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [csrfToken, setCsrfToken] = useState('');
-    const [errorMessage, setErrorMessage] = useState(null);
-    const [errorVisible, setErrorVisible] = useState(false);
+    const [type, setType] = useState('login');
+    const [email, setEmail] = useState('');
+    const [emailEnabled, setEmailEnabled] = useState(false);
+    const [authCode, setAuthCode] = useState<string>();
 
     useEffect(() => {
         try {
@@ -34,6 +37,8 @@ export default function Login() {
                     headers: { 'Content-Type': 'application/json' },
                 },
             ).then(r => {
+                setEmailEnabled(r.data.response.identity_attributes.includes('email'));
+                localStorage.setItem('emailEnabled', r.data.response.identity_attributes.includes('email'));
                 axios.interceptors.request.use((config) => {
                     if (['post', 'delete', 'patch', 'put'].includes(config.method!)) {
                         if (r.data.response.csrf_token !== '') {
@@ -59,6 +64,8 @@ export default function Login() {
                 const user = r.data;
                 const { roles } = user;
 
+                localStorage.setItem('email', user.email);
+
                 for (let i = 0; i < roles.length; i += 1) {
                     if (roles[i].name === 'administrator') {
                         localStorage.setItem('administrator', 'true');
@@ -70,27 +77,82 @@ export default function Login() {
         });
     };
 
-    const handleSubmit = async (e:any) => {
+    function handleLogin(e:any) {
         e.preventDefault();
-        setErrorVisible(false);
 
-        try {
-            await axios.post(
-                apiRoutes.login,
-                JSON.stringify({ username, password, submit: 'Login', csrf_token: csrfToken })
-            ).then(r => {
-                if (r.status === 200) {
-                    localStorage.setItem('loggedIn', 'true');
-                    localStorage.setItem('username', username);
-                    getUser();
-                    // socket.connect();
-                }
+        axios.post(
+            apiRoutes.login,
+            JSON.stringify({ username, password, submit: 'Login', csrf_token: csrfToken })
+        ).then(r => {
+            if (r.status === 200) {
+                localStorage.setItem('loggedIn', 'true');
+                localStorage.setItem('username', username);
+                if (Object.hasOwn(r.data.response, 'tf_required') && r.data.response.tf_required) {
+                    if (r.data.response.tf_method === 'authenticator') {
+                        setType('authenticator');
+                    } else if (r.data.response.tf_method === 'email') {
+                        setType('email');
+                    }
+                } else getUser();
+                // socket.connect();
+            }
+        }).catch(err => {
+            notifications.show({
+                title: 'Login Failed',
+                message: err.response.data.response.errors[0],
+                color: 'red',
+                icon: <IconX />,
             });
-        } catch (err:any) {
-            setErrorVisible(true);
-            setErrorMessage(err.response.data.response.errors[0]);
-        }
-    };
+        });
+}
+
+    function handleRegister(e:any) {
+        e.preventDefault();
+        axios.post(
+            apiRoutes.register,
+            { username, password, email }
+        ).then(r => {
+            if (r.status === 200) {
+                notifications.show({
+                    message: 'Registration Succeeded',
+                    color: 'green',
+                    icon: <IconCheck />,
+                });
+            }
+        }).catch(err => {
+            notifications.show({
+                title: 'Registration Failed',
+                message: err.response.data.response.errors[0],
+                color: 'red',
+                icon: <IconX />,
+            });
+        });
+    }
+
+    function handleAuthCode(e:any) {
+        e.preventDefault();
+        axios.post(
+            apiRoutes.tfValidate,
+            { code: authCode }
+        ).then(r => {
+            if (r.status === 200) {
+                notifications.show({
+                    message: 'Authentication Succeeded',
+                    color: 'green',
+                    icon: <IconCheck />,
+                });
+                getUser();
+            }
+        }).catch(err => {
+            console.log(err);
+            notifications.show({
+                title: 'Authentication Failed',
+                message: err.response.data.response.errors[0],
+                color: 'red',
+                icon: <IconX />,
+            });
+        });
+    }
 
     return (
         <div>
@@ -99,45 +161,105 @@ export default function Login() {
                 <Center>
                     <Image src={Logo} h={250} w="auto" />
                 </Center>
-                <Title ta="center" className={classes.title}>
-                    Welcome back!
-                </Title>
-                <Text c="dimmed" size="sm" ta="center" mt={5}>
-                    Do not have an account yet?{' '}
-                    <Anchor size="sm" component="button">
-                        Create account
-                    </Anchor>
-                </Text>
 
-                <Paper withBorder shadow="md" p={30} mt={30} mb={10} radius="md">
-                    <TextInput label="Username" placeholder="Your username" required onChange={(e) => setUsername(e.target.value)} />
-                    <PasswordInput
-                      label="Password"
-                      placeholder="Your password"
-                      required
-                      mt="md"
-                      onChange={(e) => setPassword(e.target.value)}
-                      value={password}
-                    />
-                    <Group justify="space-between" mt="lg">
-                        <Checkbox label="Remember me" />
-                        <Anchor component="button" size="sm">
-                            Forgot password?
-                        </Anchor>
-                    </Group>
-                    <Button
-                      onClick={(e) => {
-                            handleSubmit(e);
+                <Paper radius="md" p="xl" withBorder {...props}>
+                    <Stack>
+                        {type === 'register' && emailEnabled && (
+                            <TextInput
+                              required
+                              label="Email"
+                              placeholder="me@example.com"
+                              value={email}
+                              onChange={(event) => setEmail(event.currentTarget.value)}
+                              radius="md"
+                            />
+                        )}
+
+                        {(type === 'register' || type === 'login') && (
+                            <div>
+                                <TextInput
+                                  required
+                                  label="Username"
+                                  placeholder="Username"
+                                  value={username}
+                                  onChange={(event) => setUsername(event.currentTarget.value)}
+                                  radius="md"
+                                />
+
+                                <PasswordInput
+                                  required
+                                  label="Password"
+                                  placeholder="Your password"
+                                  value={password}
+                                  onChange={(event) => setPassword(event.currentTarget.value)}
+                                  radius="md"
+                                />
+                            </div>
+                    )}
+
+                        {(type === 'authenticator') && (
+                                <Text ta="center">Please check your authenticator app for an auth code</Text>
+                        )}
+                        {(type === 'email') && (
+                            <Text ta="center">Please check your email for an auth code</Text>
+                        )}
+
+                        <div style={{ display: (type === 'email' || type === 'authenticator' ? 'block' : 'none') }}>
+                            <Stack>
+                                <Center>
+                                    <PinInput
+                                      type="number"
+                                      length={6}
+                                      onChange={(e) => setAuthCode(e)}
+                                      radius="md"
+                                    />
+                                </Center>
+                                <Button
+                                  onClick={(e) => { handleAuthCode(e); }}
+                                >
+                                    Submit
+                                </Button>
+                            </Stack>
+                        </div>
+
+                    </Stack>
+
+                    {type === 'login' ?
+                        <Group justify="space-between" mt="lg">
+                            <Checkbox label="Remember me" />
+                            <Anchor component="button" size="sm">
+                                Forgot password?
+                            </Anchor>
+                        </Group>
+                    : ''}
+                    <Group justify="space-between" mt="xl">
+                        <Anchor
+                          component="button"
+                          type="button"
+                          c="dimmed"
+                          onClick={() => {
+                            if (type === 'login') setType('register');
+                            else if (type === 'register') {
+                                setType('login');
+                            }
                         }}
-                      fullWidth
-                      mt="xl"
-                    >
-                        Sign in
-                    </Button>
+                          size="xs"
+                        >
+                            {type === 'register' && 'Already have an account? Login'}
+                            {type === 'login' && "Don't have an account? Register"}
+                        </Anchor>
+                        <Button
+                          radius="xl"
+                          onClick={(e) => {
+                            if (type === 'login') handleLogin(e);
+                            else if (type === 'register') handleRegister(e);
+                          }}
+                          display={type === 'login' || type === 'register' ? 'block' : 'None'}
+                        >
+                            {upperFirst(type)}
+                        </Button>
+                    </Group>
                 </Paper>
-                <Alert style={errorVisible ? { display: 'block' } : { display: 'none' }} radius="md" variant="light" color="red" title="Login Failed">
-                    {errorMessage}
-                </Alert>
             </Container>
         </div>
     );

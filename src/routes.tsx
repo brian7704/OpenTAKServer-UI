@@ -1,5 +1,4 @@
 import React from 'react';
-import Alerts from "@/pages/Alerts";
 
 const Login = React.lazy(() => import('./pages/Login/Login'));
 const Error404 = React.lazy(() => import('./pages/Errors/Error404'));
@@ -10,6 +9,8 @@ const Casevac = React.lazy(() => import('./pages/Casevac'));
 const DataPackages = React.lazy(() => import('./pages/DataPackages'));
 const VideoStreams = React.lazy(() => import('./pages/VideoStreams'));
 const Users = React.lazy(() => import('./pages/Users'));
+const TFASetup = React.lazy(() => import('./pages/TFASetup'));
+const Alerts = React.lazy(() => import('./pages/Alerts'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -23,6 +24,7 @@ const routes = [
   { path: '/data_packages', name: 'DataPackages', element: DataPackages },
   { path: '/video_streams', name: 'VideoStreams', element: VideoStreams },
   { path: '/users', name: 'Users', element: Users },
+  { path: '/tfa_setup', name: '2FA Setup', element: TFASetup },
 ];
 
 export default routes;

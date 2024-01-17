@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
     IconAlertTriangle,
     IconHeartbeat,
@@ -7,12 +7,14 @@ import {
     IconDeviceMobile,
     IconDashboard,
     IconUsers,
-    IconUserPlus,
-    IconMap,
+    IconMap, IconLogout, IconMoonStars, Icon2fa,
 } from '@tabler/icons-react';
 import { NavLink, Title } from '@mantine/core';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import classes from './Navbar.module.css';
+import DarkModeSwitch from '../DarkModeSwitch';
+import axios from '../../axios_config';
+import { apiRoutes } from '../../config';
 
 const navbarLinks = [
     { link: '/dashboard', label: 'Dashboard', icon: IconDashboard },
@@ -52,6 +54,19 @@ export default function Navbar() {
         />
     ));
 
+    const navigate = useNavigate();
+
+    const logout = () => {
+        axios.post(
+            apiRoutes.logout
+        ).then(r => {
+            if (r.status === 200) {
+                localStorage.clear();
+                navigate('/');
+            }
+        });
+    };
+
     return (
         <>
             <div>
@@ -62,6 +77,11 @@ export default function Navbar() {
                     <Title order={6}>Admin</Title>
                     {admin_links}
                 </div> : ''}
+            <div className={classes.footer}>
+                <NavLink key="2faSettings" href="/tfa_setup" leftSection={<Icon2fa className={classes.linkIcon} stroke={1.5} />} label="Setup 2FA" />
+                <NavLink key="darkModeSwitch" leftSection={<IconMoonStars className={classes.linkIcon} stroke={1.5} />} rightSection={<DarkModeSwitch />} label="Dark Mode" />
+                <NavLink key="logout" leftSection={<IconLogout className={classes.linkIcon} stroke={1.5} />} label="Log Out" onClick={() => logout()} />
+            </div>
         </>
     );
 }

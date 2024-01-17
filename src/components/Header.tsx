@@ -3,16 +3,19 @@ import {
     Group,
     Button,
     Box,
-    ActionIcon, useComputedColorScheme, useMantineColorScheme, Image,
+    ActionIcon, useComputedColorScheme, useMantineColorScheme, Image
 } from '@mantine/core';
-import { IconSun, IconMoon } from '@tabler/icons-react';
+import {
+    IconSun,
+    IconMoon,
+} from '@tabler/icons-react';
 import cx from 'clsx';
 
 import { useNavigate } from 'react-router-dom';
 import Logo from '../assets/ots-logo.png';
 import classes from './Header.module.css';
 import axios from '../axios_config';
-import { apiRoutes } from '@/config';
+import { apiRoutes } from '../config';
 
 export const Header = () => {
     const { setColorScheme } = useMantineColorScheme();

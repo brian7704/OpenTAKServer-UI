@@ -1,31 +1,28 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
-    ActionIcon,
-    AppShell,
+    AppShell, Badge,
     Burger,
-    Button,
     Group,
     Image,
-    useComputedColorScheme,
-    useMantineColorScheme,
+    Menu,
+    rem,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconMoon, IconSun } from '@tabler/icons-react';
-import cx from 'clsx';
+import {
+    IconLogout,
+    IconMessageCircle,
+    IconSettings, IconUserCircle,
+} from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
-import classes from '@/components/Header.module.css';
 import Logo from './assets/ots-logo.png';
 import { AppContent } from './components/AppContent';
-import axios from '@/axios_config';
-import { apiRoutes } from '@/config';
-import Navbar from '@/components/Navbar/Navbar';
+import axios from './axios_config';
+import { apiRoutes } from './config';
+import Navbar from './components/Navbar/Navbar';
 
 export function DefaultLayout() {
     const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
     const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
-    const { setColorScheme } = useMantineColorScheme();
-    const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
-    const loggedIn = localStorage.getItem('loggedIn') === 'true';
 
     const navigate = useNavigate();
 
@@ -58,23 +55,33 @@ export function DefaultLayout() {
                         <Image src={Logo} h={50} w="auto" />
                     </Group>
                     <Group>
-                        <Button
-                          style={loggedIn ? { display: 'block' } : { display: 'none' }}
-                          variant="default"
-                          onClick={() => {
-                                logout();
-                            }}
-                        >Log Out
-                        </Button>
-                        <ActionIcon
-                          onClick={() => setColorScheme(computedColorScheme === 'light' ? 'dark' : 'light')}
-                          variant="default"
-                          size="xl"
-                          aria-label="Toggle color scheme"
-                        >
-                            <IconSun className={cx(classes.icon, classes.light)} stroke={1.5} />
-                            <IconMoon className={cx(classes.icon, classes.dark)} stroke={1.5} />
-                        </ActionIcon>
+                        <Menu shadow="md" width={200} trigger="click-hover">
+                            <Menu.Target>
+                                <Badge autoContrast variant="light" size="md" rightSection={<IconUserCircle size={15} />}>
+                                    {localStorage.getItem('username')}
+                                </Badge>
+                            </Menu.Target>
+
+                            <Menu.Dropdown>
+                                <Menu.Label>Application</Menu.Label>
+                                <Menu.Item leftSection={<IconSettings style={{ width: rem(14), height: rem(14) }} />}>
+                                    Settings
+                                </Menu.Item>
+                                <Menu.Item leftSection={<IconMessageCircle style={{ width: rem(14), height: rem(14) }} />}>
+                                    Messages
+                                </Menu.Item>
+                                <Menu.Divider />
+                                <Menu.Item
+                                  disabled={localStorage.getItem('loggedIn') !== 'true'}
+                                  leftSection={<IconLogout style={{ width: rem(14), height: rem(14) }} />}
+                                  onClick={() => {
+                                        logout();
+                                    }}
+                                >
+                                    Log Out
+                                </Menu.Item>
+                            </Menu.Dropdown>
+                        </Menu>
                     </Group>
                 </Group>
             </AppShell.Header>
