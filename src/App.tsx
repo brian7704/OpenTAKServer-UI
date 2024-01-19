@@ -4,7 +4,7 @@ import { Notifications } from '@mantine/notifications';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import React from 'react';
 import { theme } from './theme';
-import '@mantine/notifications/styles.css'
+import '@mantine/notifications/styles.css';
 
 const Login = React.lazy(() => import('./pages/Login/Login'));
 const Error404 = React.lazy(() => import('./pages/Errors/Error404'));

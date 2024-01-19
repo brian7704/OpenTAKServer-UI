@@ -199,7 +199,7 @@ export default function Users() {
     return (
         <>
             <Button onClick={() => { setAddUserOpen(true); }} mb="md" leftSection={<IconUserPlus size={14} />}>Add User</Button>
-            <Table data={users} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.4'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mb="md" />
+            <Table data={users} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mb="md" />
             <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
             <Modal opened={addUserOpen} onClose={() => setAddUserOpen(false)} title="Add User">
                 <TextInput required label="Username" placeholder="Username" onChange={e => { setUsername(e.target.value); }} />

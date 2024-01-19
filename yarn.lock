@@ -3136,6 +3136,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@socket.io/component-emitter@npm:~3.1.0":
+  version: 3.1.0
+  resolution: "@socket.io/component-emitter@npm:3.1.0"
+  checksum: b838ccccf74c36fa7d3ed89a7efb5858cba1a84db4d08250c2fc44d8235140f10d31875bde71517d8503cb3fb08fcd34d3b7a3d0d89058ca3f74f7c816f0fb9c
+  languageName: node
+  linkType: hard
+
 "@storybook/addon-actions@npm:7.6.6":
   version: 7.6.6
   resolution: "@storybook/addon-actions@npm:7.6.6"
@@ -6048,7 +6055,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:4, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.4":
+"debug@npm:4, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.4, debug@npm:~4.3.1, debug@npm:~4.3.2":
   version: 4.3.4
   resolution: "debug@npm:4.3.4"
   dependencies:
@@ -6405,6 +6412,26 @@ __metadata:
   dependencies:
     once: "npm:^1.4.0"
   checksum: 870b423afb2d54bb8d243c63e07c170409d41e20b47eeef0727547aea5740bd6717aca45597a9f2745525667a6b804c1e7bede41f856818faee5806dd9ff3975
+  languageName: node
+  linkType: hard
+
+"engine.io-client@npm:~6.5.2":
+  version: 6.5.3
+  resolution: "engine.io-client@npm:6.5.3"
+  dependencies:
+    "@socket.io/component-emitter": "npm:~3.1.0"
+    debug: "npm:~4.3.1"
+    engine.io-parser: "npm:~5.2.1"
+    ws: "npm:~8.11.0"
+    xmlhttprequest-ssl: "npm:~2.0.0"
+  checksum: 15d2136655972984012fe5c92446ff9939c08d872262bbb23cd54be1b66a00d489da93321cd01a8ad72eaf4022cfd73bdc8bccf32fa51c097a96c0b4c679cd7b
+  languageName: node
+  linkType: hard
+
+"engine.io-parser@npm:~5.2.1":
+  version: 5.2.1
+  resolution: "engine.io-parser@npm:5.2.1"
+  checksum: 9cf3beaaa7e4062c53f23ab85baadf54295c15938e38f439a4c452552e8d0617d2fc1dbe17f2bee41ddea82bf3decd1f2203bfdb0a425d67bdbdeaa2a9b0bc33
   languageName: node
   linkType: hard
 
@@ -8934,10 +8961,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"leaflet-drift-marker@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "leaflet-drift-marker@npm:2.0.0"
+  peerDependencies:
+    leaflet: ">=1.2.0"
+  checksum: 14ec0d9ee9d224886cb4cae3b4a1b9c48b6a0e27dda61b536bd949d1b737e6e30e7f1ff5912bbef0e2f61650857e38bf8511afb0d6c656866e6ab97852e22289
+  languageName: node
+  linkType: hard
+
 "leaflet.fullscreen@npm:2.4.0":
   version: 2.4.0
   resolution: "leaflet.fullscreen@npm:2.4.0"
   checksum: 8bf92003b3afcf20c0e2e8e62600d3b4b5a14cb5ef2fe33fba09d7efff6975edd42964dcb0b6257df386961100e09c75348c0257769580088091f8192078910b
+  languageName: node
+  linkType: hard
+
+"leaflet.marker.slideto@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "leaflet.marker.slideto@npm:0.3.0"
+  checksum: fef07d51d2cdcb797967dea41002adabbe53386ffa345753465c491cf5d575b30c7386d1ee51cdcebaa85dd792d1033c823bc107e2223e29f9e4c3e7837e4916
   languageName: node
   linkType: hard
 
@@ -9861,6 +9904,7 @@ __metadata:
     identity-obj-proxy: "npm:^3.0.0"
     jsdom: "npm:^23.0.1"
     leaflet: "npm:^1.9.4"
+    leaflet.marker.slideto: "npm:^0.3.0"
     postcss: "npm:^8.4.32"
     postcss-preset-mantine: "npm:1.12.3"
     postcss-simple-vars: "npm:^7.0.1"
@@ -9869,14 +9913,16 @@ __metadata:
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     react-leaflet: "npm:^4.2.1"
+    react-leaflet-drift-marker: "npm:^4.0.0"
     react-leaflet-fullscreen: "npm:^4.1.1"
     react-qr-code: "npm:^2.0.12"
     react-router-dom: "npm:^6.21.0"
     screenfull: "npm:^6.0.2"
+    socket.io-client: "npm:^4.7.4"
     storybook: "npm:^7.6.6"
     storybook-dark-mode: "npm:^3.0.3"
     stylelint: "npm:^16.0.2"
-    stylelint-config-standard-scss: "npm:^12.0.0"
+    stylelint-config-standard-scss: "npm:^13.0.0"
     typescript: "npm:^5.3.3"
     vite: "npm:^5.0.10"
     vite-tsconfig-paths: "npm:^4.2.2"
@@ -10665,6 +10711,19 @@ __metadata:
   version: 18.2.0
   resolution: "react-is@npm:18.2.0"
   checksum: 6eb5e4b28028c23e2bfcf73371e72cd4162e4ac7ab445ddae2afe24e347a37d6dc22fae6e1748632cd43c6d4f9b8f86dcf26bf9275e1874f436d129952528ae0
+  languageName: node
+  linkType: hard
+
+"react-leaflet-drift-marker@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "react-leaflet-drift-marker@npm:4.0.0"
+  dependencies:
+    leaflet-drift-marker: "npm:^2.0.0"
+  peerDependencies:
+    leaflet: ">=1.7"
+    react: ">=18.0.0"
+    react-leaflet: ">=4.x"
+  checksum: 782d4e050a8760875122d6190339687be0210ee113a262ab23a26f10c44124b5cbaba5bb8d37ee0c0a5b626f8b51efa0e690479cf59c7c22b2e20eebf5663457
   languageName: node
   linkType: hard
 
@@ -11522,6 +11581,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"socket.io-client@npm:^4.7.4":
+  version: 4.7.4
+  resolution: "socket.io-client@npm:4.7.4"
+  dependencies:
+    "@socket.io/component-emitter": "npm:~3.1.0"
+    debug: "npm:~4.3.2"
+    engine.io-client: "npm:~6.5.2"
+    socket.io-parser: "npm:~4.2.4"
+  checksum: 0af4dc8882ec88a48203f0e17b49ec08c4fc3d80b72c014dda3357fc5878877d09e8773736fc3bed1dfe5f18e716acc26cdc301bba6777e99d853d51aa5772bd
+  languageName: node
+  linkType: hard
+
+"socket.io-parser@npm:~4.2.4":
+  version: 4.2.4
+  resolution: "socket.io-parser@npm:4.2.4"
+  dependencies:
+    "@socket.io/component-emitter": "npm:~3.1.0"
+    debug: "npm:~4.3.1"
+  checksum: 9383b30358fde4a801ea4ec5e6860915c0389a091321f1c1f41506618b5cf7cd685d0a31c587467a0c4ee99ef98c2b99fb87911f9dfb329716c43b587f29ca48
+  languageName: node
+  linkType: hard
+
 "socks-proxy-agent@npm:^8.0.1":
   version: 8.0.2
   resolution: "socks-proxy-agent@npm:8.0.2"
@@ -11893,30 +11974,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stylelint-config-standard-scss@npm:^12.0.0":
-  version: 12.0.0
-  resolution: "stylelint-config-standard-scss@npm:12.0.0"
+"stylelint-config-standard-scss@npm:^13.0.0":
+  version: 13.0.0
+  resolution: "stylelint-config-standard-scss@npm:13.0.0"
   dependencies:
     stylelint-config-recommended-scss: "npm:^14.0.0"
-    stylelint-config-standard: "npm:^35.0.0"
+    stylelint-config-standard: "npm:^36.0.0"
   peerDependencies:
     postcss: ^8.3.3
-    stylelint: ^16.0.2
+    stylelint: ^16.1.0
   peerDependenciesMeta:
     postcss:
       optional: true
-  checksum: 7f3ccfb4175f9c50b69d30ca35a97887008c5ba493dbe7d5bce0b57b1eafd21b268177b82404368e7780600077cba784f98e1046671724be3b29a00c6a7913a4
+  checksum: 4abf317676184f4aaace6ce72b9fc9e2dffe051d43dd5637afc5803b062ea381e2807ae983c045dff22e96af58388a8b1fe9a8bdda9f97bc3660280cf24fb4d3
   languageName: node
   linkType: hard
 
-"stylelint-config-standard@npm:^35.0.0":
-  version: 35.0.0
-  resolution: "stylelint-config-standard@npm:35.0.0"
+"stylelint-config-standard@npm:^36.0.0":
+  version: 36.0.0
+  resolution: "stylelint-config-standard@npm:36.0.0"
   dependencies:
     stylelint-config-recommended: "npm:^14.0.0"
   peerDependencies:
-    stylelint: ^16.0.0
-  checksum: 791fbc26cc3029ce3c2423a643e903545b5e4cd605251b18f0ce790bac6fbaaf380469845c1ff45f4e320126af9f8a9dc1ca85d0df9274277ae60da91e81895b
+    stylelint: ^16.1.0
+  checksum: 1fc9adddfc5cf0a1d7a443182a0731712a3950ace72a24081b4ede2b0bb6fc1eebd003c009f1d8d06c3a64ba9b31b0ed12512db2f91c8fa549238d8341580e4b
   languageName: node
   linkType: hard
 
@@ -13230,6 +13311,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ws@npm:~8.11.0":
+  version: 8.11.0
+  resolution: "ws@npm:8.11.0"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ^5.0.2
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: b672b312f357afba8568b9dbb9e08b9e8a20845659b35fa6b340dc848efe371379f5e22bb1dc89c4b2940d5e2dc52dd1de85dde41776875fce115a448f94754f
+  languageName: node
+  linkType: hard
+
 "xml-name-validator@npm:^5.0.0":
   version: 5.0.0
   resolution: "xml-name-validator@npm:5.0.0"
@@ -13241,6 +13337,13 @@ __metadata:
   version: 2.2.0
   resolution: "xmlchars@npm:2.2.0"
   checksum: b64b535861a6f310c5d9bfa10834cf49127c71922c297da9d4d1b45eeaae40bf9b4363275876088fbe2667e5db028d2cd4f8ee72eed9bede840a67d57dab7593
+  languageName: node
+  linkType: hard
+
+"xmlhttprequest-ssl@npm:~2.0.0":
+  version: 2.0.0
+  resolution: "xmlhttprequest-ssl@npm:2.0.0"
+  checksum: b64ab371459bd5e3a4827e3c7535759047d285fd310aea6fd028973d547133f3be0d473c1fdae9f14d89bf509267759198ae1fbe89802079a7e217ddd990d734
   languageName: node
   linkType: hard
 

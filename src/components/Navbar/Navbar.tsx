@@ -10,7 +10,7 @@ import {
     IconMap, IconLogout, IconMoonStars, Icon2fa,
 } from '@tabler/icons-react';
 import { NavLink, Title } from '@mantine/core';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import classes from './Navbar.module.css';
 import DarkModeSwitch from '../DarkModeSwitch';
 import axios from '../../axios_config';
@@ -36,9 +36,10 @@ export default function Navbar() {
 
     const links = navbarLinks.map((item) => (
         <NavLink
+          component={Link}
           key={item.label}
           active={location.pathname === item.link || undefined}
-          href={item.link}
+          to={item.link}
           label={item.label}
           leftSection={<item.icon className={classes.linkIcon} stroke={1.5} />}
         />
@@ -46,9 +47,10 @@ export default function Navbar() {
 
     const admin_links = adminLinks.map((item) => (
         <NavLink
+          component={Link}
           key={item.label}
           active={location.pathname === item.link || undefined}
-          href={item.link}
+          to={item.link}
           label={item.label}
           leftSection={<item.icon className={classes.linkIcon} stroke={1.5} />}
         />

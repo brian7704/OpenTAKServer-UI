@@ -154,7 +154,7 @@ export default function VideoStreams() {
     return (
         <>
             <Button onClick={() => { setAddVideoOpened(true); }} mb="md" leftSection={<IconPlus size={14} />}>Add Video</Button>
-            <Table stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.4'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" data={videoStreams} highlightOnHover withTableBorder mb="md" />
+            <Table stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" data={videoStreams} highlightOnHover withTableBorder mb="md" />
             <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
             <Modal opened={addVideoOpened} onClose={() => setAddVideoOpened(false)} title="Add Video">
                 <TextInput required label="Path" onChange={e => { setPath(e.target.value); }} />

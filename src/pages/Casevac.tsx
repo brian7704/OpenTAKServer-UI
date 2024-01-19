@@ -96,7 +96,7 @@ export default function Casevac() {
 }, [activePage]);
     return (
         <>
-            <Table data={casevacs} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.4'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mb="md" />
+            <Table data={casevacs} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mb="md" />
     <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
         </>
 );

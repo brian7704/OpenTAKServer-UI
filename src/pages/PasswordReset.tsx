@@ -13,7 +13,7 @@ import {
 import axios from 'axios';
 import { notifications } from '@mantine/notifications';
 import { IconCheck, IconX } from '@tabler/icons-react';
-import Logo from '../assets/ots-logo.png';
+import Logo from '../images/ots-logo.png';
 import { Header } from '../components/Header';
 import { apiRoutes } from '@/config';
 

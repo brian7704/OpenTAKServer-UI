@@ -12,7 +12,7 @@ import {
 import cx from 'clsx';
 
 import { useNavigate } from 'react-router-dom';
-import Logo from '../assets/ots-logo.png';
+import Logo from '../images/ots-logo.png';
 import classes from './Header.module.css';
 import axios from '../axios_config';
 import { apiRoutes } from '../config';
@@ -36,7 +36,7 @@ export const Header = () => {
     };
 
     return (
-        <Box pb={0} bg={computedColorScheme === 'light' ? 'white' : 'dark.4'}>
+        <Box pb={0} bg={computedColorScheme === 'light' ? 'white' : 'dark.7'}>
             <header className={classes.header}>
                 <Group justify="space-between" h="100%">
                     <Image src={Logo} h={50} w="auto" />

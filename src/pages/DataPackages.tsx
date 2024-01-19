@@ -147,7 +147,7 @@ export default function DataPackages() {
             <FileButton onChange={setFile}>
                 {(props) => <Button {...props}>Upload Data Package</Button>}
             </FileButton>
-            <Table data={dataPackages} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.4'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mt="md" mb="md" />
+             <Table data={dataPackages} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mt="md" mb="md" />
             <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
         </>
     );

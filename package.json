@@ -23,11 +23,14 @@
     "@mantine/form": "^7.4.1",
     "@mantine/hooks": "7.4.0",
     "leaflet": "^1.9.4",
+    "leaflet.marker.slideto": "^0.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-leaflet-drift-marker": "^4.0.0",
     "react-qr-code": "^2.0.12",
     "react-router-dom": "^6.21.0",
-    "screenfull": "^6.0.2"
+    "screenfull": "^6.0.2",
+    "socket.io-client": "^4.7.4"
   },
   "devDependencies": {
     "@mantine/notifications": "^7.4.1",
@@ -71,7 +74,6 @@
     "storybook": "^7.6.6",
     "storybook-dark-mode": "^3.0.3",
     "stylelint": "^16.0.2",
-    "stylelint-config-standard-scss": "^12.0.0",
     "typescript": "^5.3.3",
     "vite": "^5.0.10",
     "vite-tsconfig-paths": "^4.2.2",

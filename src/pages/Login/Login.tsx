@@ -26,7 +26,7 @@ import { IconArrowLeft, IconCheck, IconX } from '@tabler/icons-react';
 import { Header } from '../../components/Header';
 import { apiRoutes } from '../../config';
 import axios from '../../axios_config';
-import Logo from '../../assets/ots-logo.png';
+import Logo from '../../images/ots-logo.png';
 
 export default function Login(props: PaperProps) {
     const navigate = useNavigate();
@@ -104,7 +104,7 @@ export default function Login(props: PaperProps) {
                         setType('email');
                     }
                 } else getUser();
-                // socket.connect();
+                //socket.connect();
             }
         }).catch(err => {
             notifications.show({
@@ -187,7 +187,7 @@ export default function Login(props: PaperProps) {
     }
 
     return (
-        <Box bg={computedColorScheme === 'light' ? 'gray.1' : 'dark.5'} h="100vh">
+        <Box bg={computedColorScheme === 'light' ? 'gray.1' : 'dark.9'} h="100vh">
             <Header />
             <Container size={420} my={40}>
                 <Center>
@@ -201,7 +201,7 @@ export default function Login(props: PaperProps) {
                     </Stack>
                 )}
 
-                <Paper radius="md" p="xl" withBorder {...props} bg={computedColorScheme === 'light' ? 'white' : 'dark.8'}>
+                <Paper radius="md" p="xl" withBorder {...props} bg={computedColorScheme === 'light' ? 'white' : 'dark.7'}>
                     <Stack>
                         {(type === 'register' || type === 'Reset Password') && emailEnabled && (
                             <TextInput

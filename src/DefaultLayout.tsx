@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     AppShell, Badge,
     Burger,
@@ -12,14 +12,16 @@ import { useDisclosure } from '@mantine/hooks';
 import {
     IconLogout,
     IconMessageCircle,
-    IconSettings, IconUserCircle,
+    IconSettings,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
-import Logo from './assets/ots-logo.png';
+import { notifications } from '@mantine/notifications';
+import Logo from './images/ots-logo.png';
 import { AppContent } from './components/AppContent';
 import axios from './axios_config';
 import { apiRoutes } from './config';
 import Navbar from './components/Navbar/Navbar';
+import { socket } from './socketio';
 
 export function DefaultLayout() {
     const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
@@ -27,6 +29,46 @@ export function DefaultLayout() {
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
 
     const navigate = useNavigate();
+
+    const [socketConnected, setSocketConnected] = useState(false);
+
+    useEffect(() => {
+        function onConnect() {
+            console.log(`onConnect ${socketConnected}`);
+            console.log(`onConnect2 ${socket.connected}`);
+            setSocketConnected(true);
+            notifications.show({
+                message: 'Socket connected!',
+            });
+        }
+
+        function onDisconnect() {
+            console.log(`onDisconnect ${socketConnected}`);
+            setSocketConnected(false);
+            notifications.show({
+                message: 'Socket disconnected!',
+            });
+        }
+
+        socket.on('connect', onConnect);
+        socket.on('disconnect', onDisconnect);
+
+        console.log(`connected? ${socketConnected}`);
+        console.log(`connected2? ${socket.connected}`);
+        if (!socketConnected) {
+            console.log('socket connecting');
+            socket.connect();
+        }
+
+        return () => {
+            socket.off('connect', onConnect);
+            socket.off('disconnect', onDisconnect);
+            console.log('App useEffect return');
+            notifications.show({
+                message: 'default useEffect return',
+            });
+        };
+    }, []);
 
     const logout = () => {
         axios.post(
@@ -49,17 +91,17 @@ export function DefaultLayout() {
             }}
           padding="md"
         >
-            <AppShell.Header>
-                <Group justify="space-between" pl={5} pr={5}>
-                    <Group h="100%">
-                        <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
+            <AppShell.Header pb={0}>
+                <Group justify="space-between" pr={5} h="100%">
+                    <Group h="100%" w={300}>
+                        <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" pl={5} />
                         <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
                         <Image src={Logo} h={50} w="auto" />
                     </Group>
                     <Group>
                         <Menu shadow="md" width={200} trigger="click-hover">
                             <Menu.Target>
-                                <Badge autoContrast variant="light" size="md" rightSection={<IconUserCircle size={15} />}>
+                                <Badge autoContrast variant="light" size="md">
                                     {localStorage.getItem('username')}
                                 </Badge>
                             </Menu.Target>
@@ -87,10 +129,10 @@ export function DefaultLayout() {
                     </Group>
                 </Group>
             </AppShell.Header>
-            <AppShell.Navbar p="md">
+            <AppShell.Navbar pl="md" pr="md">
                 <Navbar />
             </AppShell.Navbar>
-            <AppShell.Main bg={computedColorScheme === 'light' ? 'gray.1' : 'dark.5'}><AppContent /></AppShell.Main>
+            <AppShell.Main bg={computedColorScheme === 'light' ? 'gray.1' : 'dark.7'}><AppContent /></AppShell.Main>
         </AppShell>
     );
 }
