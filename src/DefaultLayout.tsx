@@ -91,7 +91,7 @@ export function DefaultLayout() {
             }}
           padding="md"
         >
-            <AppShell.Header pb={0}>
+            <AppShell.Header pb={0} bg={computedColorScheme === 'light' ? '#2a2d43' : 'dark.8'}>
                 <Group justify="space-between" pr={5} h="100%">
                     <Group h="100%" w={300}>
                         <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" pl={5} />
@@ -129,7 +129,7 @@ export function DefaultLayout() {
                     </Group>
                 </Group>
             </AppShell.Header>
-            <AppShell.Navbar pl="md" pr="md">
+            <AppShell.Navbar pl="md" pr="md" bg={computedColorScheme === 'light' ? '#f1f4f8' : 'dark.8'}>
                 <Navbar />
             </AppShell.Navbar>
             <AppShell.Main bg={computedColorScheme === 'light' ? 'gray.1' : 'dark.7'}><AppContent /></AppShell.Main>

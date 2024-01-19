@@ -36,6 +36,7 @@ export default function Navbar() {
 
     const links = navbarLinks.map((item) => (
         <NavLink
+          className={classes.link}
           component={Link}
           key={item.label}
           active={location.pathname === item.link || undefined}
@@ -47,6 +48,7 @@ export default function Navbar() {
 
     const admin_links = adminLinks.map((item) => (
         <NavLink
+          className={classes.link}
           component={Link}
           key={item.label}
           active={location.pathname === item.link || undefined}
@@ -80,9 +82,9 @@ export default function Navbar() {
                     {admin_links}
                 </div> : ''}
             <div className={classes.footer}>
-                <NavLink key="2faSettings" href="/tfa_setup" leftSection={<Icon2fa className={classes.linkIcon} stroke={1.5} />} label="Setup 2FA" />
-                <NavLink key="darkModeSwitch" leftSection={<IconMoonStars className={classes.linkIcon} stroke={1.5} />} rightSection={<DarkModeSwitch />} label="Dark Mode" />
-                <NavLink key="logout" leftSection={<IconLogout className={classes.linkIcon} stroke={1.5} />} label="Log Out" onClick={() => logout()} />
+                <NavLink className={classes.link} key="2faSettings" component={Link} to="/tfa_setup" leftSection={<Icon2fa className={classes.linkIcon} stroke={1.5} />} label="Setup 2FA" />
+                <NavLink className={classes.link} key="darkModeSwitch" leftSection={<IconMoonStars className={classes.linkIcon} stroke={1.5} />} rightSection={<DarkModeSwitch />} label="Dark Mode" />
+                <NavLink className={classes.link} key="logout" leftSection={<IconLogout className={classes.linkIcon} stroke={1.5} />} label="Log Out" onClick={() => logout()} />
             </div>
         </>
     );

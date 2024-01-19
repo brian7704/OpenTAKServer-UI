@@ -20,11 +20,16 @@ export default function TFASetup() {
         ).then(r => {
             setTfPrimaryMethod(r.data.response.tf_primary_method);
         }).catch(err => {
+            let message = '';
+            if (err.status === 401) message = 'Not logged in';
+
             notifications.show({
-                message: 'Failed to get 2FA methods',
+                title: 'Failed to get 2FA methods',
+                message,
                 color: 'red',
                 icon: <IconX />,
             });
+            setLoading(false);
         });
     }, []);
 
@@ -58,11 +63,16 @@ export default function TFASetup() {
                     }
                 }
             }).catch(err => {
+                let message = '';
+                if (err.status === 401) message = 'Not logged in';
+
                 notifications.show({
-                    message: 'Failed to set 2FA method',
+                    title: 'Failed to set 2FA method',
+                    message,
                     color: 'red',
                     icon: <IconX />,
                 });
+                setLoading(false);
             });
         }
     }, [setup]);

@@ -14,7 +14,7 @@ const Alerts = React.lazy(() => import('./pages/Alerts'));
 const PasswordReset = React.lazy(() => import('./pages/PasswordReset'));
 
 const routes = [
-  { path: '/', exact: true, name: 'Home' },
+  { path: '/', exact: true, name: 'Home', element: Dashboard },
   { path: '/login', name: 'Login', element: Login },
   { path: '/404', name: '404', element: Error404 },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
