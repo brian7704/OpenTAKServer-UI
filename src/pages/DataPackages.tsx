@@ -126,7 +126,7 @@ export default function DataPackages() {
 
                 r.data.results.map((row:any) => {
                     if (tableData.body !== undefined) {
-                        const link = `${apiRoutes.deleteDataPackage}?hash=${row.hash}`;
+                        const link = `${apiRoutes.download_data_packages}?hash=${row.hash}`;
                         const download = <Button component="a" href={link} key={row.hash} rightSection={<IconDownload size={14} />}>Download</Button>;
 
                         const delete_button = <Button onClick={() => deleteDataPackage(row.hash)} key={`${row.hash}_delete`} rightSection={<IconCircleMinus size={14} />}>Delete</Button>;

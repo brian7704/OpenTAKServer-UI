@@ -31,10 +31,10 @@ export default function Map() {
                         popupAnchor: [7, -20],
                         tooltipAnchor: [-4, -10],
                     });
-                    const description = `<strong>Callsign:</strong>${value.point_callsign}`;
+                    const description = `<strong>Callsign:</strong>${value.callsign}`;
                     const marker = L.marker([value.latitude, value.longitude], { icon: arrowIcon });
                     marker.bindPopup(description);
-                    marker.bindTooltip(value.point_callsign, { opacity: 0.7, permanent: true, direction: 'bottom', offset: [12, 35] });
+                    marker.bindTooltip(value.callsign, { opacity: 0.7, permanent: true, direction: 'bottom', offset: [12, 35] });
                     pointsLayer.addLayer(marker);
                     markers[uid] = marker;
                     setMarkers(markers);

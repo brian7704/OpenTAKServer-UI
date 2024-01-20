@@ -10,9 +10,10 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
+    IconCheck,
     IconLogout,
     IconMessageCircle,
-    IconSettings,
+    IconSettings, IconX,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
@@ -34,39 +35,44 @@ export function DefaultLayout() {
 
     useEffect(() => {
         function onConnect() {
-            console.log(`onConnect ${socketConnected}`);
-            console.log(`onConnect2 ${socket.connected}`);
             setSocketConnected(true);
-            notifications.show({
-                message: 'Socket connected!',
-            });
         }
 
         function onDisconnect() {
-            console.log(`onDisconnect ${socketConnected}`);
             setSocketConnected(false);
+        }
+
+        function onAlert(alert:any) {
+            let message = `${alert.alert_type} from ${alert.eud.callsign}`;
+            let color = 'red';
+            let icon = <IconX />
+
+            if (alert.cancel_time !== null) {
+                message = `${alert.alert_type} from ${alert.eud.callsign} canceled`;
+                color = 'green';
+                icon = <IconCheck />
+            }
+
             notifications.show({
-                message: 'Socket disconnected!',
-            });
+                title: 'Alert',
+                message: message,
+                color: color,
+                icon: icon
+            })
         }
 
         socket.on('connect', onConnect);
         socket.on('disconnect', onDisconnect);
+        socket.on('alert', onAlert);
 
-        console.log(`connected? ${socketConnected}`);
-        console.log(`connected2? ${socket.connected}`);
         if (!socketConnected) {
-            console.log('socket connecting');
             socket.connect();
         }
 
         return () => {
             socket.off('connect', onConnect);
             socket.off('disconnect', onDisconnect);
-            console.log('App useEffect return');
-            notifications.show({
-                message: 'default useEffect return',
-            });
+            socket.off('alert', onAlert);
         };
     }, []);
 
