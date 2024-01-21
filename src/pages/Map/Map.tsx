@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, useMap, ScaleControl, LayersControl } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { FullscreenControl } from 'react-leaflet-fullscreen';
-import L from 'leaflet';
+import L, {polyline} from 'leaflet';
 import 'react-leaflet-fullscreen/styles.css';
 import 'leaflet.marker.slideto';
 import { Paper } from '@mantine/core';
@@ -10,6 +10,7 @@ import { socket } from '../../socketio';
 
 export default function Map() {
     const [markers, setMarkers] = useState<{ [uid: string]: L.Marker }>({});
+    const [rbLines, setRBLines] = useState<{ [uid: string]: L.Polyline }>({});
 
     function MapContext() {
         const map = useMap();
@@ -41,10 +42,24 @@ export default function Map() {
                 }
             }
 
+            function onRBLine(value:any) {
+                const { uid } = value;
+                if (Object.hasOwn(rbLines, uid)) {
+                    map.removeLayer(rbLines[uid])
+                }
+                let start_point = [value.point['latitude'], value.point['longitude']]
+                let end_point = [value['end_latitude'], value['end_longitude']]
+                let polyline = L.polyline([start_point, end_point], {color: `#${value['color_hex'].slice(2)}`, weight: value.stroke_weight}).addTo(map);
+                rbLines[uid] = polyline;
+                setRBLines(rbLines)
+            }
+
             socket.on('point', onPointEvent);
+            socket.on('rb_line', onRBLine)
 
             return () => {
                 socket.off('point', onPointEvent);
+                socket.off('rb_line', onRBLine);
             };
         }, []);
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     AppShell, Badge,
     Burger,
@@ -27,7 +27,7 @@ import { socket } from './socketio';
 export function DefaultLayout() {
     const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
     const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
-    const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
+    const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });;
 
     const navigate = useNavigate();
 
@@ -45,20 +45,20 @@ export function DefaultLayout() {
         function onAlert(alert:any) {
             let message = `${alert.alert_type} from ${alert.eud.callsign}`;
             let color = 'red';
-            let icon = <IconX />
+            let icon = <IconX />;
 
             if (alert.cancel_time !== null) {
                 message = `${alert.alert_type} from ${alert.eud.callsign} canceled`;
                 color = 'green';
-                icon = <IconCheck />
+                icon = <IconCheck />;
             }
 
             notifications.show({
                 title: 'Alert',
-                message: message,
-                color: color,
-                icon: icon
-            })
+                message,
+                color,
+                icon,
+            });
         }
 
         socket.on('connect', onConnect);
