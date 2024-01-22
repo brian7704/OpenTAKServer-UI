@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, useMap, ScaleControl, LayersControl } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { FullscreenControl } from 'react-leaflet-fullscreen';
-import L, {polyline} from 'leaflet';
+import L, { polyline } from 'leaflet';
 import 'react-leaflet-fullscreen/styles.css';
 import 'leaflet.marker.slideto';
 import { Paper } from '@mantine/core';
@@ -45,23 +45,51 @@ export default function Map() {
             function onRBLine(value:any) {
                 const { uid } = value;
                 if (Object.hasOwn(rbLines, uid)) {
-                    map.removeLayer(rbLines[uid])
+                    map.removeLayer(rbLines[uid]);
                 }
-                let start_point = [value.point['latitude'], value.point['longitude']]
-                let end_point = [value['end_latitude'], value['end_longitude']]
-                let polyline = L.polyline([start_point, end_point], {color: `#${value['color_hex'].slice(2)}`, weight: value.stroke_weight}).addTo(map);
+                const start_point = [value.point.latitude, value.point.longitude];
+                const end_point = [value.end_latitude, value.end_longitude];
+                const polyline = L.polyline([start_point, end_point], { color: `#${value.color_hex.slice(2)}`, weight: value.stroke_weight }).addTo(map);
                 rbLines[uid] = polyline;
-                setRBLines(rbLines)
+                setRBLines(rbLines);
             }
 
             socket.on('point', onPointEvent);
-            socket.on('rb_line', onRBLine)
+            socket.on('rb_line', onRBLine);
+            socket.on('marker', onMarker)
 
             return () => {
                 socket.off('point', onPointEvent);
                 socket.off('rb_line', onRBLine);
+                socket.off('marker', onMarker)
             };
         }, []);
+
+        function onMarker(value:any) {
+            const { uid } = value;
+            if (Object.hasOwn(markers, uid)) {
+                map.removeLayer(markers[uid])
+            }
+
+            console.log(value);
+            let iconurl = value.iconset_path.split("/")
+            iconurl.shift();
+            iconurl = iconurl.join("/");
+            console.log(iconurl);
+
+            const icon = L.icon({
+                iconUrl: `/map_icons/${iconurl}`,
+                iconSize: [40, 40],
+                iconAnchor: [12, 24],
+                popupAnchor: [7, -20],
+                tooltipAnchor: [-4, -10],
+            })
+            const marker = L.marker([value.point.latitude, value.point.longitude], { icon });
+            marker.bindTooltip(value.callsign, { opacity: 0.7, permanent: true, direction: 'bottom', offset: [12, 35] });
+            markers[uid] = marker;
+            setMarkers(markers);
+            marker.addTo(map);
+        }
 
         return null;
     }
