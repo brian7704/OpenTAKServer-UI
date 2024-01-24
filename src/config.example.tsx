@@ -36,4 +36,5 @@ export const apiRoutes = {
   tfValidate: '/api/tf-validate',
   tfSetup: '/api/tf-setup',
   resetPassword: '/api/password/reset', //Allows users to reset their own password if they forgot it
+  mapState: '/api/map_state',
 };

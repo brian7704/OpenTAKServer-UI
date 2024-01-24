@@ -6,19 +6,29 @@ import L from 'leaflet';
 import 'react-leaflet-fullscreen/styles.css';
 import 'leaflet.marker.slideto';
 import { Paper } from '@mantine/core';
+import axios from 'axios';
+import { notifications } from '@mantine/notifications';
+import { IconX } from '@tabler/icons-react';
+import * as milsymbol from 'milsymbol';
+import { apiRoutes } from '@/config';
 import { socket } from '../../socketio';
 
 export default function Map() {
     const [markers, setMarkers] = useState<{ [uid: string]: L.Marker }>({});
     const [circles, setCircles] = useState<{ [uid: string]: L.Circle }>({});
     const [rbLines, setRBLines] = useState<{ [uid: string]: L.Polyline }>({});
+    const [haveMapState, setHaveMapState] = useState(false);
 
     function MapContext() {
         const map = useMap();
 
         useEffect(() => {
-            const pointsLayer = new L.LayerGroup();
-            map.addLayer(pointsLayer);
+            const eudsLayer = new L.LayerGroup();
+            const rbLinesLayer = new L.LayerGroup();
+            const markersLayer = new L.LayerGroup();
+            map.addLayer(eudsLayer);
+            map.addLayer(rbLinesLayer);
+            map.addLayer(markersLayer);
 
             function onPointEvent(value: any) {
                 const { uid } = value;
@@ -42,7 +52,7 @@ export default function Map() {
                         direction: 'bottom',
                         offset: [12, 35],
                     });
-                    pointsLayer.addLayer(marker);
+                    eudsLayer.addLayer(marker);
                     markers[uid] = marker;
                     setMarkers(markers);
                 }
@@ -58,17 +68,14 @@ export default function Map() {
                 rbLines[uid] = L.polyline([start_point, end_point], {
                     color: `#${value.color_hex.slice(2)}`,
                     weight: value.stroke_weight,
-                }).addTo(map);
+                }).addTo(rbLinesLayer);
                 setRBLines(rbLines);
             }
 
             function onMarker(value: any) {
                 const { uid } = value;
 
-                let iconurl = value.iconset_path.split('/');
-                iconurl.shift();
-                iconurl = iconurl.join('/');
-                if (iconurl.startsWith('b-m-p')) {
+                if (value.iconset_path.includes('COT_MAPPING_SPOTMAP')) {
                     if (Object.hasOwn(circles, uid)) {
                         map.removeLayer(circles[uid]);
                     }
@@ -89,24 +96,91 @@ export default function Map() {
                         map.removeLayer(markers[uid]);
                     }
 
-                    const icon = L.icon({
-                        iconUrl: `/map_icons/${iconurl}`,
-                        iconSize: [40, 40],
-                        iconAnchor: [12, 24],
-                        popupAnchor: [7, -20],
-                        tooltipAnchor: [-4, -10],
-                    });
-                    const marker = L.marker([value.point.latitude, value.point.longitude], { icon });
+                    const marker = L.marker([value.point.latitude, value.point.longitude]);
                     marker.bindTooltip(value.callsign, {
                         opacity: 0.7,
                         permanent: true,
                         direction: 'bottom',
                         offset: [12, 35],
                     });
+
+                    if (value.mil_std_2525c !== null) {
+                        const symbol = new milsymbol.default.Symbol(value.mil_std_2525c, { size: 25 });
+                        marker.setIcon(L.divIcon({
+                            className: '',
+                            html: symbol.asSVG(),
+                            iconAnchor: new L.Point(symbol.getAnchor().x, symbol.getAnchor().y),
+                            tooltipAnchor: [-13, -13],
+                        }));
+                    } else if (value.icon !== null) {
+                        marker.setIcon(L.icon({
+                            iconUrl: value.icon.bitmap,
+                            shadowUrl: value.icon.shadow,
+                            iconAnchor: [12, 24],
+                            popupAnchor: [7, -20],
+                            tooltipAnchor: [-7, -15],
+                        }));
+                    } else {
+                        marker.setIcon(L.icon({
+                            iconUrl: '/map_icons/marker-icon.png',
+                            shadowUrl: '/map_icons/marker-shadow.png',
+                            iconAnchor: [12, 24],
+                            popupAnchor: [7, -20],
+                            tooltipAnchor: [-4, -10],
+                        }));
+                    }
+
                     markers[uid] = marker;
                     setMarkers(markers);
-                    marker.addTo(map);
+                    marker.addTo(markersLayer);
                 }
+            }
+
+            if (!haveMapState) {
+                axios.get(
+                    apiRoutes.mapState
+                ).then(r => {
+                    if (r.status === 200) {
+                        r.data.euds.map((eud: any, index: any) => {
+                            const arrowIcon = L.icon({
+                                iconUrl: '/map_icons/arrow.svg',
+                                iconSize: [40, 40],
+                                iconAnchor: [12, 24],
+                                popupAnchor: [7, -20],
+                                tooltipAnchor: [-4, -10],
+                            });
+                            const description = `<strong>Callsign:</strong>${eud.callsign}`;
+                            const marker = L.marker([eud.last_point.latitude, eud.last_point.longitude], { icon: arrowIcon });
+                            marker.bindPopup(description);
+                            marker.bindTooltip(eud.callsign, {
+                                opacity: 0.7,
+                                permanent: true,
+                                direction: 'bottom',
+                                offset: [12, 35],
+                            });
+                            eudsLayer.addLayer(marker);
+                            markers[eud.uid] = marker;
+                            setMarkers(markers);
+                            return null;
+                        });
+                        r.data.markers.map((marker: any, index: any) => {
+                            onMarker(marker);
+                            return null;
+                        });
+                        r.data.rb_lines.map((rb_line: any, index: any) => {
+                            onRBLine(rb_line);
+                            return null;
+                        });
+                    }
+                }).catch(err => {
+                    console.log(err);
+                    notifications.show({
+                        message: 'Failed to get map state',
+                        color: 'red',
+                        icon: <IconX />,
+                    });
+                });
+                setHaveMapState(true);
             }
 
             socket.on('point', onPointEvent);
