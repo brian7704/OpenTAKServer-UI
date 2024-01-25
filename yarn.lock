@@ -4395,7 +4395,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/leaflet@npm:^1.9.8":
+"@types/leaflet-rotatedmarker@npm:^0":
+  version: 0.2.5
+  resolution: "@types/leaflet-rotatedmarker@npm:0.2.5"
+  dependencies:
+    "@types/leaflet": "npm:*"
+  checksum: 85cae5e2c8b19b1a249f50cb96f99cf39fa3aef1d6d0c19b01fc50048ca616cb91530ae2a2dd2aeba10b264318b11d67dc2ecd870cc234f9bf89d89ea0493a00
+  languageName: node
+  linkType: hard
+
+"@types/leaflet@npm:*, @types/leaflet@npm:^1.9.8":
   version: 1.9.8
   resolution: "@types/leaflet@npm:1.9.8"
   dependencies:
@@ -8970,6 +8979,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"leaflet-rotatedmarker@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "leaflet-rotatedmarker@npm:0.2.0"
+  checksum: c5116bec4438bcad873f7f656328225abd5d14812750b7f9331c72b46efaed6bbb4b99b6a7f02795a5bd680f888a84f047b1c535071c0861ef6971166f8dc584
+  languageName: node
+  linkType: hard
+
 "leaflet.fullscreen@npm:2.4.0":
   version: 2.4.0
   resolution: "leaflet.fullscreen@npm:2.4.0"
@@ -9894,6 +9910,7 @@ __metadata:
     "@testing-library/react": "npm:^14.1.2"
     "@testing-library/user-event": "npm:^14.5.1"
     "@types/leaflet": "npm:^1.9.8"
+    "@types/leaflet-rotatedmarker": "npm:^0"
     "@types/react": "npm:^18.2.36"
     "@types/react-dom": "npm:^18.2.14"
     "@typescript-eslint/eslint-plugin": "npm:^6.9.1"
@@ -9911,6 +9928,7 @@ __metadata:
     identity-obj-proxy: "npm:^3.0.0"
     jsdom: "npm:^23.0.1"
     leaflet: "npm:^1.9.4"
+    leaflet-rotatedmarker: "npm:^0.2.0"
     leaflet.marker.slideto: "npm:^0.3.0"
     milsymbol: "npm:^2.2.0"
     postcss: "npm:^8.4.32"

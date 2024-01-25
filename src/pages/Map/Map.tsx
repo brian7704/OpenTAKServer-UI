@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { renderToString } from 'react-dom/server';
 import { LayersControl, MapContainer, ScaleControl, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { FullscreenControl } from 'react-leaflet-fullscreen';
 import L from 'leaflet';
 import 'react-leaflet-fullscreen/styles.css';
 import 'leaflet.marker.slideto';
+import 'leaflet-rotatedmarker';
 import { Paper } from '@mantine/core';
 import axios from 'axios';
 import { notifications } from '@mantine/notifications';
@@ -12,6 +14,8 @@ import { IconX } from '@tabler/icons-react';
 import * as milsymbol from 'milsymbol';
 import { apiRoutes } from '@/config';
 import { socket } from '../../socketio';
+import classes from './Map.module.css';
+import Arrow from './Arrow';
 
 export default function Map() {
     const [markers, setMarkers] = useState<{ [uid: string]: L.Marker }>({});
@@ -19,13 +23,49 @@ export default function Map() {
     const [rbLines, setRBLines] = useState<{ [uid: string]: L.Polyline }>({});
     const [haveMapState, setHaveMapState] = useState(false);
 
+    const eudsLayer = new L.LayerGroup();
+    const rbLinesLayer = new L.LayerGroup();
+    const markersLayer = new L.LayerGroup();
+
+    function addEud(eud:any) {
+        let className = classes.disconnected;
+        if (eud.last_status === 'Connected') className = classes.connected;
+
+        const arrowIcon = L.divIcon({
+            html: renderToString(<Arrow fillColor={eud.team_color} className={className} />),
+            iconSize: [40, 40],
+            iconAnchor: [12, 24],
+            popupAnchor: [7, -20],
+            tooltipAnchor: [-4, -20],
+            className,
+        });
+
+        const { uid } = eud;
+
+        if (Object.hasOwn(markers, uid)) {
+            markers[uid].setIcon(arrowIcon);
+        } else {
+            const description = `<strong>Callsign:</strong>${eud.callsign}`;
+            const marker = L.marker(
+                [eud.last_point.latitude, eud.last_point.longitude],
+                { icon: arrowIcon, rotationOrigin: 'center center' });
+            marker.bindPopup(description);
+            marker.bindTooltip(eud.callsign, {
+                opacity: 0.7,
+                permanent: true,
+                direction: 'bottom',
+                offset: [12, 35],
+            });
+            eudsLayer.addLayer(marker);
+            markers[eud.uid] = marker;
+            setMarkers(markers);
+        }
+    }
+
     function MapContext() {
         const map = useMap();
 
         useEffect(() => {
-            const eudsLayer = new L.LayerGroup();
-            const rbLinesLayer = new L.LayerGroup();
-            const markersLayer = new L.LayerGroup();
             map.addLayer(eudsLayer);
             map.addLayer(rbLinesLayer);
             map.addLayer(markersLayer);
@@ -34,27 +74,9 @@ export default function Map() {
                 const { uid } = value;
                 if (Object.hasOwn(markers, uid)) {
                     // @ts-ignore trust me bro
-                    markers[uid].slideTo([value.latitude, value.longitude]);
-                } else {
-                    const arrowIcon = L.icon({
-                        iconUrl: '/map_icons/arrow.svg',
-                        iconSize: [40, 40],
-                        iconAnchor: [12, 24],
-                        popupAnchor: [7, -20],
-                        tooltipAnchor: [-4, -10],
-                    });
-                    const description = `<strong>Callsign:</strong>${value.callsign}`;
-                    const marker = L.marker([value.latitude, value.longitude], { icon: arrowIcon });
-                    marker.bindPopup(description);
-                    marker.bindTooltip(value.callsign, {
-                        opacity: 0.7,
-                        permanent: true,
-                        direction: 'bottom',
-                        offset: [12, 35],
-                    });
-                    eudsLayer.addLayer(marker);
-                    markers[uid] = marker;
-                    setMarkers(markers);
+                    markers[uid].slideTo([value.latitude, value.longitude],
+                        { duration: 1500, keepAtCenter: false });
+                    markers[uid].setRotationAngle(value.course - 90);
                 }
             }
 
@@ -134,7 +156,8 @@ export default function Map() {
 
                     if (Object.hasOwn(markers, uid)) {
                         // @ts-ignore trust me bro
-                        markers[uid].slideTo([value.point.latitude, value.point.longitude]);
+                        markers[uid].slideTo([value.point.latitude, value.point.longitude],
+                            { duration: 2000, keepAtCenter: false });
                     } else {
                         marker.addTo(markersLayer);
                     }
@@ -143,31 +166,17 @@ export default function Map() {
                 }
             }
 
+            function onEud(value: any) {
+                addEud(value);
+            }
+
             if (!haveMapState) {
                 axios.get(
                     apiRoutes.mapState
                 ).then(r => {
                     if (r.status === 200) {
                         r.data.euds.map((eud: any, index: any) => {
-                            const arrowIcon = L.icon({
-                                iconUrl: '/map_icons/arrow.svg',
-                                iconSize: [40, 40],
-                                iconAnchor: [12, 24],
-                                popupAnchor: [7, -20],
-                                tooltipAnchor: [-4, -10],
-                            });
-                            const description = `<strong>Callsign:</strong>${eud.callsign}`;
-                            const marker = L.marker([eud.last_point.latitude, eud.last_point.longitude], { icon: arrowIcon });
-                            marker.bindPopup(description);
-                            marker.bindTooltip(eud.callsign, {
-                                opacity: 0.7,
-                                permanent: true,
-                                direction: 'bottom',
-                                offset: [12, 35],
-                            });
-                            eudsLayer.addLayer(marker);
-                            markers[eud.uid] = marker;
-                            setMarkers(markers);
+                            addEud(eud);
                             return null;
                         });
                         r.data.markers.map((marker: any, index: any) => {
@@ -193,11 +202,13 @@ export default function Map() {
             socket.on('point', onPointEvent);
             socket.on('rb_line', onRBLine);
             socket.on('marker', onMarker);
+            socket.on('eud', onEud);
 
             return () => {
                 socket.off('point', onPointEvent);
                 socket.off('rb_line', onRBLine);
                 socket.off('marker', onMarker);
+                socket.off('eud', onEud);
             };
         }, []);
 
