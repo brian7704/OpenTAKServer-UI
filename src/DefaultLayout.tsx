@@ -1,6 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-    AppShell, Badge,
+    Badge,
+    AppShell,
     Burger,
     Group,
     Image,
@@ -13,7 +14,8 @@ import {
     IconCheck,
     IconLogout,
     IconMessageCircle,
-    IconSettings, IconX,
+    IconSettings,
+    IconAlertTriangle,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
@@ -27,7 +29,7 @@ import { socket } from './socketio';
 export function DefaultLayout() {
     const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
     const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
-    const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });;
+    const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
 
     const navigate = useNavigate();
 
@@ -43,14 +45,14 @@ export function DefaultLayout() {
         }
 
         function onAlert(alert:any) {
-            let message = `${alert.alert_type} from ${alert.eud.callsign}`;
+            let message = `${alert.alert_type} from ${alert.callsign}`;
             let color = 'red';
-            let icon = <IconX />;
+            let icon = <IconAlertTriangle style={{ width: rem(20), height: rem(20) }} />;
 
             if (alert.cancel_time !== null) {
-                message = `${alert.alert_type} from ${alert.eud.callsign} canceled`;
+                message = `${alert.alert_type} from ${alert.callsign} canceled`;
                 color = 'green';
-                icon = <IconCheck />;
+                icon = <IconCheck style={{ width: rem(20), height: rem(20) }} />;
             }
 
             notifications.show({

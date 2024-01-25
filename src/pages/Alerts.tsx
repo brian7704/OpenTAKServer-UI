@@ -37,7 +37,7 @@ export default function Alerts() {
 
                 r.data.results.map((row:any) => {
                     if (tableData.body !== undefined) {
-                        tableData.body.push([row.eud.callsign, row.alert_type, row.start_time, row.cancel_time]);
+                        tableData.body.push([row.callsign, row.alert_type, row.start_time, row.cancel_time]);
                     }
                 });
 

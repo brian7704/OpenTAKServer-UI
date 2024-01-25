@@ -75,28 +75,30 @@ export default function Map() {
             function onMarker(value: any) {
                 const { uid } = value;
 
-                if (value.iconset_path.includes('COT_MAPPING_SPOTMAP')) {
-                    if (Object.hasOwn(circles, uid)) {
-                        map.removeLayer(circles[uid]);
-                    }
-                    const circle = L.circle(
-                        [value.point.latitude, value.point.longitude],
-                        { radius: 5, color: `#${value.color_hex.slice(2)}` }
-                    );
-                    circle.bindTooltip(value.callsign, {
-                        opacity: 0.7,
-                        permanent: true,
-                        direction: 'bottom',
-                    });
-                    circles[uid] = circle;
-                    setCircles(circles);
-                    circle.addTo(map);
+                if (Object.hasOwn(value, 'iconset_path') &&
+                    value.iconset_path !== null &&
+                    value.iconset_path.includes('COT_MAPPING_SPOTMAP')) {
+                        if (Object.hasOwn(circles, uid)) {
+                            map.removeLayer(circles[uid]);
+                        }
+                        const circle = L.circle(
+                            [value.point.latitude, value.point.longitude],
+                            { radius: 5, color: `#${value.color_hex.slice(2)}` }
+                        );
+                        circle.bindTooltip(value.callsign, {
+                            opacity: 0.7,
+                            permanent: true,
+                            direction: 'bottom',
+                        });
+                        circles[uid] = circle;
+                        setCircles(circles);
+                        circle.addTo(map);
                 } else {
+                    let marker = L.marker([value.point.latitude, value.point.longitude]);
                     if (Object.hasOwn(markers, uid)) {
-                        map.removeLayer(markers[uid]);
+                        marker = markers[uid];
                     }
 
-                    const marker = L.marker([value.point.latitude, value.point.longitude]);
                     marker.bindTooltip(value.callsign, {
                         opacity: 0.7,
                         permanent: true,
@@ -130,9 +132,14 @@ export default function Map() {
                         }));
                     }
 
+                    if (Object.hasOwn(markers, uid)) {
+                        // @ts-ignore trust me bro
+                        markers[uid].slideTo([value.point.latitude, value.point.longitude]);
+                    } else {
+                        marker.addTo(markersLayer);
+                    }
                     markers[uid] = marker;
                     setMarkers(markers);
-                    marker.addTo(markersLayer);
                 }
             }
 
