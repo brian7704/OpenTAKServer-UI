@@ -12,6 +12,7 @@ const Users = React.lazy(() => import('./pages/Users'));
 const TFASetup = React.lazy(() => import('./pages/TFASetup'));
 const Alerts = React.lazy(() => import('./pages/Alerts'));
 const PasswordReset = React.lazy(() => import('./pages/PasswordReset'));
+const ScheduledJobs = React.lazy(() => import('./pages/ScheduledJobs'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home', element: Dashboard },
@@ -27,6 +28,7 @@ const routes = [
   { path: '/users', name: 'Users', element: Users },
   { path: '/tfa_setup', name: '2FA Setup', element: TFASetup },
   { path: '/reset', name: 'Password Reset', element: PasswordReset },
+  { path: '/jobs', name: 'Scheduled Jobs', element: ScheduledJobs },
 ];
 
 export default routes;

@@ -3,14 +3,6 @@ import React, { useEffect, useState } from 'react';
 import axios from '../axios_config';
 import { apiRoutes } from '../config';
 
-interface alert {
-    callsign: string;
-    alert_type: string;
-    start_time: string;
-    cancel_time: string;
-    phone_number: number;
-}
-
 export default function Alerts() {
     const [alerts, setAlerts] = useState<TableData>({
         caption: '',

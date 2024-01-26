@@ -7,7 +7,7 @@ import {
     IconDeviceMobile,
     IconDashboard,
     IconUsers,
-    IconMap, IconLogout, IconMoonStars, Icon2fa,
+    IconMap, IconLogout, IconMoonStars, Icon2fa, IconCalendarDue,
 } from '@tabler/icons-react';
 import { NavLink, Title } from '@mantine/core';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -28,6 +28,7 @@ const navbarLinks = [
 
 const adminLinks = [
     { link: '/users', label: 'Users', icon: IconUsers },
+    { link: '/jobs', label: 'Scheduled Jobs', icon: IconCalendarDue },
 ];
 
 export default function Navbar() {

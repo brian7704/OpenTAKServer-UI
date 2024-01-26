@@ -52,8 +52,7 @@ export default function Users() {
                             setShowResetPassword(true);
                             setUsername(row.username);
                         }}
-                        >Reset Password
-                                                      </Button>;
+                        >Reset Password</Button>;
 
                         const active_switch = <Switch
                           disabled={row.username === localStorage.getItem('username')}
@@ -84,72 +83,72 @@ export default function Users() {
             });
         }
 
-        useEffect(() => {
-            getUsers();
-        }, [activePage]);
+    useEffect(() => {
+        getUsers();
+    }, [activePage]);
 
-        function addUser(e:any) {
-            e.preventDefault();
-            axios.post(
-                apiRoutes.addUser,
-                { username, password, confirm_password, roles: [role] }
-            ).then(r => {
-                if (r.status === 200) {
-                    setPassword('');
-                    setConfirmPassword('');
-                    setAddUserOpen(false);
-                    getUsers();
-                }
-            }).catch(err => {
-                notifications.show({
-                    title: 'Failed to add user',
-                    message: err.response.data.error,
-                    color: 'red',
-                });
+    function addUser(e:any) {
+        e.preventDefault();
+        axios.post(
+            apiRoutes.addUser,
+            { username, password, confirm_password, roles: [role] }
+        ).then(r => {
+            if (r.status === 200) {
+                setPassword('');
+                setConfirmPassword('');
+                setAddUserOpen(false);
+                getUsers();
+            }
+        }).catch(err => {
+            notifications.show({
+                title: 'Failed to add user',
+                message: err.response.data.error,
+                color: 'red',
             });
-        }
+        });
+    }
 
-        function changeRole(username:string, role:string) {
-            axios.post(
-                apiRoutes.changeRole,
-                { username, roles: [role] }
-            ).then(r => {
-                if (r.status === 200) {
-                    getUsers();
-                    notifications.show({
-                        message: `Changed ${username}'s role to ${role}`,
-                        color: 'green',
-                    });
-                }
-            }).catch(err => {
+    function changeRole(username:string, role:string) {
+        axios.post(
+            apiRoutes.changeRole,
+            { username, roles: [role] }
+        ).then(r => {
+            if (r.status === 200) {
+                getUsers();
                 notifications.show({
-                    title: `Failed to change ${username}'s role`,
-                    message: err.response.data.error,
-                    color: 'red',
+                    message: `Changed ${username}'s role to ${role}`,
+                    color: 'green',
                 });
+            }
+        }).catch(err => {
+            notifications.show({
+                title: `Failed to change ${username}'s role`,
+                message: err.response.data.error,
+                color: 'red',
             });
-        }
+        });
+    }
 
-        function deactivateUser(username:string) {
-            axios.post(
-                apiRoutes.deactivateUser,
-                { username }
-            ).then(r => {
-                if (r.status === 200) {
-                    getUsers();
-                    notifications.show({
-                        message: `${username} has been deactivated`,
-                        color: 'green',
-                    });
-                }
-            }).catch(err => {
+    function deactivateUser(username:string) {
+        axios.post(
+            apiRoutes.deactivateUser,
+            { username }
+        ).then(r => {
+            if (r.status === 200) {
+                getUsers();
                 notifications.show({
-                    title: `Failed to deactivate ${username}`,
-                    message: err.response.data.error,
-                    color: 'red',
+                    message: `${username} has been deactivated`,
+                    color: 'green',
                 });
+            }
+        }).catch(err => {
+            notifications.show({
+                title: `Failed to deactivate ${username}`,
+                message: err.response.data.error,
+                color: 'red',
             });
-        }
+        });
+    }
 
     function activateUser(username:string) {
         axios.post(

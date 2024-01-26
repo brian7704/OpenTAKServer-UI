@@ -22,6 +22,7 @@
     "@mantine/core": "7.4.0",
     "@mantine/form": "^7.4.1",
     "@mantine/hooks": "7.4.0",
+    "date-fns": "^3.3.1",
     "leaflet": "^1.9.4",
     "leaflet-rotatedmarker": "^0.2.0",
     "leaflet.marker.slideto": "^0.3.0",
