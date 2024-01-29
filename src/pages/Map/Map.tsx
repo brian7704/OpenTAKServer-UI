@@ -46,19 +46,21 @@ export default function Map() {
             markers[uid].setIcon(arrowIcon);
         } else {
             const description = `<strong>Callsign:</strong>${eud.callsign}`;
-            const marker = L.marker(
-                [eud.last_point.latitude, eud.last_point.longitude],
-                { icon: arrowIcon, rotationOrigin: 'center center' });
-            marker.bindPopup(description);
-            marker.bindTooltip(eud.callsign, {
-                opacity: 0.7,
-                permanent: true,
-                direction: 'bottom',
-                offset: [12, 35],
-            });
-            eudsLayer.addLayer(marker);
-            markers[eud.uid] = marker;
-            setMarkers(markers);
+            if (eud.last_point !== null) {
+                const marker = L.marker(
+                    [eud.last_point.latitude, eud.last_point.longitude],
+                    {icon: arrowIcon, rotationOrigin: 'center center'});
+                marker.bindPopup(description);
+                marker.bindTooltip(eud.callsign, {
+                    opacity: 0.7,
+                    permanent: true,
+                    direction: 'bottom',
+                    offset: [12, 35],
+                });
+                eudsLayer.addLayer(marker);
+                markers[eud.uid] = marker;
+                setMarkers(markers);
+            }
         }
     }
 

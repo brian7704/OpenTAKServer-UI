@@ -1,4 +1,4 @@
-import { Button, Center, Container, Pagination, Switch, Table, TableData, useComputedColorScheme } from '@mantine/core';
+import { Button, Switch, Table, TableData, useComputedColorScheme } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import { IconCheck, IconPlayerPlay, IconX } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
