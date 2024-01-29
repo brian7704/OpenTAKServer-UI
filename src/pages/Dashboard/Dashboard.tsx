@@ -1,31 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import { Text, Alert, Grid, Center, Title, Divider, Paper } from '@mantine/core';
+import { Text, Center, Title, Divider, Paper, useComputedColorScheme, Flex } from '@mantine/core';
+import { IconCheck, IconX } from '@tabler/icons-react';
+import { AreaChart, DonutChart } from '@mantine/charts';
 import axios from '../../axios_config';
 import { apiRoutes } from '../../config';
 import tools from '../../tools';
+import '@mantine/charts/styles.css';
 
 export default function Dashboard() {
+    const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
     const [alerts, setAlerts] = useState({
         cot_router: false,
         tcp: false,
         ssl: false,
-        online_euds: 0
+        online_euds: 0,
     });
     const [serverStatus, setServerStatus] = useState({
-        cpu_percent: 0
+        cpu_percent: 0,
     });
     const [disk, setDisk] = useState({
         free: 0,
         used: 0,
         total: 0,
-        percent: 0
+        percent: 0,
     });
     const [memory, setMemory] = useState({
         available: 0,
         free: 0,
         used: 0,
         total: 0,
-        percent: 0
+        percent: 0,
     });
 
     useEffect(() => {
@@ -37,94 +41,99 @@ export default function Dashboard() {
                         cot_router: r.data.cot_router,
                         tcp: r.data.tcp,
                         ssl: r.data.ssl,
-                        online_euds: r.data.online_euds
+                        online_euds: r.data.online_euds,
                     });
-                    setServerStatus({cpu_percent: r.data.cpu_percent});
+                    setServerStatus({ cpu_percent: r.data.cpu_percent });
                     setDisk({
                         free: r.data.disk_usage.free,
                         used: r.data.disk_usage.used,
                         total: r.data.disk_usage.total,
-                        percent: r.data.disk_usage.percent
-                    })
+                        percent: r.data.disk_usage.percent,
+                    });
                     setMemory({
                         available: r.data.memory.available,
                         free: r.data.memory.free,
                         used: r.data.memory.used,
                         total: r.data.memory.total,
-                        percent: r.data.memory.percent
-                    })
+                        percent: r.data.memory.percent,
+                    });
                 }
-            }).catch(err => {});
+            }).catch(err => {
+                console.log(err);
+            });
     }, []);
 
     return (
-        <div>
+        <>
             <Center>
                 <Title mb="xl" order={2}>OpenTAKServer Status</Title>
             </Center>
             <Center>
-                <Grid>
-                    <Alert radius="md" p="xl" color={alerts.cot_router ? 'green' : 'red'} mr="md" mb="md" title="CoT Router">
-                        <Center><Text>{alerts.cot_router ? 'Online' : 'Offline'}</Text></Center>
-                    </Alert>
-                    <Alert radius="md" p="xl" color={alerts.tcp ? 'green' : 'red'} mr="md" mb="md" title="TCP">
-                        <Center><Text>{alerts.tcp ? 'Online' : 'Offline'}</Text></Center>
-                    </Alert>
-                    <Alert radius="md" p="xl" color={alerts.ssl ? 'green' : 'red'} mr="md" mb="md" title="SSL">
-                        <Center><Text>{alerts.ssl ? 'Online' : 'Offline'}</Text></Center>
-                    </Alert>
-                    <Alert radius="md" p="xl" title="Online EUDs" mr="md" mb="md">
+                <Flex direction={{ base: 'column', xs: 'row' }}>
+                    <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md">
+                        <Center mb="md"><Title order={4}>CoT Router</Title></Center>
+                        <Center>{alerts.cot_router ? <IconCheck color="green" /> : <IconX color="red" />}</Center>
+                    </Paper>
+                    <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md">
+                        <Center mb="md"><Title order={4}>TCP</Title></Center>
+                        <Center>{alerts.tcp ? <IconCheck color="green" /> : <IconX color="red" />}</Center>
+                    </Paper>
+                    <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md">
+                        <Center mb="md"><Title order={4}>SSL</Title></Center>
+                        <Center>{alerts.ssl ? <IconCheck color="green" /> : <IconX color="red" />}</Center>
+                    </Paper>
+                    <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md">
+                        <Center mb="md"><Title order={4}>Online EUDs</Title></Center>
                         <Center><Text>{alerts.online_euds ? Object.keys(alerts.online_euds).length : 0}</Text></Center>
-                    </Alert>
-                </Grid>
+                    </Paper>
+                </Flex>
             </Center>
             <Divider my="lg" />
             <Center>
                 <Title mb="xl" order={2}>Server Status</Title>
             </Center>
             <Center mb="xl">
-                <Grid>
-                        <Alert radius="md" mr="md" mb="md" title="CPU Percent">
-                            <Center>{`${serverStatus.cpu_percent}%`}</Center>
-                        </Alert>
-                        <Alert radius="md" mr="md" mb="md" title="Disk Free Space">
-                            <Center>{`${tools(disk.free)}`}</Center>
-                        </Alert>
-                        <Alert radius="md" mr="md" mb="md" title="Disk Used Space">
-                            <Center>{`${tools(disk.used)}`}</Center>
-                        </Alert>
-                        <Alert radius="md" mr="md" mb="md" title="Disk Total Space">
-                            <Center>{`${tools(disk.total)}`}</Center>
-                        </Alert>
-                        <Alert radius="md" mr="md" mb="md" title="Disk Used Percentage">
-                            <Center>{`${disk.percent}%`}</Center>
-                        </Alert>
-                </Grid>
+                <Flex direction={{ base: 'column', xs: 'row' }}>
+                    <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md">
+                        <Center mb="md"><Title order={4}>CPU Usage</Title></Center>
+                        <Center>
+                            <DonutChart
+                                data={[
+                                    { name: 'Used Percentage', value: serverStatus.cpu_percent, color: 'blue' },
+                                    { name: 'Idle Percentage', value: 100 - serverStatus.cpu_percent, color: 'gray.6' },
+                                ]}
+                            />
+                        </Center>
+                        <Center><Text fw={700} size="md" c="blue.9">{`${serverStatus.cpu_percent}%`}</Text></Center>
+                    </Paper>
+                    <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md">
+                        <Center mb="md"><Title order={4}>Disk Usage</Title></Center>
+                        <Center>
+                            <DonutChart
+                              data={[
+                                    { name: 'Used Percentage', value: disk.percent, color: 'blue' },
+                                    { name: 'Free Percentage', value: 100 - disk.percent, color: 'gray.6' },
+                                ]}
+                            />
+                        </Center>
+                        <Center><Text fw={700} size="md" c="red.9">Total Space: {`${tools(disk.total)}`}</Text></Center>
+                        <Center><Text fw={700} size="md" c="red.9">Used Space: {`${tools(disk.used)}`}</Text></Center>
+                    </Paper>
+                    <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md">
+                        <Center mb="md"><Title order={4}>Memory Usage</Title></Center>
+                        <Center>
+                            <DonutChart
+                              data={[
+                                { name: 'Used Percentage', value: memory.percent, color: 'blue' },
+                                { name: 'Free Percentage', value: 100 - memory.percent, color: 'gray.6' },
+                            ]}
+                            />
+                        </Center>
+                        <Center><Text fw={700} size="md" c="green.9">Available Memory: {`${tools(memory.available)}`}</Text></Center>
+                        <Center><Text fw={700} size="md" c="green.9">Used Memory: {`${tools(memory.used)}`}</Text></Center>
+                    </Paper>
+                </Flex>
             </Center>
-            <Center>
-                <Grid>
-                        <Alert radius="md" mr="md" mb="md" title="Memory Available">
-                            <Center>{`${tools(memory.available)}`}</Center>
-                        </Alert>
-                        <Alert radius="md" mr="md" mb="md" title="Free Memory">
-                            <Center>{`${tools(memory.free)}`}</Center>
-                        </Alert>
-                        <Alert radius="md" mr="md" mb="md" title="Memory Used">
-                            <Center>{`${tools(memory.used)}`}</Center>
-                        </Alert>
-                        <Alert radius="md" mr="md" mb="md" title="Memory Total">
-                            <Center>{`${tools(memory.total)}`}</Center>
-                        </Alert>
-                        <Alert radius="md" mr="md" mb="md" title="Memory Used Percentage">
-                            <Center>{`${memory.percent}%`}</Center>
-                        </Alert>
-                </Grid>
-            </Center>
-            <Center mb="xl">
-                <Grid>
-                    {}
-                </Grid>
-            </Center>
-        </div>
+        </>
     );
 }

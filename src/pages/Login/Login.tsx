@@ -104,7 +104,6 @@ export default function Login(props: PaperProps) {
                         setType('email');
                     }
                 } else getUser();
-                //socket.connect();
             }
         }).catch(err => {
             notifications.show({

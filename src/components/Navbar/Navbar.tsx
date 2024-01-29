@@ -44,6 +44,7 @@ export default function Navbar() {
           to={item.link}
           label={item.label}
           leftSection={<item.icon className={classes.linkIcon} stroke={1.5} />}
+          mt="md"
         />
     ));
 
@@ -56,6 +57,7 @@ export default function Navbar() {
           to={item.link}
           label={item.label}
           leftSection={<item.icon className={classes.linkIcon} stroke={1.5} />}
+          mt="md"
         />
     ));
 
