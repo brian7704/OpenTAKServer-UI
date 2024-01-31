@@ -41,4 +41,6 @@ export const apiRoutes = {
   runJob: '/api/scheduler/job/run',
   resumeJob: '/api/scheduler/job/resume',
   pauseJob: '/api/scheduler/job/pause',
+  getRecording: '/api/videos/recording',
+  getRecordings: '/api/videos/recordings',
 };

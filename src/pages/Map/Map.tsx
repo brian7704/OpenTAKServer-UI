@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { renderToString } from 'react-dom/server';
 import { LayersControl, MapContainer, ScaleControl, TileLayer, useMap, WMSTileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { FullscreenControl } from 'react-leaflet-fullscreen';
 import L from 'leaflet';
 import 'react-leaflet-fullscreen/styles.css';
 import 'leaflet.marker.slideto';
@@ -15,6 +14,8 @@ import * as milsymbol from 'milsymbol';
 import { apiRoutes } from '@/config';
 import { socket } from '../../socketio';
 import classes from './Map.module.css';
+import 'leaflet.fullscreen';
+import 'leaflet.fullscreen/Control.FullScreen.css';
 import Arrow from './Arrow';
 
 export default function Map() {
@@ -66,6 +67,8 @@ export default function Map() {
 
     function MapContext() {
         const map = useMap();
+        const fullscreenControl = L.control.fullscreen();
+        map.addControl(fullscreenControl);
 
         useEffect(() => {
             map.addLayer(eudsLayer);
@@ -131,7 +134,7 @@ export default function Map() {
                         offset: [12, 35],
                     });
 
-                    if (value.mil_std_2525c !== null && !value.iconset_path.endsWith('.png')) {
+                    if (value.mil_std_2525c !== null) {
                         const options = { size: 25, direction: undefined };
                         if (value.point !== null && value.point.course !== null) {
                             options.direction = value.point.course;
@@ -216,6 +219,13 @@ export default function Map() {
                 socket.off('rb_line', onRBLine);
                 socket.off('marker', onMarker);
                 socket.off('eud', onEud);
+
+                // janky fix for duplicate fullscreen buttons
+                const elementsToRemove =
+                    fullscreenControl.getContainer()?.getElementsByClassName('leaflet-control-zoom-fullscreen') ?? [];
+                for (let i = 0; i < elementsToRemove.length; i++) {
+                    elementsToRemove[i].remove();
+                }
             };
         }, []);
 
@@ -232,29 +242,30 @@ export default function Map() {
             >
                 <MapContext />
                 <ScaleControl />
-                <FullscreenControl />
                 <LayersControl>
                     <LayersControl.BaseLayer name="OSM" checked>
                         <TileLayer
                           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                           zIndex={0}
+                          minZoom={0}
+                          maxZoom={20}
                         />
                     </LayersControl.BaseLayer>
                     <LayersControl.BaseLayer name="Google Streets">
-                        <TileLayer url="http://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}" zIndex={0} />
+                        <TileLayer url="http://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}" zIndex={0} minZoom={0} maxZoom={20} />
                     </LayersControl.BaseLayer>
                     <LayersControl.BaseLayer name="Google Hybrid">
-                        <TileLayer url="http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}&s=Ga" zIndex={0} />
+                        <TileLayer url="http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}&s=Ga" zIndex={0} minZoom={0} maxZoom={20} />
                     </LayersControl.BaseLayer>
                     <LayersControl.BaseLayer name="Google Terrain">
-                        <TileLayer url="http://mt1.google.com/vt/lyrs=p&amp;x={x}&amp;y={y}&amp;z={z}" zIndex={0} />
+                        <TileLayer url="http://mt1.google.com/vt/lyrs=p&amp;x={x}&amp;y={y}&amp;z={z}" zIndex={0} minZoom={0} maxZoom={20} />
                     </LayersControl.BaseLayer>
                     <LayersControl.BaseLayer name="ESRI World Imagery (Clarity) Beta">
-                        <TileLayer url="http://clarity.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" />
+                        <TileLayer url="http://clarity.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" minZoom={0} maxZoom={20} />
                     </LayersControl.BaseLayer>
                     <LayersControl.BaseLayer name="ESRI World Topo">
-                        <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}" />
+                        <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}" minZoom={0} maxZoom={20} />
                     </LayersControl.BaseLayer>
                 </LayersControl>
                 <LayersControl position="topright">

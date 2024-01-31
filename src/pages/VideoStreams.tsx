@@ -1,6 +1,7 @@
 import {
+    AspectRatio,
     Button,
-    Center,
+    Center, CloseButton, Flex,
     Modal,
     Pagination,
     Switch,
@@ -10,7 +11,7 @@ import {
     useComputedColorScheme,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
-import { IconCheck, IconCircleMinus, IconPlus, IconX } from '@tabler/icons-react';
+import { IconCheck, IconChevronDown, IconCircleMinus, IconPlus, IconX } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import axios from '../axios_config';
 import { apiRoutes } from '../config';
@@ -28,6 +29,8 @@ export default function VideoStreams() {
     const [deletePath, setDeletePath] = useState('');
     const [path, setPath] = useState('');
     const [source, setSource] = useState('');
+    const [showVideo, setShowVideo] = useState(false);
+    const [videoUrl, setVideoUrl] = useState('');
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
 
     function setRecord(path:string, record:boolean) {
@@ -84,7 +87,15 @@ export default function VideoStreams() {
                         >Delete
                                               </Button>;
 
-                        const watch_button = <Button key={`${row.path}_watch`} onClick={() => window.open(row.webrtc_link, '_blank')}>Watch</Button>;
+                        //const watch_button = <Button key={`${row.path}_watch`} onClick={() => window.open(row.webrtc_link, '_blank')}>Watch</Button>;
+                        const watch_button = <Button
+                          key={`${row.path}_watch`}
+                          onClick={() => {
+                            setVideoUrl(row.webrtc_link);
+                            setShowVideo(true);
+                        }}
+                        >Watch
+                                             </Button>;
                         let online_icon = null;
 
                         if (row.ready) {
@@ -93,8 +104,14 @@ export default function VideoStreams() {
                             online_icon = <IconX size={14} color="red" />;
                         }
 
-                        const record = <Switch checked={row.record} onChange={(e) => { setRecord(row.path, e.target.checked); getVideoStreams(); }} />;
-                        tableData.body.push([row.username, row.path, row.rtsp_link, row.webrtc_link, row.source, online_icon, record, watch_button, delete_button]);
+                        const record = <Switch
+                          checked={row.record}
+                          onChange={(e) => {
+                              setRecord(row.path, e.target.checked); getVideoStreams();
+                          }}
+                        />;
+                        tableData.body.push([row.username, row.path, row.rtsp_link, row.webrtc_link,
+                            row.source, online_icon, record, watch_button, delete_button]);
                     }
                 });
 
@@ -154,7 +171,9 @@ export default function VideoStreams() {
     return (
         <>
             <Button onClick={() => { setAddVideoOpened(true); }} mb="md" leftSection={<IconPlus size={14} />}>Add Video</Button>
-            <Table stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" data={videoStreams} highlightOnHover withTableBorder mb="md" />
+            <Table.ScrollContainer minWidth="100%">
+                <Table stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" data={videoStreams} highlightOnHover withTableBorder mb="md" />
+            </Table.ScrollContainer>
             <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
             <Modal opened={addVideoOpened} onClose={() => setAddVideoOpened(false)} title="Add Video">
                 <TextInput required label="Path" onChange={e => { setPath(e.target.value); }} />
@@ -174,6 +193,25 @@ export default function VideoStreams() {
                     <Button onClick={() => setDeleteVideoOpened(false)}>No</Button>
                 </Center>
             </Modal>
+            <AspectRatio ratio={16 / 9} display={showVideo ? 'block' : 'none'}>
+                <Flex justify="flex-end" align="flex-start">
+                    <CloseButton
+                      style={{ zIndex: 9999 }}
+                      size={30}
+                      onClick={() => {
+                        setShowVideo(false);
+                        setVideoUrl('');
+                    }}
+                    />
+                </Flex>
+                <iframe
+                  src={videoUrl}
+                  title="MOON"
+                  style={{ border: 0 }}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+            </AspectRatio>
         </>
     );
 }

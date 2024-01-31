@@ -1543,7 +1543,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.1.2":
+"@babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.4.5":
   version: 7.23.9
   resolution: "@babel/runtime@npm:7.23.9"
   dependencies:
@@ -2311,7 +2311,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mantine/core@npm:7.5.0":
+"@mantine/core@npm:^7.5.0":
   version: 7.5.0
   resolution: "@mantine/core@npm:7.5.0"
   dependencies:
@@ -4495,6 +4495,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/leaflet.fullscreen@npm:^3":
+  version: 3.0.2
+  resolution: "@types/leaflet.fullscreen@npm:3.0.2"
+  dependencies:
+    "@types/leaflet": "npm:*"
+  checksum: 4a879e0d6c8b3583150bd5292c91c64bc115422a5b04c6a9f1ac46d2dc0c66b83eae99cf31755922b26f594fcb8883832e0f23b41a950a9ad6c86bc981c067e6
+  languageName: node
+  linkType: hard
+
 "@types/leaflet@npm:*, @types/leaflet@npm:^1.9.8":
   version: 1.9.8
   resolution: "@types/leaflet@npm:1.9.8"
@@ -4682,6 +4691,15 @@ __metadata:
   version: 9.0.7
   resolution: "@types/uuid@npm:9.0.7"
   checksum: b329ebd4f9d1d8e08d4f2cc211be4922d70d1149f73d5772630e4a3acfb5170c6d37b3d7a39a0412f1a56e86e8a844c7f297c798b082f90380608bf766688787
+  languageName: node
+  linkType: hard
+
+"@types/video-react@npm:^0":
+  version: 0.15.5
+  resolution: "@types/video-react@npm:0.15.5"
+  dependencies:
+    "@types/react": "npm:*"
+  checksum: d14a24c547ff1b855da5c237a4186042a70e46a648438b644e92132b596d546d1f82bfd2a1c2703ece4d83f475894ddd0d69aba7e0b1e7b3e3c054350d5d9869
   languageName: node
   linkType: hard
 
@@ -5809,6 +5827,13 @@ __metadata:
   version: 3.9.0
   resolution: "ci-info@npm:3.9.0"
   checksum: 6f0109e36e111684291d46123d491bc4e7b7a1934c3a20dea28cba89f1d4a03acd892f5f6a81ed3855c38647e285a150e3c9ba062e38943bef57fee6c1554c3a
+  languageName: node
+  linkType: hard
+
+"classnames@npm:^2.2.6":
+  version: 2.5.1
+  resolution: "classnames@npm:2.5.1"
+  checksum: afff4f77e62cea2d79c39962980bf316bacb0d7c49e13a21adaadb9221e1c6b9d3cdb829d8bb1b23c406f4e740507f37e1dcf506f7e3b7113d17c5bab787aa69
   languageName: node
   linkType: hard
 
@@ -9228,6 +9253,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"leaflet.fullscreen@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "leaflet.fullscreen@npm:3.0.1"
+  checksum: f64af85825b7a4bd03969947670ba95dd1bc47f3011f0e3a2a797ff1f2ff48d1c5e7b60df9fac3887aa72aee867a738dc1559645e59e1cbc3b6d1ade89705d96
+  languageName: node
+  linkType: hard
+
 "leaflet.marker.slideto@npm:^0.3.0":
   version: 0.3.0
   resolution: "leaflet.marker.slideto@npm:0.3.0"
@@ -9315,6 +9347,13 @@ __metadata:
   version: 4.6.2
   resolution: "lodash.merge@npm:4.6.2"
   checksum: 402fa16a1edd7538de5b5903a90228aa48eb5533986ba7fa26606a49db2572bf414ff73a2c9f5d5fd36b31c46a5d5c7e1527749c07cbcf965ccff5fbdf32c506
+  languageName: node
+  linkType: hard
+
+"lodash.throttle@npm:^4.1.1":
+  version: 4.1.1
+  resolution: "lodash.throttle@npm:4.1.1"
+  checksum: 14628013e9e7f65ac904fc82fd8ecb0e55a9c4c2416434b1dd9cf64ae70a8937f0b15376a39a68248530adc64887ed0fe2b75204b2c9ec3eea1cb2d66ddd125d
   languageName: node
   linkType: hard
 
@@ -10128,7 +10167,7 @@ __metadata:
   resolution: "opentakserver-ui@workspace:."
   dependencies:
     "@mantine/charts": "npm:^7.5.0"
-    "@mantine/core": "npm:7.5.0"
+    "@mantine/core": "npm:^7.5.0"
     "@mantine/form": "npm:^7.5.0"
     "@mantine/hooks": "npm:7.5.0"
     "@mantine/notifications": "npm:^7.5.0"
@@ -10147,8 +10186,10 @@ __metadata:
     "@testing-library/user-event": "npm:^14.5.1"
     "@types/leaflet": "npm:^1.9.8"
     "@types/leaflet-rotatedmarker": "npm:^0"
+    "@types/leaflet.fullscreen": "npm:^3"
     "@types/react": "npm:^18.2.36"
     "@types/react-dom": "npm:^18.2.14"
+    "@types/video-react": "npm:^0"
     "@typescript-eslint/eslint-plugin": "npm:^6.9.1"
     "@typescript-eslint/parser": "npm:^6.9.1"
     "@vitejs/plugin-react": "npm:^4.2.1"
@@ -10166,6 +10207,7 @@ __metadata:
     jsdom: "npm:^23.0.1"
     leaflet: "npm:^1.9.4"
     leaflet-rotatedmarker: "npm:^0.2.0"
+    leaflet.fullscreen: "npm:^3.0.1"
     leaflet.marker.slideto: "npm:^0.3.0"
     milsymbol: "npm:^2.2.0"
     postcss: "npm:^8.4.32"
@@ -10187,6 +10229,7 @@ __metadata:
     storybook-dark-mode: "npm:^3.0.3"
     stylelint: "npm:^16.0.2"
     typescript: "npm:^5.3.3"
+    video-react: "npm:^0.16.0"
     vite: "npm:^5.0.10"
     vite-tsconfig-paths: "npm:^4.2.2"
     vitest: "npm:^1.1.0"
@@ -11308,6 +11351,15 @@ __metadata:
     indent-string: "npm:^4.0.0"
     strip-indent: "npm:^3.0.0"
   checksum: d64a6b5c0b50eb3ddce3ab770f866658a2b9998c678f797919ceb1b586bab9259b311407280bd80b804e2a7c7539b19238ae6a2a20c843f1a7fcff21d48c2eae
+  languageName: node
+  linkType: hard
+
+"redux@npm:^4.0.1":
+  version: 4.2.1
+  resolution: "redux@npm:4.2.1"
+  dependencies:
+    "@babel/runtime": "npm:^7.9.2"
+  checksum: 136d98b3d5dbed1cd6279c8c18a6a74c416db98b8a432a46836bdd668475de6279a2d4fd9d1363f63904e00f0678a8a3e7fa532c897163340baf1e71bb42c742
   languageName: node
   linkType: hard
 
@@ -13142,6 +13194,22 @@ __metadata:
     d3-time: "npm:^3.0.0"
     d3-timer: "npm:^3.0.1"
   checksum: d7773b0d9b75d395d77ef677d77568d3bd236973402c6a6d620dc80b05387cf965d482af9a75cf1f1ae99a64cb055f2eb0f914936e8dba8b24ec281d585316d6
+  languageName: node
+  linkType: hard
+
+"video-react@npm:^0.16.0":
+  version: 0.16.0
+  resolution: "video-react@npm:0.16.0"
+  dependencies:
+    "@babel/runtime": "npm:^7.4.5"
+    classnames: "npm:^2.2.6"
+    lodash.throttle: "npm:^4.1.1"
+    prop-types: "npm:^15.7.2"
+    redux: "npm:^4.0.1"
+  peerDependencies:
+    react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+  checksum: a64879f7c2f9f9c78eab1f3ffbac0cfa70faa59736cabc4d28eed87cc7c4d7b9e1c41dc16690e37aceaec86d8bc7209bb5056e9e80bc9f9efc38c77ae58fbf69
   languageName: node
   linkType: hard
 

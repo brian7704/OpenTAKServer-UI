@@ -7,7 +7,7 @@ import {
     IconDeviceMobile,
     IconDashboard,
     IconUsers,
-    IconMap, IconLogout, IconMoonStars, Icon2fa, IconCalendarDue,
+    IconMap, IconLogout, IconMoonStars, Icon2fa, IconCalendarDue, IconMovie,
 } from '@tabler/icons-react';
 import { NavLink, Title } from '@mantine/core';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -24,6 +24,7 @@ const navbarLinks = [
     { link: '/casevac', label: 'Casevac', icon: IconHeartbeat },
     { link: '/data_packages', label: 'Data Packages', icon: IconPackage },
     { link: '/video_streams', label: 'Video Streams', icon: IconVideo },
+    { link: '/video_recordings', label: 'Video Recordings', icon: IconMovie },
 ];
 
 const adminLinks = [
