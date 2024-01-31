@@ -43,4 +43,5 @@ export const apiRoutes = {
   pauseJob: '/api/scheduler/job/pause',
   getRecording: '/api/videos/recording',
   getRecordings: '/api/videos/recordings',
+  deleteRecording: '/api/videos/recording',
 };

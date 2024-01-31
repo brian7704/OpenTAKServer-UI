@@ -10,13 +10,14 @@ import {
     useComputedColorScheme,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
-import { IconCheck, IconCircleMinus, IconX } from '@tabler/icons-react';
+import {IconCheck, IconCircleMinus, IconDownload, IconPlayerPlay, IconX} from '@tabler/icons-react';
 import 'video-react/dist/video-react.css';
 import { Player, ControlBar, PlaybackRateMenuButton, PlayerReference, BigPlayButton } from 'video-react';
 import { intervalToDuration, formatDuration } from 'date-fns';
 import { notifications } from '@mantine/notifications';
 import axios from '../axios_config';
 import { apiRoutes } from '../config';
+import tools from "@/tools";
 
 export default function VideoRecordings() {
     const [videoStreams, setVideoStreams] = useState<TableData>({
@@ -43,7 +44,7 @@ export default function VideoRecordings() {
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
-                    head: ['Start Time', 'End Time', 'Duration', 'Filename', 'In Progress', 'Path', 'Watch', 'Delete'],
+                    head: ['Start Time', 'End Time', 'Duration', 'Resolution', 'In Progress', 'Path', 'File Size', 'Video Codec', 'Audio Codec', 'Watch', 'Delete', 'Download'],
                     body: [],
                 };
 
@@ -55,9 +56,7 @@ export default function VideoRecordings() {
                                 setDeleteRecording(row.id);
                             }}
                           key={`${row.path}_delete`}
-                          rightSection={<IconCircleMinus size={14} />}
-                        >Delete
-                                              </Button>;
+                        ><IconCircleMinus /></Button>;
 
                         const watch_button = <Button
                           key={`${row.filename}_watch`}
@@ -65,8 +64,7 @@ export default function VideoRecordings() {
                             setVideoUrl(`${apiRoutes.getRecording}?id=${row.id}`);
                             setShowVideo(true);
                         }}
-                        >Watch
-                                             </Button>;
+                        ><IconPlayerPlay /></Button>;
 
                         let in_progress_icon;
 
@@ -82,9 +80,11 @@ export default function VideoRecordings() {
                             formattedDuration = formatDuration(duration);
                         }
 
-                        tableData.body.push([row.start_time, row.stop_time,
-                            formattedDuration, row.filename, in_progress_icon, row.path, watch_button,
-                            delete_button]);
+                        const download_button = <Button component="a" href={`${apiRoutes.getRecording}?id=${row.id}`}><IconDownload /></Button>
+
+                        tableData.body.push([row.start_time, row.stop_time, formattedDuration,
+                            `${row.width} x ${row.height}`, in_progress_icon, row.path, tools(row.file_size),
+                            row.video_codec, row.audio_codec, watch_button, delete_button, download_button]);
                     }
                 });
 
@@ -105,20 +105,20 @@ export default function VideoRecordings() {
 
     function deleteVideoStream() {
         axios.delete(
-            apiRoutes.deleteVideoStream,
+            apiRoutes.deleteRecording,
             { params: {
-                    path: deleteRecording,
+                    id: deleteRecording,
                 } },
         ).then(r => {
             notifications.show({
                 title: '',
-                message: 'Successfully deleted video stream',
+                message: 'Successfully deleted recording',
                 color: 'green',
             });
             getVideoRecordings();
         }).catch(err => {
             notifications.show({
-                title: 'Failed to delete video stream',
+                title: 'Failed to delete recording',
                 message: err.response.data.error,
                 color: 'red',
             });
@@ -132,7 +132,7 @@ export default function VideoRecordings() {
                 <Table stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" data={videoStreams} highlightOnHover withTableBorder mb="md" />
             </Table.ScrollContainer>
             <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
-            <Modal opened={deleteRecordingOpen} onClose={() => setDeleteRecordingOpen(false)} title={`Are you sure you want to delete ${deleteRecording}?`}>
+            <Modal opened={deleteRecordingOpen} onClose={() => setDeleteRecordingOpen(false)} title="Are you sure you want to delete this recording?">
                 <Center>
                     <Button
                       mr="md"
@@ -145,25 +145,25 @@ export default function VideoRecordings() {
                     <Button onClick={() => setDeleteRecordingOpen(false)}>No</Button>
                 </Center>
             </Modal>
-            <Container fluid>
-                <AspectRatio ratio={16 / 9} display={showVideo ? 'block' : 'none'} mt="md">
-                    <Player
-                      ref={playerRef => {
-                            setPlayer(playerRef);
-                      }}
-                      playsInline
-                    >
-                        <source
-                          src={videoUrl}
-                          type="video/mp4"
-                        />
-                        <BigPlayButton position="center" />
-                        <ControlBar>
-                            <PlaybackRateMenuButton rates={[5, 2, 1, 0.5, 0.1]} />
-                        </ControlBar>
-                    </Player>
-                </AspectRatio>
-            </Container>
+
+            <AspectRatio ratio={16 / 9} display={showVideo ? 'block' : 'none'} mt="md" p={0}>
+                <Player
+                  ref={playerRef => {
+                        setPlayer(playerRef);
+                  }}
+                  playsInline
+                >
+                    <source
+                      src={videoUrl}
+                      type="video/mp4"
+                    />
+                    <BigPlayButton position="center" />
+                    <ControlBar>
+                        <PlaybackRateMenuButton rates={[5, 2, 1, 0.5, 0.1]} />
+                    </ControlBar>
+                </Player>
+            </AspectRatio>
+
         </>
     );
 }
