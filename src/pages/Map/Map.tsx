@@ -134,7 +134,7 @@ export default function Map() {
                         offset: [12, 35],
                     });
 
-                    if (value.mil_std_2525c !== null) {
+                    if (value.mil_std_2525c !== null && value.iconset_path.startsWith('COT_MAPPING_2525C')) {
                         const options = { size: 25, direction: undefined };
                         if (value.point !== null && value.point.course !== null) {
                             options.direction = value.point.course;
