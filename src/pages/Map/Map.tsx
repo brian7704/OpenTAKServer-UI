@@ -192,7 +192,7 @@ export default function Map() {
                         open();
                     });
 
-                    if (value.mil_std_2525c !== null && value.iconset_path.startsWith('COT_MAPPING_2525C')) {
+                    if (value.mil_std_2525c !== null && value.icon === null) {
                         const options = { size: 25, direction: undefined };
                         if (value.point !== null && value.point.course !== null) {
                             options.direction = value.point.course;
