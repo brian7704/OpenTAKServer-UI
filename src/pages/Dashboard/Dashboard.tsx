@@ -4,7 +4,7 @@ import { IconCheck, IconX } from '@tabler/icons-react';
 import { AreaChart, DonutChart } from '@mantine/charts';
 import axios from '../../axios_config';
 import { apiRoutes } from '../../config';
-import tools from '../../tools';
+import bytes_formatter from '../../bytes_formatter';
 import '@mantine/charts/styles.css';
 
 export default function Dashboard() {
@@ -116,8 +116,8 @@ export default function Dashboard() {
                                 ]}
                             />
                         </Center>
-                        <Center><Text fw={700} size="md" c="red.9">Total Space: {`${tools(disk.total)}`}</Text></Center>
-                        <Center><Text fw={700} size="md" c="red.9">Used Space: {`${tools(disk.used)}`}</Text></Center>
+                        <Center><Text fw={700} size="md" c="red.9">Total Space: {`${bytes_formatter(disk.total)}`}</Text></Center>
+                        <Center><Text fw={700} size="md" c="red.9">Used Space: {`${bytes_formatter(disk.used)}`}</Text></Center>
                     </Paper>
                     <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md">
                         <Center mb="md"><Title order={4}>Memory Usage</Title></Center>
@@ -129,8 +129,8 @@ export default function Dashboard() {
                             ]}
                             />
                         </Center>
-                        <Center><Text fw={700} size="md" c="green.9">Available Memory: {`${tools(memory.available)}`}</Text></Center>
-                        <Center><Text fw={700} size="md" c="green.9">Used Memory: {`${tools(memory.used)}`}</Text></Center>
+                        <Center><Text fw={700} size="md" c="green.9">Available Memory: {`${bytes_formatter(memory.available)}`}</Text></Center>
+                        <Center><Text fw={700} size="md" c="green.9">Used Memory: {`${bytes_formatter(memory.used)}`}</Text></Center>
                     </Paper>
                 </Flex>
             </Center>

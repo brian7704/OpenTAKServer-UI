@@ -1,0 +1,8 @@
+:global(.mantine-AspectRatio-root) {
+    padding-bottom: 0;
+    margin-bottom: 50px;
+}
+
+:global(.mantine-AspectRatio-root::before) {
+    padding-bottom: 0;
+}

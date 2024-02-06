@@ -11,7 +11,7 @@ import React, { useEffect, useState } from 'react';
 import { IconDownload, IconCircleMinus, IconX, IconCheck } from '@tabler/icons-react';
 import axios from '@/axios_config';
 import { apiRoutes } from '@/config';
-import tools from '@/tools';
+import bytes_formatter from '@/bytes_formatter';
 
 interface data_package {
     filename: string;
@@ -131,7 +131,7 @@ export default function DataPackages() {
 
                         const delete_button = <Button onClick={() => deleteDataPackage(row.hash)} key={`${row.hash}_delete`} rightSection={<IconCircleMinus size={14} />}>Delete</Button>;
                         const callsign = row.eud ? row.eud.callsign : '';
-                        tableData.body.push([row.filename, tools(row.size), row.submission_user, callsign, row.submission_time, download, delete_button]);
+                        tableData.body.push([row.filename, bytes_formatter(row.size), row.submission_user, callsign, row.submission_time, download, delete_button]);
                     }
                 });
 

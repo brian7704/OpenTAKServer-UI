@@ -1,8 +1,9 @@
 import {
     AspectRatio,
-    Box,
     Button,
-    Center, CloseButton, Container, Flex,
+    Center,
+    CloseButton,
+    Flex,
     Modal,
     Pagination,
     Table,
@@ -10,14 +11,15 @@ import {
     useComputedColorScheme,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
-import {IconCheck, IconCircleMinus, IconDownload, IconPlayerPlay, IconX} from '@tabler/icons-react';
+import { IconCheck, IconCircleMinus, IconDownload, IconPlayerPlay, IconX } from '@tabler/icons-react';
 import 'video-react/dist/video-react.css';
+import './VideoRecordings.module.css';
 import { Player, ControlBar, PlaybackRateMenuButton, PlayerReference, BigPlayButton } from 'video-react';
 import { intervalToDuration, formatDuration } from 'date-fns';
 import { notifications } from '@mantine/notifications';
 import axios from '../axios_config';
 import { apiRoutes } from '../config';
-import tools from "@/tools";
+import bytes_formatter from '@/bytes_formatter';
 
 export default function VideoRecordings() {
     const [videoStreams, setVideoStreams] = useState<TableData>({
@@ -44,7 +46,7 @@ export default function VideoRecordings() {
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
-                    head: ['Start Time', 'End Time', 'Duration', 'Resolution', 'In Progress', 'Path', 'File Size', 'Video Codec', 'Audio Codec', 'Watch', 'Delete', 'Download'],
+                    head: ['Start Time', 'End Time', 'Duration', 'Resolution', 'In Progress', 'Path', 'File Size', 'Video Codec', 'Video Bitrate', 'Audio Codec', 'Audio Bitrate', 'Watch', 'Delete', 'Download'],
                     body: [],
                 };
 
@@ -56,7 +58,8 @@ export default function VideoRecordings() {
                                 setDeleteRecording(row.id);
                             }}
                           key={`${row.path}_delete`}
-                        ><IconCircleMinus /></Button>;
+                        ><IconCircleMinus />
+                                              </Button>;
 
                         const watch_button = <Button
                           key={`${row.filename}_watch`}
@@ -64,7 +67,8 @@ export default function VideoRecordings() {
                             setVideoUrl(`${apiRoutes.getRecording}?id=${row.id}`);
                             setShowVideo(true);
                         }}
-                        ><IconPlayerPlay /></Button>;
+                        ><IconPlayerPlay />
+                                             </Button>;
 
                         let in_progress_icon;
 
@@ -80,11 +84,13 @@ export default function VideoRecordings() {
                             formattedDuration = formatDuration(duration);
                         }
 
-                        const download_button = <Button component="a" href={`${apiRoutes.getRecording}?id=${row.id}`}><IconDownload /></Button>
+                        const download_button = <Button component="a" href={`${apiRoutes.getRecording}?id=${row.id}`}><IconDownload /></Button>;
 
                         tableData.body.push([row.start_time, row.stop_time, formattedDuration,
-                            `${row.width} x ${row.height}`, in_progress_icon, row.path, tools(row.file_size),
-                            row.video_codec, row.audio_codec, watch_button, delete_button, download_button]);
+                            `${row.width} x ${row.height}`, in_progress_icon, row.path, bytes_formatter(row.file_size),
+                            row.video_codec, bytes_formatter(row.video_bitrate, 2, true),
+                            row.audio_codec, `${bytes_formatter(row.audio_bitrate, 2, true)}`,
+                            watch_button, delete_button, download_button]);
                     }
                 });
 
@@ -146,7 +152,17 @@ export default function VideoRecordings() {
                 </Center>
             </Modal>
 
-            <AspectRatio ratio={16 / 9} display={showVideo ? 'block' : 'none'} mt="md" p={0}>
+            <AspectRatio ratio={16 / 9} display={showVideo ? 'block' : 'none'} mt="md" pb={100} mb="xl">
+                <Flex justify="flex-end" align="flex-start">
+                    <CloseButton
+                      style={{ zIndex: 9999 }}
+                      size={30}
+                      onClick={() => {
+                            setShowVideo(false);
+                            setVideoUrl('');
+                        }}
+                    />
+                </Flex>
                 <Player
                   ref={playerRef => {
                         setPlayer(playerRef);
