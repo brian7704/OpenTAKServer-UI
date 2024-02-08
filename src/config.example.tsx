@@ -1,12 +1,3 @@
-const { protocol } = location;
-const { port } = location;
-
-export const server_address = 'example.com';
-
-export const config = {
-  apiUrl: `${protocol}//${server_address}:${port}`,
-};
-
 export const apiRoutes = {
   login: '/api/login',
   logout: '/api/logout',
@@ -44,4 +35,5 @@ export const apiRoutes = {
   getRecording: '/api/videos/recording',
   getRecordings: '/api/videos/recordings',
   deleteRecording: '/api/videos/recording',
+  adminSettings: '/api/config',
 };

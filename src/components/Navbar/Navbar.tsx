@@ -7,9 +7,9 @@ import {
     IconDeviceMobile,
     IconDashboard,
     IconUsers,
-    IconMap, IconLogout, IconMoonStars, Icon2fa, IconCalendarDue, IconMovie,
+    IconMap, IconLogout, IconMoonStars, Icon2fa, IconCalendarDue, IconMovie, IconSettings,
 } from '@tabler/icons-react';
-import { NavLink, Title } from '@mantine/core';
+import { NavLink, ScrollArea, Title } from '@mantine/core';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import classes from './Navbar.module.css';
 import DarkModeSwitch from '../DarkModeSwitch';
@@ -30,6 +30,7 @@ const navbarLinks = [
 const adminLinks = [
     { link: '/users', label: 'Users', icon: IconUsers },
     { link: '/jobs', label: 'Scheduled Jobs', icon: IconCalendarDue },
+    { link: '/settings', label: 'Settings', icon: IconSettings },
 ];
 
 export default function Navbar() {
@@ -76,7 +77,7 @@ export default function Navbar() {
     };
 
     return (
-        <>
+        <ScrollArea>
             <div>
                 {links}
             </div>
@@ -90,6 +91,6 @@ export default function Navbar() {
                 <NavLink className={classes.link} key="darkModeSwitch" leftSection={<IconMoonStars className={classes.linkIcon} stroke={1.5} />} rightSection={<DarkModeSwitch />} label="Dark Mode" />
                 <NavLink className={classes.link} key="logout" leftSection={<IconLogout className={classes.linkIcon} stroke={1.5} />} label="Log Out" onClick={() => logout()} />
             </div>
-        </>
+        </ScrollArea>
     );
 }
