@@ -18,7 +18,7 @@ import { Player, ControlBar, PlaybackRateMenuButton, PlayerReference, BigPlayBut
 import { intervalToDuration, formatDuration } from 'date-fns';
 import { notifications } from '@mantine/notifications';
 import axios from '../axios_config';
-import { apiRoutes } from '../config';
+import { apiRoutes } from '../apiRoutes';
 import bytes_formatter from '@/bytes_formatter';
 
 export default function VideoRecordings() {

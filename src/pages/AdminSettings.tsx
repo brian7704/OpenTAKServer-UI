@@ -1,8 +1,8 @@
 import {
     Anchor,
     Button,
-    Center, Divider, Flex, Grid,
-    Modal, NumberInput,
+    Divider, Flex, Grid,
+    NumberInput,
     Switch,
     Text,
     TextInput,
@@ -11,7 +11,7 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import {IconCheck, IconX} from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import axios from '../axios_config';
-import { apiRoutes } from '../config';
+import { apiRoutes } from '../apiRoutes';
 
 interface SettingsObject {
     [key:string]: any;

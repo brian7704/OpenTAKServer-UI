@@ -14,7 +14,7 @@ import React, { useEffect, useState } from 'react';
 import { IconUserPlus } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import axios from '../axios_config';
-import { apiRoutes } from '../config';
+import { apiRoutes } from '../apiRoutes';
 
 export default function Users() {
     const [users, setUsers] = useState<TableData>({

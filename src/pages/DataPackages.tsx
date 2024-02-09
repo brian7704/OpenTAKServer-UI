@@ -10,7 +10,7 @@ import { notifications } from '@mantine/notifications';
 import React, { useEffect, useState } from 'react';
 import { IconDownload, IconCircleMinus, IconX, IconCheck } from '@tabler/icons-react';
 import axios from '@/axios_config';
-import { apiRoutes } from '@/config';
+import { apiRoutes } from '@/apiRoutes';
 import bytes_formatter from '@/bytes_formatter';
 
 interface data_package {

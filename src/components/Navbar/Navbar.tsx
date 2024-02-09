@@ -14,7 +14,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import classes from './Navbar.module.css';
 import DarkModeSwitch from '../DarkModeSwitch';
 import axios from '../../axios_config';
-import { apiRoutes } from '../../config';
+import { apiRoutes } from '../../apiRoutes';
 
 const navbarLinks = [
     { link: '/dashboard', label: 'Dashboard', icon: IconDashboard },

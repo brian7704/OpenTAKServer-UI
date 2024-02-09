@@ -15,7 +15,7 @@ import { notifications } from '@mantine/notifications';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import Logo from '../images/ots-logo.png';
 import { Header } from '../components/Header';
-import { apiRoutes } from '@/config';
+import { apiRoutes } from '@/apiRoutes';
 
 export default function PasswordReset() {
     const [searchParams, setSearchParams] = useSearchParams();

@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import Logo from '../images/ots-logo.png';
 import classes from './Header.module.css';
 import axios from '../axios_config';
-import { apiRoutes } from '../config';
+import { apiRoutes } from '../apiRoutes';
 
 export const Header = () => {
     const { setColorScheme } = useMantineColorScheme();

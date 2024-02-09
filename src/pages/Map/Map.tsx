@@ -12,7 +12,7 @@ import { notifications } from '@mantine/notifications';
 import { IconX } from '@tabler/icons-react';
 import * as milsymbol from 'milsymbol';
 import { useDisclosure } from '@mantine/hooks';
-import { apiRoutes } from '@/config';
+import { apiRoutes } from '@/apiRoutes';
 import { socket } from '@/socketio';
 import classes from './Map.module.css';
 import 'leaflet.fullscreen';

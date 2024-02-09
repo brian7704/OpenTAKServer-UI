@@ -24,7 +24,7 @@ import { upperFirst } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconArrowLeft, IconCheck, IconX } from '@tabler/icons-react';
 import { Header } from '../../components/Header';
-import { apiRoutes } from '../../config';
+import { apiRoutes } from '../../apiRoutes';
 import axios from '../../axios_config';
 import Logo from '../../images/ots-logo.png';
 

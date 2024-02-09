@@ -11,10 +11,10 @@ import {
     useComputedColorScheme,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
-import { IconCheck, IconChevronDown, IconCircleMinus, IconPlus, IconX } from '@tabler/icons-react';
+import { IconCheck, IconCircleMinus, IconPlus, IconX } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import axios from '../axios_config';
-import { apiRoutes } from '../config';
+import { apiRoutes } from '../apiRoutes';
 
 export default function VideoStreams() {
     const [videoStreams, setVideoStreams] = useState<TableData>({

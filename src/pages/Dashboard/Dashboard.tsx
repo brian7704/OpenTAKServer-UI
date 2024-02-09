@@ -3,7 +3,7 @@ import { Text, Center, Title, Divider, Paper, useComputedColorScheme, Flex } fro
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { AreaChart, DonutChart } from '@mantine/charts';
 import axios from '../../axios_config';
-import { apiRoutes } from '../../config';
+import { apiRoutes } from '../../apiRoutes';
 import bytes_formatter from '../../bytes_formatter';
 import '@mantine/charts/styles.css';
 

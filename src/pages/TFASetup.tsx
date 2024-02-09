@@ -4,7 +4,7 @@ import { notifications } from '@mantine/notifications';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import QRCode from 'react-qr-code';
 import axios from '../axios_config';
-import { apiRoutes } from '../config';
+import { apiRoutes } from '../apiRoutes';
 
 export default function TFASetup() {
     const [tfPrimaryMethod, setTfPrimaryMethod] = useState<string | undefined>(undefined);

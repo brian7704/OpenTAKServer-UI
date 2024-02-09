@@ -22,7 +22,7 @@ import { notifications } from '@mantine/notifications';
 import Logo from './images/ots-logo.png';
 import { AppContent } from './components/AppContent';
 import axios from './axios_config';
-import { apiRoutes } from './config';
+import { apiRoutes } from './apiRoutes';
 import Navbar from './components/Navbar/Navbar';
 import { socket } from './socketio';
 

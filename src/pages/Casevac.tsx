@@ -1,7 +1,7 @@
 import {Center, Pagination, Table, TableData, useComputedColorScheme} from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import axios from '@/axios_config';
-import { apiRoutes } from '@/config';
+import { apiRoutes } from '@/apiRoutes';
 
 interface alert {
     callsign: string;
