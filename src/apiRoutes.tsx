@@ -36,4 +36,5 @@ export const apiRoutes = {
   getRecordings: '/api/videos/recordings',
   deleteRecording: '/api/videos/recording',
   adminSettings: '/api/config',
+  modifyJob: '/api/scheduler/job/modify',
 };
