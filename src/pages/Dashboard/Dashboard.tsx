@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Text, Center, Title, Divider, Paper, useComputedColorScheme, Flex } from '@mantine/core';
+import { Text, Center, Title, Divider, Paper, useComputedColorScheme, Flex, Switch } from '@mantine/core';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { AreaChart, DonutChart } from '@mantine/charts';
 import axios from '../../axios_config';
 import { apiRoutes } from '../../apiRoutes';
 import bytes_formatter from '../../bytes_formatter';
 import '@mantine/charts/styles.css';
+import { notifications } from '@mantine/notifications';
 
 export default function Dashboard() {
+    const [tcpEnabled, setTcpEnabled] = useState(true);
+    const [sslEnabled, setSslEnabled] = useState(true);
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
     const [alerts, setAlerts] = useState({
         cot_router: false,
@@ -57,11 +60,65 @@ export default function Dashboard() {
                         total: r.data.memory.total,
                         percent: r.data.memory.percent,
                     });
+                    setTcpEnabled(r.data.tcp);
+                    setSslEnabled(r.data.ssl);
                 }
             }).catch(err => {
                 console.log(err);
             });
     }, []);
+
+    function toggleSSL() {
+        axios.get((sslEnabled) ? apiRoutes.stopSSL : apiRoutes.startSSL)
+            .then(r => {
+                if (r.status === 200) {
+                    let message = 'The SSL server has been started';
+                    if (sslEnabled) message = 'The SSL server has been stopped';
+
+                    notifications.show({
+                        title: 'Success',
+                        message,
+                        icon: <IconCheck />,
+                        color: 'green',
+                    });
+                    setSslEnabled(!sslEnabled);
+                }
+            }).catch(err => {
+                console.log(err);
+                notifications.show({
+                    title: 'Error',
+                    message: err.response.data.error,
+                    icon: <IconX />,
+                    color: 'red',
+                });
+        });
+    }
+
+    function toggleTCP() {
+        axios.get((tcpEnabled) ? apiRoutes.stopTCP : apiRoutes.startTCP)
+            .then(r => {
+                if (r.status === 200) {
+                    let message = 'The TCP server has been started';
+                    if (tcpEnabled) message = 'The TCP server has been stopped';
+
+                    notifications.show({
+                        title: 'Success',
+                        message,
+                        icon: <IconCheck />,
+                        color: 'green',
+                    });
+                    setTcpEnabled(!tcpEnabled);
+                }
+            }).catch(err => {
+            console.log(err);
+            notifications.show({
+                title: 'Error',
+                message: err.response.data.error,
+                icon: <IconX />,
+                color: 'red',
+            });
+        });
+    }
 
     return (
         <>
@@ -76,11 +133,13 @@ export default function Dashboard() {
                     </Paper>
                     <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md">
                         <Center mb="md"><Title order={4}>TCP</Title></Center>
-                        <Center>{alerts.tcp ? <IconCheck color="green" /> : <IconX color="red" />}</Center>
+                        <Center>{tcpEnabled ? <IconCheck color="green" /> : <IconX color="red" />}</Center>
+                        <Switch label="Enabled" checked={tcpEnabled} onChange={() => toggleTCP()} mt="md" />
                     </Paper>
                     <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md">
                         <Center mb="md"><Title order={4}>SSL</Title></Center>
-                        <Center>{alerts.ssl ? <IconCheck color="green" /> : <IconX color="red" />}</Center>
+                        <Center>{sslEnabled ? <IconCheck color="green" /> : <IconX color="red" />}</Center>
+                        <Switch label="Enabled" checked={sslEnabled} onChange={() => toggleSSL()} mt="md" />
                     </Paper>
                     <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md">
                         <Center mb="md"><Title order={4}>Online EUDs</Title></Center>
@@ -98,7 +157,7 @@ export default function Dashboard() {
                         <Center mb="md"><Title order={4}>CPU Usage</Title></Center>
                         <Center>
                             <DonutChart
-                                data={[
+                              data={[
                                     { name: 'Used Percentage', value: serverStatus.cpu_percent, color: 'blue' },
                                     { name: 'Idle Percentage', value: 100 - serverStatus.cpu_percent, color: 'gray.6' },
                                 ]}

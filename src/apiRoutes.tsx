@@ -37,4 +37,8 @@ export const apiRoutes = {
   deleteRecording: '/api/videos/recording',
   adminSettings: '/api/config',
   modifyJob: '/api/scheduler/job/modify',
+  startSSL: '/api/ssl/start',
+  stopSSL: '/api/ssl/stop',
+  startTCP: '/api/tcp/start',
+  stopTCP: '/api/tcp/stop',
 };
