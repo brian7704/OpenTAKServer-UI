@@ -116,12 +116,6 @@ export function DefaultLayout() {
 
                             <Menu.Dropdown>
                                 <Menu.Label>Application</Menu.Label>
-                                <Menu.Item leftSection={<IconSettings style={{ width: rem(14), height: rem(14) }} />}>
-                                    Settings
-                                </Menu.Item>
-                                <Menu.Item leftSection={<IconMessageCircle style={{ width: rem(14), height: rem(14) }} />}>
-                                    Messages
-                                </Menu.Item>
                                 <Menu.Divider />
                                 <Menu.Item
                                   disabled={localStorage.getItem('loggedIn') !== 'true'}
