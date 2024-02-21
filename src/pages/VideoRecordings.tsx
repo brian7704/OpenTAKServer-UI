@@ -2,7 +2,7 @@ import {
     AspectRatio,
     Button,
     Center,
-    CloseButton,
+    CloseButton, Container,
     Flex,
     Modal,
     Pagination,
@@ -14,7 +14,7 @@ import React, { useEffect, useState } from 'react';
 import { IconCheck, IconCircleMinus, IconDownload, IconPlayerPlay, IconX } from '@tabler/icons-react';
 import 'video-react/dist/video-react.css';
 import './VideoRecordings.module.css';
-import { Player, ControlBar, PlaybackRateMenuButton, PlayerReference, BigPlayButton } from 'video-react';
+import ReactPlayer from 'react-player';
 import { intervalToDuration, formatDuration } from 'date-fns';
 import { notifications } from '@mantine/notifications';
 import axios from '../axios_config';
@@ -33,7 +33,7 @@ export default function VideoRecordings() {
     const [deleteRecording, setDeleteRecording] = useState('');
     const [showVideo, setShowVideo] = useState(false);
     const [videoUrl, setVideoUrl] = useState('');
-    const [player, setPlayer] = useState<PlayerReference | null>();
+    //const [player, setPlayer] = useState<PlayerReference | null>();
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
 
     function getVideoRecordings() {
@@ -102,10 +102,6 @@ export default function VideoRecordings() {
     }
 
     useEffect(() => {
-        if (player) player.load();
-    }, [videoUrl]);
-
-    useEffect(() => {
         getVideoRecordings();
     }, [activePage]);
 
@@ -152,7 +148,7 @@ export default function VideoRecordings() {
                 </Center>
             </Modal>
 
-            <AspectRatio ratio={16 / 9} display={showVideo ? 'block' : 'none'} mt="md" pb={100} mb="xl">
+            <AspectRatio ratio={16 / 9} h="100%" display={showVideo ? 'block' : 'none'} mt="md" pb={100} mb="xl">
                 <Flex justify="flex-end" align="flex-start">
                     <CloseButton
                       style={{ zIndex: 9999 }}
@@ -163,21 +159,7 @@ export default function VideoRecordings() {
                         }}
                     />
                 </Flex>
-                <Player
-                  ref={playerRef => {
-                        setPlayer(playerRef);
-                  }}
-                  playsInline
-                >
-                    <source
-                      src={videoUrl}
-                      type="video/mp4"
-                    />
-                    <BigPlayButton position="center" />
-                    <ControlBar>
-                        <PlaybackRateMenuButton rates={[5, 2, 1, 0.5, 0.1]} />
-                    </ControlBar>
-                </Player>
+                <ReactPlayer style={{ position: 'relative' }} controls url={videoUrl} width="100%" height="100%" />
             </AspectRatio>
 
         </>

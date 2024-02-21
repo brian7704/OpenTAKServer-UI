@@ -87,12 +87,12 @@ export default function VideoStreams() {
                         >Delete
                                               </Button>;
 
-                        //const watch_button = <Button key={`${row.path}_watch`} onClick={() => window.open(row.webrtc_link, '_blank')}>Watch</Button>;
                         const watch_button = <Button
                           key={`${row.path}_watch`}
                           onClick={() => {
                             setVideoUrl(row.webrtc_link);
                             setShowVideo(true);
+                            setPath(row.path);
                         }}
                         >Watch
                                              </Button>;
@@ -193,7 +193,7 @@ export default function VideoStreams() {
                     <Button onClick={() => setDeleteVideoOpened(false)}>No</Button>
                 </Center>
             </Modal>
-            <AspectRatio ratio={16 / 9} display={showVideo ? 'block' : 'none'}>
+            <AspectRatio ratio={16 / 9} display={showVideo ? 'block' : 'none'} h="100%" mb="xl">
                 <Flex justify="flex-end" align="flex-start">
                     <CloseButton
                       style={{ zIndex: 9999 }}
@@ -206,7 +206,7 @@ export default function VideoStreams() {
                 </Flex>
                 <iframe
                   src={videoUrl}
-                  title="MOON"
+                  title={path}
                   style={{ border: 0 }}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen

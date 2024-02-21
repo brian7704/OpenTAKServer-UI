@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { IconCheck, IconDeviceFloppy, IconEdit, IconPlayerPlay, IconX } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { formatISO, parseISO } from 'date-fns';
-import * as events from 'events';
 import { apiRoutes } from '../apiRoutes';
 import axios from '../axios_config';
 
@@ -15,8 +14,6 @@ export default function ScheduledJobs() {
         body: [],
     });
     const [editable, setEditable] = useState<string | null>(null);
-    const [changeMinutes, setChangeMinutes] = useState<string | number>(0);
-    const [changeSeconds, setChangeSeconds] = useState<string | number>(0);
     const [data, setData] = useState<Array<[]>>([]);
     const [interval, setInterval] = useState({
         minutes: 0,
