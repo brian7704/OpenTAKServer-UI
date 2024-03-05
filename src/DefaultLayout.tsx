@@ -102,8 +102,8 @@ export function DefaultLayout() {
             <AppShell.Header pb={0} bg={computedColorScheme === 'light' ? '#2a2d43' : 'dark.8'}>
                 <Group justify="space-between" pr={5} h="100%">
                     <Group h="100%" w={300}>
-                        <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" pl={5} />
-                        <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
+                        <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" pl={5} color="white" />
+                        <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" color="white" />
                         <Image src={Logo} h={50} w="auto" />
                     </Group>
                     <Group>

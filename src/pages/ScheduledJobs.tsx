@@ -137,8 +137,8 @@ export default function ScheduledJobs() {
         };
 
         data.map((row:any) => {
-            const start = (row.start_date !== null) ? formatISO(parseISO(row.start_date)) : '';
-            const next = (row.next_run_time !== null) ? formatISO(parseISO(row.next_run_time)) : '';
+            const start = (Object.hasOwn(row, 'start_date') && row.start_date !== null) ? formatISO(parseISO(row.start_date)) : '';
+            const next = (Object.hasOwn(row, 'next_run_time') && row.next_run_time !== null) ? formatISO(parseISO(row.next_run_time)) : '';
 
             const run_now = <Button
               onClick={(e) => {
@@ -158,14 +158,27 @@ export default function ScheduledJobs() {
                 }}
             />;
 
-            const editButton = <Button onClick={(e) => {
-                e.preventDefault();
-                setEditable(row.id);
-                setInterval({ minutes: row.minutes, seconds: row.seconds, changeJob: false, job_id: row.id, trigger: row.trigger });
+            const editButton = <Button
+              disabled={row.trigger !== 'interval'}
+              onClick={(e) => {
+                  if (row.trigger === 'interval') {
+                      e.preventDefault();
+                      setEditable(row.id);
+                      setInterval({
+                          minutes: row.minutes,
+                          seconds: row.seconds,
+                          changeJob: false,
+                          job_id: row.id,
+                          trigger: row.trigger,
+                      });
+                  }
             }}
             ><IconEdit size={14} />
                                </Button>;
-            const saveButton = <Button onClick={(e) => {
+
+            const saveButton = <Button
+              disabled={row.trigger !== 'interval'}
+              onClick={(e) => {
                 e.preventDefault();
                 setInterval(prevState => ({ ...prevState, changeJob: true }));
             }}
@@ -188,7 +201,7 @@ export default function ScheduledJobs() {
                   min={0}
                   max={59}
                 />;
-            } else {
+            } else if (row.trigger === 'interval') {
                 minutes = row.minutes;
                 seconds = row.seconds;
             }
