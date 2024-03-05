@@ -1,7 +1,7 @@
 import {
     Button,
     Center,
-    FileButton,
+    FileButton, Modal,
     Pagination,
     Table,
     TableData, useComputedColorScheme,
@@ -39,6 +39,8 @@ export default function DataPackages() {
     const [totalPages, setTotalPages] = useState(1);
     const [file, setFile] = useState<File | null>(null);
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
+    const [deleteDataPackageOpen, setDeleteDataPackageOpen] = useState(false);
+    const [dataPackageToDelete, setDataPackageToDelete] = useState('');
 
     useEffect(() => {
         if (file) {
@@ -76,10 +78,10 @@ export default function DataPackages() {
         getDatapackages();
     }, [activePage]);
 
-    function deleteDataPackage(hash:string) {
+    function deleteDataPackage() {
         axios.delete(apiRoutes.deleteDataPackage,
             { params: {
-                    hash,
+                    hash: dataPackageToDelete,
                 } }).then(r => {
                     if (r.status === 200) {
                         getDatapackages();
@@ -129,9 +131,19 @@ export default function DataPackages() {
                         const link = `${apiRoutes.download_data_packages}?hash=${row.hash}`;
                         const download = <Button component="a" href={link} key={row.hash} rightSection={<IconDownload size={14} />}>Download</Button>;
 
-                        const delete_button = <Button onClick={() => deleteDataPackage(row.hash)} key={`${row.hash}_delete`} rightSection={<IconCircleMinus size={14} />}>Delete</Button>;
+                        const delete_button = <Button
+                          onClick={() => {
+                            setDataPackageToDelete(row.hash);
+                            setDeleteDataPackageOpen(true);
+                        }}
+                          key={`${row.hash}_delete`}
+                          rightSection={<IconCircleMinus size={14} />}
+                        >Delete
+                                              </Button>;
                         const callsign = row.eud ? row.eud.callsign : '';
-                        tableData.body.push([row.filename, bytes_formatter(row.size), row.submission_user, callsign, row.submission_time, download, delete_button]);
+                        tableData.body.push([row.filename, bytes_formatter(row.size),
+                            row.submission_user, callsign, row.submission_time,
+                            download, delete_button]);
                     }
                 });
 
@@ -147,6 +159,19 @@ export default function DataPackages() {
             <FileButton onChange={setFile}>
                 {(props) => <Button {...props}>Upload Data Package</Button>}
             </FileButton>
+            <Modal opened={deleteDataPackageOpen} onClose={() => setDeleteDataPackageOpen(false)} title="Are you sure you want to delete this recording?">
+                <Center>
+                    <Button
+                      mr="md"
+                      onClick={() => {
+                            deleteDataPackage();
+                            setDeleteDataPackageOpen(false);
+                        }}
+                    >Yes
+                    </Button>
+                    <Button onClick={() => setDeleteDataPackageOpen(false)}>No</Button>
+                </Center>
+            </Modal>
             <Table.ScrollContainer minWidth="100%">
                 <Table data={dataPackages} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mt="md" mb="md" />
             </Table.ScrollContainer>

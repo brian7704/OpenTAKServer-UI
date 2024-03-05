@@ -105,7 +105,7 @@ export default function VideoRecordings() {
         getVideoRecordings();
     }, [activePage]);
 
-    function deleteVideoStream() {
+    function deleteVideoRecording() {
         axios.delete(
             apiRoutes.deleteRecording,
             { params: {
@@ -139,7 +139,7 @@ export default function VideoRecordings() {
                     <Button
                       mr="md"
                       onClick={() => {
-                            deleteVideoStream();
+                            deleteVideoRecording();
                             setDeleteRecordingOpen(false);
                         }}
                     >Yes

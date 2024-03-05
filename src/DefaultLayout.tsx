@@ -13,8 +13,6 @@ import { useDisclosure } from '@mantine/hooks';
 import {
     IconCheck,
     IconLogout,
-    IconMessageCircle,
-    IconSettings,
     IconAlertTriangle,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
@@ -48,6 +46,8 @@ export function DefaultLayout() {
             let message = `${alert.alert_type} from ${alert.callsign}`;
             let color = 'red';
             let icon = <IconAlertTriangle style={{ width: rem(20), height: rem(20) }} />;
+            const alert_sound = new Audio('/alert.mp3');
+            alert_sound.play();
 
             if (alert.cancel_time !== null) {
                 message = `${alert.alert_type} from ${alert.callsign} canceled`;
