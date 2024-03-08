@@ -8,10 +8,11 @@ import {
     Table,
     TableData,
     TextInput,
+    Tooltip,
     useComputedColorScheme,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
-import { IconCheck, IconCircleMinus, IconPlus, IconX } from '@tabler/icons-react';
+import { IconCheck, IconCircleMinus, IconPlus, IconVideo, IconX } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import axios from '../axios_config';
 import { apiRoutes } from '../apiRoutes';
@@ -168,9 +169,21 @@ export default function VideoStreams() {
         });
     }
 
+    function startStreaming() {
+        window.open(`${window.location.origin}/webrtc/${localStorage.getItem('username')}_browser/publish`, '_blank');
+    }
+
     return (
         <>
-            <Button onClick={() => { setAddVideoOpened(true); }} mb="md" leftSection={<IconPlus size={14} />}>Add Video</Button>
+            <Button onClick={() => { setAddVideoOpened(true); }} mb="md" mr="md" leftSection={<IconPlus size={14} />}>Add Video</Button>
+            <Tooltip
+              multiline
+              w={220}
+              withArrow
+              label="Start streaming in the browser using your device's camera"
+            >
+                <Button onClick={() => {startStreaming()}} mb="md" leftSection={<IconVideo size={14} />}>Start Streaming</Button>
+            </Tooltip>
             <Table.ScrollContainer minWidth="100%">
                 <Table stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" data={videoStreams} highlightOnHover withTableBorder mb="md" />
             </Table.ScrollContainer>
