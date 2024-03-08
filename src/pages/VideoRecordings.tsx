@@ -2,7 +2,7 @@ import {
     AspectRatio,
     Button,
     Center,
-    CloseButton, Container,
+    CloseButton,
     Flex,
     Modal,
     Pagination,
@@ -12,7 +12,6 @@ import {
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import { IconCheck, IconCircleMinus, IconDownload, IconPlayerPlay, IconX } from '@tabler/icons-react';
-import 'video-react/dist/video-react.css';
 import './VideoRecordings.module.css';
 import ReactPlayer from 'react-player';
 import { intervalToDuration, formatDuration } from 'date-fns';

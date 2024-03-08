@@ -12,17 +12,20 @@ import { notifications } from '@mantine/notifications';
 import { IconX } from '@tabler/icons-react';
 import * as milsymbol from 'milsymbol';
 import { useDisclosure } from '@mantine/hooks';
+import GreatCircle from './GreatCircle';
 import { apiRoutes } from '@/apiRoutes';
 import { socket } from '@/socketio';
 import classes from './Map.module.css';
 import 'leaflet.fullscreen';
 import 'leaflet.fullscreen/Control.FullScreen.css';
 import Arrow from './Arrow';
+import Video from './Video';
 
 export default function Map() {
     const [markers, setMarkers] = useState<{ [uid: string]: L.Marker }>({});
     const [circles, setCircles] = useState<{ [uid: string]: L.Circle }>({});
     const [rbLines, setRBLines] = useState<{ [uid: string]: L.Polyline }>({});
+    const [fovs, setFovs] = useState<{ [uid: string]: L.Polygon }>({});
     const [haveMapState, setHaveMapState] = useState(false);
     const [opened, { open, close }] = useDisclosure(false);
     const [drawerTitle, setDrawerTitle] = useState('');
@@ -33,6 +36,7 @@ export default function Map() {
     const eudsLayer = new L.LayerGroup();
     const rbLinesLayer = new L.LayerGroup();
     const markersLayer = new L.LayerGroup();
+    const fovsLayer = new L.LayerGroup();
 
     function formatDrawer(data:any) {
         const detail_rows:ReactElement[] = [];
@@ -72,11 +76,49 @@ export default function Map() {
         return null;
     }
 
+    function handleFov(point:any) {
+        const device_uid = point.uid;
+
+        if (Object.hasOwn(fovs, point.device_uid)) {
+            fovsLayer.removeLayer(fovs[device_uid]);
+            delete fovs[device_uid];
+        }
+        if (point.fov !== null) {
+            let angle1 = point.azimuth - point.fov / 2;
+            if (angle1 < 0) angle1 = 360 + angle1;
+
+            let angle2 = point.azimuth + point.fov / 2;
+            if (angle2 === 360) angle2 = 0;
+            else if (angle2 > 360) angle2 -= 360;
+
+            const p1 = GreatCircle.destination(point.latitude, point.longitude, angle1, 100, 'M');
+            const p2 = GreatCircle.destination(point.latitude, point.longitude, angle2, 100, 'M');
+
+            const fov = L.polygon(
+                [[point.latitude, point.longitude], [p1.LAT, p1.LON], [p2.LAT, p2.LON]],
+                { color: 'gray' }
+            );
+
+            fovsLayer.addLayer(fov);
+            fovs[point.device_uid] = fov;
+        }
+    }
+
     function addEud(eud:any) {
         let className = classes.disconnected;
-        if (eud.last_status === 'Connected') className = classes.connected;
+        if (eud.last_status === 'Connected') {
+            className = classes.connected;
+            handleFov(eud.last_point);
+        } else if (Object.hasOwn(fovs, eud.uid)) {
+            fovsLayer.removeLayer(fovs[eud.uid]);
+            delete fovs[eud.uid];
+        }
 
-        const arrowIcon = L.divIcon({
+        let type = 'a-f-G-U-C';
+        if (eud.last_point !== null) type = eud.last_point.type;
+        else if (Object.hasOwn(eud, 'type')) type = eud.type;
+
+        let icon = L.divIcon({
             html: renderToString(<Arrow fillColor={eud.team_color} className={className} />),
             iconSize: [40, 40],
             iconAnchor: [12, 24],
@@ -85,32 +127,52 @@ export default function Map() {
             className,
         });
 
+        // Video streams, most likely OpenTAK ICU
+        if (type === 'b-m-p-s-p-loc') {
+            icon = L.divIcon({
+                html: renderToString(<Video />),
+                iconSize: [40, 40],
+                iconAnchor: [12, 24],
+                popupAnchor: [7, -20],
+                tooltipAnchor: [-4, -20],
+                className: classes.connected,
+            });
+        }
+
         const { uid } = eud;
 
         if (Object.hasOwn(markers, uid)) {
-            markers[uid].setIcon(arrowIcon);
-        } else if (eud.last_point !== null) {
-                const marker = L.marker(
-                    [eud.last_point.latitude, eud.last_point.longitude],
-                    { icon: arrowIcon, rotationOrigin: 'center center' });
+            markers[uid].setIcon(icon);
+        } else {
+            const marker = L.marker(
+                [999, 999],
+                { icon, rotationOrigin: 'center center' });
 
-                marker.on('click', (e) => {
-                    setDrawerTitle(eud.callsign);
-                    formatDrawer(eud);
-                    open();
-                });
+            if (eud.last_point !== null) marker.setLatLng([eud.last_point.latitude, eud.last_point.longitude]);
 
-                marker.bindTooltip(eud.callsign, {
-                    opacity: 0.7,
-                    permanent: true,
-                    direction: 'bottom',
-                    offset: [12, 35],
-                });
+            marker.on('click', (e) => {
+                setDrawerTitle(eud.callsign);
+                formatDrawer(eud);
+                open();
+            });
 
-                eudsLayer.addLayer(marker);
-                markers[eud.uid] = marker;
-                setMarkers(markers);
+            marker.bindTooltip(eud.callsign, {
+                opacity: 0.7,
+                permanent: true,
+                direction: 'bottom',
+                offset: [12, 35],
+            });
+
+            if (eud.last_point !== null && eud.last_point.azimuth !== null) {
+                marker.setRotationAngle(eud.last_point.azimuth - 90); //Rotate 90 degrees counter-clockwise because the icon points to the east
+            } else if (eud.last_point !== null && eud.last_point.course !== null) {
+                marker.setRotationAngle(eud.last_point.course);
             }
+
+            eudsLayer.addLayer(marker);
+            markers[eud.uid] = marker;
+            setMarkers(markers);
+        }
     }
 
     function MapContext() {
@@ -122,15 +184,26 @@ export default function Map() {
             map.addLayer(eudsLayer);
             map.addLayer(rbLinesLayer);
             map.addLayer(markersLayer);
+            map.addLayer(fovsLayer);
 
-            function onPointEvent(value: any) {
-                const { uid } = value;
+            function onPointEvent(point: any) {
+                const { uid } = point;
                 if (Object.hasOwn(markers, uid)) {
-                    // @ts-ignore trust me bro
-                    markers[uid].slideTo([value.latitude, value.longitude],
-                        { duration: 1500, keepAtCenter: false });
-                    markers[uid].setRotationAngle(value.course - 90);
+                    // filter out values of 999999
+                    if (point.longitude <= 180) {
+                        // @ts-ignore trust me bro
+                        markers[uid].slideTo([point.latitude, point.longitude],
+                            { duration: 1500, keepAtCenter: false });
+                        if (point.azimuth !== null) {
+                            markers[uid].setRotationAngle(point.azimuth - 90);
+                        } else {
+                            markers[uid].setRotationAngle(point.course);
+                        }
+                    }
                 }
+
+                // Update the FOV polygon if there is one
+                handleFov(point);
             }
 
             function onRBLine(value: any) {
@@ -194,7 +267,9 @@ export default function Map() {
 
                     if (value.mil_std_2525c !== null && value.icon === null) {
                         const options = { size: 25, direction: undefined };
-                        if (value.point !== null && value.point.course !== null) {
+                        if (value.point !== null && value.point.azimuth !== null) {
+                            options.direction = value.point.azimuth;
+                        } else if (value.point !== null && value.point.course !== null) {
                             options.direction = value.point.course;
                         }
                         const symbol = new milsymbol.default.Symbol(value.mil_std_2525c, options);
