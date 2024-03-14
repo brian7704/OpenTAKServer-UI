@@ -38,50 +38,69 @@ export default function Map() {
     const markersLayer = new L.LayerGroup();
     const fovsLayer = new L.LayerGroup();
 
-    function formatDrawer(data:any) {
+    //const fovs: { [uid: string]: L.Polygon } = {};
+
+    function formatDrawer(eud:any, point:any) {
         const detail_rows:ReactElement[] = [];
         const position_rows:ReactElement[] = [];
 
-        Object.keys(data).map((key, index) => {
-            if (key !== 'point' && key !== 'last_point' && key !== 'icon') {
-                detail_rows.push(
-                    <Table.Tr>
-                        <Table.Td><Text fw={700}>{key}</Text></Table.Td>
-                        <Table.Td>{data[key]}</Table.Td>
-                    </Table.Tr>
-                );
-            } else if (key === 'icon' && data[key] !== null) {
-                detail_rows.push(
-                    <Table.Tr>
-                        <Table.Td><Text fw={700}>{key}</Text></Table.Td>
-                        <Table.Td><Image src={data[key].bitmap} w="auto" fit="contain" /></Table.Td>
-                    </Table.Tr>
-                );
-            } else if (data[key] !== null) {
-                Object.keys(data[key]).map((point_key, point_index) => {
-                    position_rows.push(
+        if (eud !== null) {
+            Object.keys(eud).map((key, index) => {
+                if (key !== 'point' && key !== 'last_point' && key !== 'icon') {
+                    detail_rows.push(
                         <Table.Tr>
-                            <Table.Td><Text fw={700}>{point_key}</Text></Table.Td>
-                            <Table.Td>{data[key][point_key]}</Table.Td>
+                            <Table.Td><Text fw={700}>{key}</Text></Table.Td>
+                            <Table.Td>{eud[key]}</Table.Td>
                         </Table.Tr>
                     );
+                } else if (key === 'icon' && eud[key] !== null) {
+                    detail_rows.push(
+                        <Table.Tr>
+                            <Table.Td><Text fw={700}>{key}</Text></Table.Td>
+                            <Table.Td><Image src={eud[key].bitmap} w="auto" fit="contain" /></Table.Td>
+                        </Table.Tr>
+                    );
+                } else if (eud[key] !== null) {
+                    Object.keys(eud[key]).map((point_key, point_index) => {
+                        position_rows.push(
+                            <Table.Tr>
+                                <Table.Td><Text fw={700}>{point_key}</Text></Table.Td>
+                                <Table.Td>{eud[key][point_key]}</Table.Td>
+                            </Table.Tr>
+                        );
 
-                    return null;
-                });
-            }
-        });
+                        return null;
+                    });
+                }
+            });
 
-        setDetailRows(detail_rows);
-        setPositionRows(position_rows);
+            setDetailRows(detail_rows);
+            setPositionRows(position_rows);
+        }
+
+        if (point !== null) {
+            Object.keys(point).map((point_key, point_index) => {
+                position_rows.push(
+                    <Table.Tr>
+                        <Table.Td><Text fw={700}>{point_key}</Text></Table.Td>
+                        <Table.Td>{point[point_key]}</Table.Td>
+                    </Table.Tr>
+                );
+
+                return null;
+            });
+            setPositionRows(position_rows);
+        }
+
         return null;
     }
 
     function handleFov(point:any) {
-        const device_uid = point.uid;
+        const uid = point.device_uid;
 
-        if (Object.hasOwn(fovs, point.device_uid)) {
-            fovsLayer.removeLayer(fovs[device_uid]);
-            delete fovs[device_uid];
+        let fov;
+        if (Object.hasOwn(fovs, uid)) {
+            fov = fovs[uid];
         }
         if (point.fov !== null) {
             let angle1 = point.azimuth - point.fov / 2;
@@ -94,13 +113,18 @@ export default function Map() {
             const p1 = GreatCircle.destination(point.latitude, point.longitude, angle1, 100, 'M');
             const p2 = GreatCircle.destination(point.latitude, point.longitude, angle2, 100, 'M');
 
-            const fov = L.polygon(
-                [[point.latitude, point.longitude], [p1.LAT, p1.LON], [p2.LAT, p2.LON]],
-                { color: 'gray' }
-            );
-
-            fovsLayer.addLayer(fov);
-            fovs[point.device_uid] = fov;
+            if (!fov) {
+                fov = L.polygon(
+                    [[point.latitude, point.longitude], [p1.LAT, p1.LON], [p2.LAT, p2.LON]],
+                    { color: 'gray' }
+                );
+                fovsLayer.addLayer(fov);
+                fovs[uid] = fov;
+                setFovs(fovs);
+            } else {
+                fovs[uid].setLatLngs([[point.latitude, point.longitude],
+                    [p1.LAT, p1.LON], [p2.LAT, p2.LON]]);
+            }
         }
     }
 
@@ -110,8 +134,9 @@ export default function Map() {
             className = classes.connected;
             handleFov(eud.last_point);
         } else if (Object.hasOwn(fovs, eud.uid)) {
-            fovsLayer.removeLayer(fovs[eud.uid]);
+            fovs[eud.uid].remove();
             delete fovs[eud.uid];
+            setFovs(fovs);
         }
 
         let type = 'a-f-G-U-C';
@@ -143,6 +168,11 @@ export default function Map() {
 
         if (Object.hasOwn(markers, uid)) {
             markers[uid].setIcon(icon);
+            markers[uid].on('click', (e) => {
+                setDrawerTitle(eud.callsign);
+                formatDrawer(eud, null);
+                open();
+            });
         } else {
             const marker = L.marker(
                 [999, 999],
@@ -152,7 +182,7 @@ export default function Map() {
 
             marker.on('click', (e) => {
                 setDrawerTitle(eud.callsign);
-                formatDrawer(eud);
+                formatDrawer(eud, null);
                 open();
             });
 
@@ -199,6 +229,7 @@ export default function Map() {
                         } else {
                             markers[uid].setRotationAngle(point.course);
                         }
+                        formatDrawer(null, point);
                     }
                 }
 
@@ -240,7 +271,7 @@ export default function Map() {
                         });
                         circle.on('click', (e) => {
                             setDrawerTitle(value.callsign);
-                            formatDrawer(value);
+                            formatDrawer(value, null);
                             open();
                         });
                         circles[uid] = circle;
@@ -261,7 +292,7 @@ export default function Map() {
 
                     marker.on('click', (e) => {
                         setDrawerTitle(value.callsign);
-                        formatDrawer(value);
+                        formatDrawer(value, null);
                         open();
                     });
 
