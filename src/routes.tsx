@@ -14,7 +14,6 @@ const Alerts = React.lazy(() => import('./pages/Alerts'));
 const PasswordReset = React.lazy(() => import('./pages/PasswordReset'));
 const ScheduledJobs = React.lazy(() => import('./pages/ScheduledJobs'));
 const VideoRecordings = React.lazy(() => import('./pages/VideoRecordings'));
-const AdminSettings = React.lazy(() => import('./pages/AdminSettings'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home', element: Dashboard },
@@ -32,7 +31,6 @@ const routes = [
   { path: '/reset', name: 'Password Reset', element: PasswordReset },
   { path: '/jobs', name: 'Scheduled Jobs', element: ScheduledJobs },
   { path: '/video_recordings', name: 'Video Recordings', element: VideoRecordings },
-  { path: '/settings', name: 'Settings', element: AdminSettings },
 ];
 
 export default routes;

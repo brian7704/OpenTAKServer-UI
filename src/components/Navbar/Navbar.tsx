@@ -30,7 +30,6 @@ const navbarLinks = [
 const adminLinks = [
     { link: '/users', label: 'Users', icon: IconUsers },
     { link: '/jobs', label: 'Scheduled Jobs', icon: IconCalendarDue },
-    { link: '/settings', label: 'Settings', icon: IconSettings },
 ];
 
 export default function Navbar() {
