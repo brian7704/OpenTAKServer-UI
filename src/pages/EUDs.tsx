@@ -3,9 +3,11 @@ import {
     TableData,
     Pagination,
     Center,
-    useComputedColorScheme
+    useComputedColorScheme, Button,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
+import { notifications } from '@mantine/notifications';
+import {IconCheck, IconDownload, IconPlus, IconX} from '@tabler/icons-react';
 import axios from '../axios_config';
 import { apiRoutes } from '../apiRoutes';
 
@@ -25,14 +27,43 @@ interface eud {
 export default function EUDs() {
     const [euds, setEuds] = useState<TableData>({
         caption: '',
-        head: ['Callsign', 'Device', 'Platform', 'OS', 'Phone Number', 'Username', 'UID', 'Version', 'Last Event Time', 'Last Event'],
+        head: ['Callsign', 'Device', 'Platform', 'OS', 'Phone Number', 'Username', 'UID', 'Version', 'Last Event Time', 'Last Event', 'Data Package'],
         body: [],
     });
     const [activePage, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
+    const [generatingDataPackage, setGeneratingDataPackage] = useState(false);
 
-    useEffect(() => {
+    function createDataPackage(callsign:string, uid:string) {
+        setGeneratingDataPackage(true);
+        axios.post(
+            apiRoutes.generate_certificate,
+            { callsign, uid }
+        ).then(r => {
+            setGeneratingDataPackage(false);
+            if (r.status === 200) {
+                getEuds();
+                notifications.show({
+                    title: 'Success',
+                    message: `Successfully created data package for ${callsign}`,
+                    icon: <IconCheck />,
+                    color: 'green',
+                });
+            }
+        }).catch(err => {
+            console.log(err);
+            setGeneratingDataPackage(false);
+            notifications.show({
+                title: 'Error',
+                message: err.response.data.error,
+                icon: <IconX />,
+                color: 'red',
+            });
+        });
+    }
+
+    function getEuds() {
         axios.get(
             apiRoutes.eud,
             { params: {
@@ -42,14 +73,27 @@ export default function EUDs() {
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
-                    head: ['Callsign', 'Device', 'Platform', 'OS', 'Phone Number', 'Username', 'UID', 'Version', 'Last Event Time', 'Last Event'],
+                    head: ['Callsign', 'Device', 'Platform', 'OS', 'Phone Number', 'Username', 'UID', 'Version', 'Last Event Time', 'Last Event', 'Data Package'],
                     body: [],
                 };
 
                 r.data.results.map((row:any) => {
                     if (tableData.body !== undefined) {
+                        let data_package;
+                        if (row.config_hash) {
+                            const link = `${apiRoutes.download_data_packages}?hash=${row.config_hash}`;
+                            data_package = <Button component="a" href={link}><IconDownload /></Button>;
+                        } else {
+                            data_package = <Button
+                              onClick={() => {
+                                createDataPackage(row.callsign, row.uid);
+                            }}
+                              loading={generatingDataPackage}
+                            ><IconPlus />
+                                           </Button>;
+                        }
                         tableData.body.push([row.callsign, row.device, row.platform, row.os, row.phone_number,
-                            row.username, row.uid, row.version, row.last_event_time, row.last_status]);
+                            row.username, row.uid, row.version, row.last_event_time, row.last_status, data_package]);
                     }
                 });
 
@@ -58,6 +102,10 @@ export default function EUDs() {
                 setEuds(tableData);
             }
         });
+    }
+
+    useEffect(() => {
+        getEuds();
     }, [activePage]);
 
     return (

@@ -7,7 +7,7 @@ import {
     IconDeviceMobile,
     IconDashboard,
     IconUsers,
-    IconMap, IconLogout, IconMoonStars, Icon2fa, IconCalendarDue, IconMovie, IconSettings,
+    IconMap, IconLogout, IconMoonStars, Icon2fa, IconCalendarDue, IconMovie,
 } from '@tabler/icons-react';
 import { NavLink, ScrollArea, Title } from '@mantine/core';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
