@@ -159,7 +159,7 @@ export default function DataPackages() {
             <FileButton onChange={setFile}>
                 {(props) => <Button {...props}>Upload Data Package</Button>}
             </FileButton>
-            <Modal opened={deleteDataPackageOpen} onClose={() => setDeleteDataPackageOpen(false)} title="Are you sure you want to delete this recording?">
+            <Modal opened={deleteDataPackageOpen} onClose={() => setDeleteDataPackageOpen(false)} title="Are you sure you want to delete this data package?">
                 <Center>
                     <Button
                       mr="md"
