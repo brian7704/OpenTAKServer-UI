@@ -3,6 +3,8 @@ import { notifications } from '@mantine/notifications';
 import {Text, Center, Title, Divider, Paper, Flex, Switch, Space} from '@mantine/core';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { DonutChart } from '@mantine/charts';
+import { intervalToDuration, formatDuration } from 'date-fns';
+import { versions } from '../../_versions';
 import axios from '../../axios_config';
 import { apiRoutes } from '../../apiRoutes';
 import bytes_formatter from '../../bytes_formatter';
@@ -23,6 +25,12 @@ export default function Dashboard() {
         PRETTY_NAME: '',
         VERSION: '',
         VERSION_CODENAME: '',
+    });
+    const [ots, setOts] = useState({
+        version: '',
+        uptime: 0,
+        start_time: '',
+        python_version: '',
     });
     const [alerts, setAlerts] = useState({
         cot_router: false,
@@ -45,6 +53,10 @@ export default function Dashboard() {
         used: 0,
         total: 0,
         percent: 0,
+    });
+    const [uptime, setUptime] = useState({
+        boot_time: '',
+        uptime: 0,
     });
 
     useEffect(() => {
@@ -71,6 +83,16 @@ export default function Dashboard() {
                         used: r.data.memory.used,
                         total: r.data.memory.total,
                         percent: r.data.memory.percent,
+                    });
+                    setOts({
+                        version: r.data.ots_version,
+                        uptime: r.data.ots_uptime,
+                        start_time: r.data.ots_start_time,
+                        python_version: r.data.python_version,
+                    });
+                    setUptime({
+                        uptime: r.data.system_uptime,
+                        boot_time: r.data.system_boot_time,
                     });
                     setTcpEnabled(r.data.tcp);
                     setSslEnabled(r.data.ssl);
@@ -205,6 +227,11 @@ export default function Dashboard() {
                         <Center><Text fw={700} size="md" c="green.9">Available Memory: {`${bytes_formatter(memory.available)}`}</Text></Center>
                         <Center><Text fw={700} size="md" c="green.9">Used Memory: {`${bytes_formatter(memory.used)}`}</Text></Center>
                     </Paper>
+                    <Paper shadow="xl" withBorder radius="md" p="xl" mr="md" mb="md">
+                        <Center mb="md"><Title order={4}>Uptime</Title></Center>
+                        <Flex><Text fw={700}>Uptime:</Text><Space w="md" /><Text>{formatDuration(intervalToDuration({ start: 0, end: uptime.uptime * 1000 }))}</Text></Flex>
+                        <Flex><Text fw={700}>Boot Time:</Text><Space w="md" />{uptime.boot_time}</Flex>
+                    </Paper>
                 </Flex>
             </Center>
             <Divider my="lg" />
@@ -227,6 +254,20 @@ export default function Dashboard() {
                         <Flex><Text fw={700}>Pretty Name:</Text><Space w="md" /><Text>{osRelease.PRETTY_NAME}</Text></Flex>
                         <Flex><Text fw={700}>Version:</Text><Space w="md" /><Text>{osRelease.VERSION}</Text></Flex>
                         <Flex><Text fw={700}>Code Name:</Text><Space w="md" /><Text>{osRelease.VERSION_CODENAME}</Text></Flex>
+                    </Paper>
+                    <Paper shadow="xl" withBorder radius="md" p="xl" mr="md" mb="md">
+                        <Center mb="md"><Title order={4}>OpenTAKServer</Title></Center>
+                        <Flex><Text fw={700}>Version:</Text><Space w="md" /><Text>{ots.version}</Text></Flex>
+                        <Flex><Text fw={700}>UI Version:</Text><Space w="md" /><Text>{versions.gitTag}</Text></Flex>
+                        <Flex><Text fw={700}>UI Commit Hash:</Text><Space w="md" /><Text>{versions.gitCommitHash}</Text></Flex>
+                        <Flex><Text fw={700}>UI Commit Date:</Text><Space w="md" /><Text>{versions.versionDate}</Text></Flex>
+                        <Flex><Text fw={700}>Uptime:</Text><Space w="md" />
+                            <Text>
+                                {formatDuration(intervalToDuration({ start: 0, end: ots.uptime * 1000 }))}
+                            </Text>
+                        </Flex>
+                        <Flex><Text fw={700}>Start Time:</Text><Space w="md" /><Text>{ots.start_time}</Text></Flex>
+                        <Flex><Text fw={700}>Python Version:</Text><Space w="md" /><Text>{ots.python_version}</Text></Flex>
                     </Paper>
                 </Flex>
             </Center>

@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "vite --force",
-    "build": "tsc && vite build",
+    "build": "ts-appversion --git=. && tsc && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "lint": "npm run lint:eslint && npm run lint:stylelint",
@@ -19,10 +19,10 @@
     "storybook:build": "storybook build"
   },
   "dependencies": {
-    "@mantine/charts": "^7.5.0",
-    "@mantine/core": "^7.5.0",
-    "@mantine/form": "^7.5.0",
-    "@mantine/hooks": "7.5.0",
+    "@mantine/charts": "^7.7.0",
+    "@mantine/core": "^7.7.0",
+    "@mantine/form": "^7.7.0",
+    "@mantine/hooks": "7.7.0",
     "date-fns": "^3.3.1",
     "leaflet": "^1.9.4",
     "leaflet-rotatedmarker": "^0.2.0",
@@ -42,6 +42,7 @@
   "devDependencies": {
     "@mantine/notifications": "^7.5.0",
     "@mantinex/mantine-logo": "^1.0.1",
+    "@saithodev/ts-appversion": "^2.1.2",
     "@storybook/addon-essentials": "^7.6.6",
     "@storybook/addon-interactions": "^7.6.6",
     "@storybook/addon-links": "^7.6.6",
