@@ -38,19 +38,23 @@ export default function Map() {
     const markersLayer = new L.LayerGroup();
     const fovsLayer = new L.LayerGroup();
 
-    //const fovs: { [uid: string]: L.Polygon } = {};
-
     function formatDrawer(eud:any, point:any) {
         const detail_rows:ReactElement[] = [];
         const position_rows:ReactElement[] = [];
 
         if (eud !== null) {
             Object.keys(eud).map((key, index) => {
-                if (key !== 'point' && key !== 'last_point' && key !== 'icon') {
+                if (key !== 'point' && key !== 'last_point' && key !== 'icon' && key !== 'zmist' && key !== 'eud') {
+                    let value = eud[key];
+                    if (eud[key] === true) {
+                        value = 'True';
+                    } else if (eud[key] === false) {
+                        value = 'False';
+                    }
                     detail_rows.push(
                         <Table.Tr>
                             <Table.Td><Text fw={700}>{key}</Text></Table.Td>
-                            <Table.Td>{eud[key]}</Table.Td>
+                            <Table.Td>{value}</Table.Td>
                         </Table.Tr>
                     );
                 } else if (key === 'icon' && eud[key] !== null) {
@@ -60,17 +64,27 @@ export default function Map() {
                             <Table.Td><Image src={eud[key].bitmap} w="auto" fit="contain" /></Table.Td>
                         </Table.Tr>
                     );
-                } else if (eud[key] !== null) {
+                } else if (key === 'point' && eud[key] !== null) {
                     Object.keys(eud[key]).map((point_key, point_index) => {
                         position_rows.push(
                             <Table.Tr>
                                 <Table.Td><Text fw={700}>{point_key}</Text></Table.Td>
-                                <Table.Td>{eud[key][point_key]}</Table.Td>
+                                <Table.Td>{eud[key][point_key]}
+                                </Table.Td>
                             </Table.Tr>
                         );
-
                         return null;
                     });
+                } else if (key === 'zmist' && eud[key] !== null) {
+                    Object.keys(eud[key]).map((zmist_key, zmist_index) => {
+                        detail_rows.push(
+                            <Table.Tr>
+                                <Table.Td><Text fw={700}>{zmist_key}</Text></Table.Td>
+                                <Table.Td>{eud[key][zmist_key]}</Table.Td>
+                            </Table.Tr>
+                        );
+                    });
+                    return null;
                 }
             });
 
@@ -237,6 +251,41 @@ export default function Map() {
                 handleFov(point);
             }
 
+            function onCaseEvac(value: any) {
+                const { uid } = value;
+                const marker = L.marker([value.point.latitude, value.point.longitude]);
+                marker.bindTooltip(value.title, {
+                    opacity: 0.7,
+                    permanent: true,
+                    direction: 'bottom',
+                    offset: [12, 35],
+                });
+
+                marker.on('click', (e) => {
+                    setDrawerTitle(value.title);
+                    formatDrawer(value, null);
+                    open();
+                });
+
+                marker.setIcon(L.icon({
+                    iconUrl: value.icon.bitmap,
+                    shadowUrl: value.icon.shadow,
+                    iconAnchor: [12, 24],
+                    popupAnchor: [7, -20],
+                    tooltipAnchor: [-7, -15],
+                }));
+
+                if (Object.hasOwn(markers, uid)) {
+                    // @ts-ignore trust me bro
+                    markers[uid].slideTo([value.point.latitude, value.point.longitude],
+                        { duration: 2000, keepAtCenter: false });
+                } else {
+                    marker.addTo(markersLayer);
+                }
+                markers[uid] = marker;
+                setMarkers(markers);
+            }
+
             function onRBLine(value: any) {
                 const { uid } = value;
                 if (Object.hasOwn(rbLines, uid)) {
@@ -361,6 +410,10 @@ export default function Map() {
                             onRBLine(rb_line);
                             return null;
                         });
+                        r.data.casevacs.map((casevac: any, index: any) => {
+                            onCaseEvac(casevac);
+                            return null;
+                        });
                     }
                 }).catch(err => {
                     console.log(err);
@@ -377,12 +430,14 @@ export default function Map() {
             socket.on('rb_line', onRBLine);
             socket.on('marker', onMarker);
             socket.on('eud', onEud);
+            socket.on('casevac', onCaseEvac);
 
             return () => {
                 socket.off('point', onPointEvent);
                 socket.off('rb_line', onRBLine);
                 socket.off('marker', onMarker);
                 socket.off('eud', onEud);
+                socket.off('casevac', onCaseEvac);
 
                 // janky fix for duplicate fullscreen buttons
                 const elementsToRemove =
