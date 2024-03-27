@@ -1,17 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { Text, Center, Title, Divider, Paper, useComputedColorScheme, Flex, Switch } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import {Text, Center, Title, Divider, Paper, Flex, Switch, Space} from '@mantine/core';
 import { IconCheck, IconX } from '@tabler/icons-react';
-import { AreaChart, DonutChart } from '@mantine/charts';
+import { DonutChart } from '@mantine/charts';
 import axios from '../../axios_config';
 import { apiRoutes } from '../../apiRoutes';
 import bytes_formatter from '../../bytes_formatter';
 import '@mantine/charts/styles.css';
-import { notifications } from '@mantine/notifications';
 
 export default function Dashboard() {
     const [tcpEnabled, setTcpEnabled] = useState(true);
     const [sslEnabled, setSslEnabled] = useState(true);
-    const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
+    const [uname, setUname] = useState({
+        machine: '',
+        node: '',
+        release: '',
+        system: '',
+        version: '',
+    });
+    const [osRelease, setOsRelease] = useState({
+        NAME: '',
+        PRETTY_NAME: '',
+        VERSION: '',
+        VERSION_CODENAME: '',
+    });
     const [alerts, setAlerts] = useState({
         cot_router: false,
         tcp: false,
@@ -62,6 +74,8 @@ export default function Dashboard() {
                     });
                     setTcpEnabled(r.data.tcp);
                     setSslEnabled(r.data.ssl);
+                    setUname(r.data.uname);
+                    setOsRelease(r.data.os_release);
                 }
             }).catch(err => {
                 console.log(err);
@@ -163,7 +177,7 @@ export default function Dashboard() {
                                 ]}
                             />
                         </Center>
-                        <Center><Text fw={700} size="md" c="blue.9">{`${serverStatus.cpu_percent}%`}</Text></Center>
+                        <Center><Text fw={700} size="md" c="green.9">{`${serverStatus.cpu_percent}%`}</Text></Center>
                     </Paper>
                     <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md">
                         <Center mb="md"><Title order={4}>Disk Usage</Title></Center>
@@ -175,8 +189,8 @@ export default function Dashboard() {
                                 ]}
                             />
                         </Center>
-                        <Center><Text fw={700} size="md" c="red.9">Total Space: {`${bytes_formatter(disk.total)}`}</Text></Center>
-                        <Center><Text fw={700} size="md" c="red.9">Used Space: {`${bytes_formatter(disk.used)}`}</Text></Center>
+                        <Center><Text fw={700} size="md" c="green.9">Total Space: {`${bytes_formatter(disk.total)}`}</Text></Center>
+                        <Center><Text fw={700} size="md" c="green.9">Used Space: {`${bytes_formatter(disk.used)}`}</Text></Center>
                     </Paper>
                     <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md">
                         <Center mb="md"><Title order={4}>Memory Usage</Title></Center>
@@ -190,6 +204,29 @@ export default function Dashboard() {
                         </Center>
                         <Center><Text fw={700} size="md" c="green.9">Available Memory: {`${bytes_formatter(memory.available)}`}</Text></Center>
                         <Center><Text fw={700} size="md" c="green.9">Used Memory: {`${bytes_formatter(memory.used)}`}</Text></Center>
+                    </Paper>
+                </Flex>
+            </Center>
+            <Divider my="lg" />
+            <Center>
+                <Title mb="xl" order={2}>Server Details</Title>
+            </Center>
+            <Center mb="xl">
+                <Flex direction={{ base: 'column', xs: 'row' }}>
+                    <Paper shadow="xl" withBorder radius="md" p="xl" mr="md" mb="md">
+                        <Center mb="md"><Title order={4}>uname</Title></Center>
+                        <Flex><Text fw={700}>System:</Text><Space w="md" /><Text>{uname.system}</Text></Flex>
+                        <Flex><Text fw={700}>Release:</Text><Space w="md" />{uname.release}</Flex>
+                        <Flex><Text fw={700}>Version:</Text><Space w="md" />{uname.version}</Flex>
+                        <Flex><Text fw={700}>Architecture:</Text><Space w="md" />{uname.machine}</Flex>
+                        <Flex><Text fw={700}>Hostname:</Text><Space w="md" />{uname.node}</Flex>
+                    </Paper>
+                    <Paper shadow="xl" withBorder radius="md" p="xl" mr="md" mb="md">
+                        <Center mb="md"><Title order={4}>OS Release</Title></Center>
+                        <Flex><Text fw={700}>Name:</Text><Space w="md" /><Text>{osRelease.NAME}</Text></Flex>
+                        <Flex><Text fw={700}>Pretty Name:</Text><Space w="md" /><Text>{osRelease.PRETTY_NAME}</Text></Flex>
+                        <Flex><Text fw={700}>Version:</Text><Space w="md" /><Text>{osRelease.VERSION}</Text></Flex>
+                        <Flex><Text fw={700}>Code Name:</Text><Space w="md" /><Text>{osRelease.VERSION_CODENAME}</Text></Flex>
                     </Paper>
                 </Flex>
             </Center>
