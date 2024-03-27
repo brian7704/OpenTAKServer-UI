@@ -64,7 +64,7 @@ export default function Casevac() {
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
-                    head: ['Callsign', 'Casevac', 'Urgent', 'Priority', 'Routine', 'Hoist', 'Extraction Equipment', 'Ventilator',
+                    head: ['Title', 'Timestamp', 'Callsign', 'Casevac', 'Urgent', 'Priority', 'Routine', 'Hoist', 'Extraction Equipment', 'Ventilator',
                         'Equipment Detail', 'Litter', 'Ambulatory', 'Security', 'HLZ Marking', 'HLZ Remarks', 'Coalition Military',
                         'Coalition Civilian', 'Non-Coalition Military', 'Non-Coalition Civilian', 'Opposing Force or Detainee',
                         'Children', 'Terrain Slope Direction', 'Rough Terrain', 'Loose Terrain', 'Terrain Remarks', 'Remarks',
@@ -76,14 +76,16 @@ export default function Casevac() {
                     if (tableData.body !== undefined) {
                         const { zmist } = row;
 
-                        tableData.body.push([row.eud.callsign, row.casevac, row.urgent,
-                            row.priority, row.routine, row.hoist, row.extraction_equipment,
-                        row.ventilator, row.equipment_detail, row.litter, row.ambulatory,
+                        tableData.body.push([row.title, row.timestamp, row.eud.callsign,
+                        String(row.casevac), row.urgent, row.priority, row.routine,
+                        String(row.hoist), String(row.extraction_equipment),
+                        String(row.ventilator), row.equipment_detail, row.litter, row.ambulatory,
                         row.security, row.hlz_marking, row.hlz_remarks, row.us_military,
                         row.us_civilian, row.nonus_military, row.nonus_civilian, row.epw,
-                        row.child, row.terrain_slope_dir, row.terrain_rough, row.terrain_loose,
-                        row.terrain_other_detail, row.medline_remarks, (zmist ? zmist.i : ''),
-                        (zmist ? zmist.m : ''), (zmist ? zmist.s : ''), (zmist ? zmist.t : ''), (zmist ? zmist.title : ''),
+                        row.child, row.terrain_slope_dir, String(row.terrain_rough),
+                        String(row.terrain_loose), String(row.terrain_other_detail),
+                        row.medline_remarks, (zmist ? zmist.i : ''), (zmist ? zmist.m : ''),
+                        (zmist ? zmist.s : ''), (zmist ? zmist.t : ''), (zmist ? zmist.title : ''),
                         (zmist ? zmist.z : '')]);
                     }
                 });
