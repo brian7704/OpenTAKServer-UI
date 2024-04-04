@@ -1,7 +1,7 @@
 {
   "name": "opentakserver-ui",
   "private": true,
-  "version": "1.0.0",
+  "version": "0.0.0",
   "scripts": {
     "dev": "vite --force",
     "build": "ts-appversion --git=. && tsc && vite build",

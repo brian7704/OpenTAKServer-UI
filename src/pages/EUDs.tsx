@@ -73,27 +73,14 @@ export default function EUDs() {
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
-                    head: ['Callsign', 'Device', 'Platform', 'OS', 'Phone Number', 'Username', 'UID', 'Version', 'Last Event Time', 'Last Event', 'Data Package'],
+                    head: ['Callsign', 'Device', 'Platform', 'OS', 'Phone Number', 'Username', 'UID', 'Version', 'Last Event Time', 'Last Event'],
                     body: [],
                 };
 
                 r.data.results.map((row:any) => {
                     if (tableData.body !== undefined) {
-                        let data_package;
-                        if (row.config_hash) {
-                            const link = `${apiRoutes.download_data_packages}?hash=${row.config_hash}`;
-                            data_package = <Button component="a" href={link}><IconDownload /></Button>;
-                        } else {
-                            data_package = <Button
-                              onClick={() => {
-                                createDataPackage(row.callsign, row.uid);
-                            }}
-                              loading={generatingDataPackage}
-                            ><IconPlus />
-                                           </Button>;
-                        }
                         tableData.body.push([row.callsign, row.device, row.platform, row.os, row.phone_number,
-                            row.username, row.uid, row.version, row.last_event_time, row.last_status, data_package]);
+                            row.username, row.uid, row.version, row.last_event_time, row.last_status]);
                     }
                 });
 
