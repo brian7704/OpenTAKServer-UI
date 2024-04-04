@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
     IconAlertTriangle,
     IconHeartbeat,
@@ -7,14 +7,16 @@ import {
     IconDeviceMobile,
     IconDashboard,
     IconUsers,
-    IconMap, IconLogout, IconMoonStars, Icon2fa, IconCalendarDue, IconMovie,
+    IconMap, IconLogout, IconMoonStars, Icon2fa, IconCalendarDue, IconMovie, IconQrcode, IconX,
 } from '@tabler/icons-react';
-import { NavLink, ScrollArea, Title } from '@mantine/core';
+import {NavLink, ScrollArea, Title, Button, Modal, Text, Center} from '@mantine/core';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import classes from './Navbar.module.css';
 import DarkModeSwitch from '../DarkModeSwitch';
 import axios from '../../axios_config';
 import { apiRoutes } from '../../apiRoutes';
+import {notifications} from "@mantine/notifications";
+import QRCode from "react-qr-code";
 
 const navbarLinks = [
     { link: '/dashboard', label: 'Dashboard', icon: IconDashboard },
@@ -35,6 +37,8 @@ const adminLinks = [
 export default function Navbar() {
     const administrator = localStorage.getItem('administrator') === 'true';
     const location = useLocation();
+    const [showItakQr, setShowItakQr] = useState(false);
+    const [qrString, setQrString] = useState("");
 
     const links = navbarLinks.map((item) => (
         <NavLink
@@ -75,6 +79,22 @@ export default function Navbar() {
         });
     };
 
+    const itak_qr_string = () => {
+        axios.get(apiRoutes.itakQrString).then(r => {
+            if (r.status === 200) {
+                setQrString(r.data);
+                setShowItakQr(true);
+            }
+        }).catch(err => {
+            console.log(err);
+            notifications.show({
+                message: "Failed to get QR code string",
+                icon: <IconX />,
+                color: 'red',
+            });
+        })
+    }
+
     return (
         <ScrollArea>
             <div>
@@ -86,10 +106,14 @@ export default function Navbar() {
                     {admin_links}
                 </div> : ''}
             <div className={classes.footer}>
+                <NavLink className={classes.link} key="itakQrCode" onClick={() => itak_qr_string()} leftSection={<IconQrcode className={classes.linkIcon} stroke={1.5} />} label="iTAK QR Code" />
                 <NavLink className={classes.link} key="2faSettings" component={Link} to="/tfa_setup" leftSection={<Icon2fa className={classes.linkIcon} stroke={1.5} />} label="Setup 2FA" />
                 <NavLink className={classes.link} key="darkModeSwitch" leftSection={<IconMoonStars className={classes.linkIcon} stroke={1.5} />} rightSection={<DarkModeSwitch />} label="Dark Mode" />
                 <NavLink className={classes.link} key="logout" leftSection={<IconLogout className={classes.linkIcon} stroke={1.5} />} label="Log Out" onClick={() => logout()} />
             </div>
+            <Modal opened={showItakQr} onClose={() => setShowItakQr(false)} p="md" title="iTAK Connection Details">
+                <Center><QRCode value={qrString} /></Center>
+            </Modal>
         </ScrollArea>
     );
 }

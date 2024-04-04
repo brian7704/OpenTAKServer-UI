@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { notifications } from '@mantine/notifications';
-import {Text, Center, Title, Divider, Paper, Flex, Switch, Space} from '@mantine/core';
+import {Text, Center, Title, Divider, Paper, Flex, Switch, Space, ScrollArea} from '@mantine/core';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { DonutChart } from '@mantine/charts';
 import { intervalToDuration, formatDuration } from 'date-fns';
@@ -157,7 +157,7 @@ export default function Dashboard() {
     }
 
     return (
-        <>
+        <ScrollArea>
             <Center>
                 <Title mb="xl" order={2}>OpenTAKServer Status</Title>
             </Center>
@@ -271,6 +271,6 @@ export default function Dashboard() {
                     </Paper>
                 </Flex>
             </Center>
-        </>
+        </ScrollArea>
     );
 }

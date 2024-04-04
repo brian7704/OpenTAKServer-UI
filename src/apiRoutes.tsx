@@ -40,4 +40,5 @@ export const apiRoutes = {
   stopSSL: '/api/ssl/stop',
   startTCP: '/api/tcp/start',
   stopTCP: '/api/tcp/stop',
+  itakQrString: '/api/itak_qr_string',
 };
