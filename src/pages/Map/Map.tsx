@@ -44,7 +44,7 @@ export default function Map() {
 
         if (eud !== null) {
             Object.keys(eud).map((key, index) => {
-                if (key !== 'point' && key !== 'last_point' && key !== 'icon' && key !== 'zmist' && key !== 'eud') {
+                if (key !== 'point' && key !== 'last_point' && key !== 'icon' && key !== 'zmist' && key !== 'eud' && key !== 'data_packages') {
                     let value = eud[key];
                     if (eud[key] === true) {
                         value = 'True';
@@ -64,7 +64,7 @@ export default function Map() {
                             <Table.Td><Image src={eud[key].bitmap} w="auto" fit="contain" /></Table.Td>
                         </Table.Tr>
                     );
-                } else if (key === 'point' && eud[key] !== null) {
+                } else if ((key === 'point' || key === 'last_point') && eud[key] !== null) {
                     Object.keys(eud[key]).map((point_key, point_index) => {
                         position_rows.push(
                             <Table.Tr>
