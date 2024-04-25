@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
     IconAlertTriangle,
     IconHeartbeat,
@@ -9,14 +9,15 @@ import {
     IconUsers,
     IconMap, IconLogout, IconMoonStars, Icon2fa, IconCalendarDue, IconMovie, IconQrcode, IconX,
 } from '@tabler/icons-react';
-import {NavLink, ScrollArea, Title, Button, Modal, Text, Center} from '@mantine/core';
+import { NavLink, ScrollArea, Title, Modal, Center } from '@mantine/core';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { notifications } from '@mantine/notifications';
+import QRCode from 'react-qr-code';
 import classes from './Navbar.module.css';
 import DarkModeSwitch from '../DarkModeSwitch';
 import axios from '../../axios_config';
 import { apiRoutes } from '../../apiRoutes';
-import {notifications} from "@mantine/notifications";
-import QRCode from "react-qr-code";
+import MeshtasticLogo from './MeshtasticLogo';
 
 const navbarLinks = [
     { link: '/dashboard', label: 'Dashboard', icon: IconDashboard },
@@ -27,6 +28,7 @@ const navbarLinks = [
     { link: '/data_packages', label: 'Data Packages', icon: IconPackage },
     { link: '/video_streams', label: 'Video Streams', icon: IconVideo },
     { link: '/video_recordings', label: 'Video Recordings', icon: IconMovie },
+    { link: '/meshtastic', label: 'Meshtastic', icon: MeshtasticLogo },
 ];
 
 const adminLinks = [
@@ -38,7 +40,7 @@ export default function Navbar() {
     const administrator = localStorage.getItem('administrator') === 'true';
     const location = useLocation();
     const [showItakQr, setShowItakQr] = useState(false);
-    const [qrString, setQrString] = useState("");
+    const [qrString, setQrString] = useState('');
 
     const links = navbarLinks.map((item) => (
         <NavLink
@@ -88,12 +90,12 @@ export default function Navbar() {
         }).catch(err => {
             console.log(err);
             notifications.show({
-                message: "Failed to get QR code string",
+                message: 'Failed to get QR code string',
                 icon: <IconX />,
                 color: 'red',
             });
-        })
-    }
+        });
+    };
 
     return (
         <ScrollArea>

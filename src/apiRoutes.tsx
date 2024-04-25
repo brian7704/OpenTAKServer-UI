@@ -41,4 +41,5 @@ export const apiRoutes = {
   startTCP: '/api/tcp/start',
   stopTCP: '/api/tcp/stop',
   itakQrString: '/api/itak_qr_string',
+  meshtasticChannels: '/api/meshtastic/channel',
 };
