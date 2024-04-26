@@ -3,12 +3,12 @@ import {
     Center, CopyButton, Modal, NumberInput,
     Pagination, Select, Switch,
     Table,
-    TableData, TextInput,
+    TableData, TextInput, Tooltip,
     useComputedColorScheme,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import React, { useEffect, useState } from 'react';
-import {IconCircleMinus, IconX, IconCheck, IconQrcode, IconPlus, IconReload} from '@tabler/icons-react';
+import { IconCircleMinus, IconX, IconCheck, IconQrcode, IconPlus, IconReload } from '@tabler/icons-react';
 import QRCode from 'react-qr-code';
 import axios from '@/axios_config';
 import { apiRoutes } from '@/apiRoutes';
@@ -22,14 +22,23 @@ export default function Meshtastic() {
     const [channelUrl, setChannelUrl] = useState('');
     const [channelToDelete, setChannelToDelete] = useState('');
     const [deleteChannelOpen, setDeleteChanelOpen] = useState(false);
-    const [channelNameError, setChannelNameError] = useState("");
+    const [channelNameError, setChannelNameError] = useState('');
     const [showAddChannel, setShowAddChannel] = useState(false);
     const [showNewChannel, setShowNewChannel] = useState(false);
-    const [psk, setPsk] = useState();
+    const [psk, setPsk] = useState('');
     const [channelProperties, setChannelProperties] = useState({
-        name: "", psk: "", uplink_enabled: false, downlink_enabled: false, position_precision: 32,
-        lora_region: "UNSET", lora_hop_limit: 3, lora_tx_enabled: false, lora_tx_power: 30, lora_sx126x_rx_boosted_gain: false, modem_preset: "LONG_FAST"
-    })
+        name: '',
+        psk: '',
+        uplink_enabled: false,
+        downlink_enabled: false,
+        position_precision: 32,
+                lora_region: 'UNSET',
+        lora_hop_limit: 3,
+        lora_tx_enabled: false,
+        lora_tx_power: 30,
+        lora_sx126x_rx_boosted_gain: false,
+        modem_preset: 'LONG_FAST',
+    });
     const [channels, setChannels] = useState<TableData>({
         caption: '',
         head: ['Name', 'PSK', 'Uplink Enabled', 'Downlink Enabled', 'Position Precision', 'LoRa Region', 'Hop Limit', 'TX Enabled', 'TX Power', 'RX Gain Boost', 'Modem Preset'],
@@ -44,39 +53,49 @@ export default function Meshtastic() {
                 channelProperties.psk = r.data.psk;
                 setPsk(r.data.psk);
             }
-        })
+        });
     }
 
     function addChannel() {
         if (!channelProperties.name) {
-            setChannelNameError("Name cannot be blank")
+            setChannelNameError('Name cannot be blank');
         } else {
             axios.post(
                 apiRoutes.meshtasticChannels,
-                {...channelProperties}
+                { ...channelProperties }
             ).then(r => {
                 if (r.status === 200) {
                     getChannels();
                     notifications.show({
                         message: 'Successfully added channel',
-                        icon: <IconCheck/>,
-                        color: 'green'
-                    })
+                        icon: <IconCheck />,
+                        color: 'green',
+                    });
                     setShowNewChannel(false);
+                    setPsk("");
                     setChannelProperties({
-                        name: "", psk: "", uplink_enabled: false, downlink_enabled: false, position_precision: 32,
-                        lora_region: "UNSET", lora_hop_limit: 3, lora_tx_enabled: false, lora_tx_power: 30, lora_sx126x_rx_boosted_gain: false, modem_preset: "LONG_FAST"
-                    })
+                        name: '',
+                        psk: '',
+                        uplink_enabled: false,
+                        downlink_enabled: false,
+                        position_precision: 32,
+                                                lora_region: 'UNSET',
+                        lora_hop_limit: 3,
+                        lora_tx_enabled: false,
+                        lora_tx_power: 30,
+                        lora_sx126x_rx_boosted_gain: false,
+                        modem_preset: 'LONG_FAST',
+                    });
                 }
             }).catch(err => {
                 console.log(err);
                 notifications.show({
-                    title: "Failed to add channel",
+                    title: 'Failed to add channel',
                     message: err.response.data.error,
-                    icon: <IconX/>,
-                    color: 'red'
-                })
-            })
+                    icon: <IconX />,
+                    color: 'red',
+                });
+            });
         }
     }
 
@@ -92,21 +111,22 @@ export default function Meshtastic() {
         ).then(r => {
             if (r.status === 200) {
                 notifications.show({
-                    message: "Successfully added channel",
+                    message: 'Successfully added channel',
                     icon: <IconCheck />,
                     color: 'green',
-                })
-                setShowNewChannel(false);
+                });
+                setShowAddChannel(false);
+                getChannels();
             }
         }).catch(err => {
             console.log(err);
             notifications.show({
-                title: "Failed to add channel",
+                title: 'Failed to add channel',
                 message: err.response.data.error,
                 color: 'red',
-                icon: <IconX />
-            })
-        })
+                icon: <IconX />,
+            });
+        });
     }
 
     function getChannels() {
@@ -150,15 +170,27 @@ export default function Meshtastic() {
                         const tx_enabled = row.lora_tx_enabled ? <IconCheck color="green" /> : <IconX color="red" />;
                         const lora_sx126x_rx_boosted_gain = row.lora_sx126x_rx_boosted_gain ? <IconCheck color="green" /> : <IconX color="red" />;
                         const url = <CopyButton value={row.url}>{({ copied, copy }) => (
-                            <Button color={copied ? 'teal' : 'blue'} onClick={copy}>
-                                {copied ? 'Copied URL' : 'Copy URL'}
-                            </Button>
-                        )}</CopyButton>
-                        const psk = <CopyButton value={row.psk}>{({ copied, copy }) => (
-                            <Button color={copied ? 'teal' : 'blue'} onClick={copy}>
-                                {copied ? 'Copied PSK' : 'Copy PSK'}
-                            </Button>
-                        )}</CopyButton>
+                                                <Tooltip label={row.url}>
+                                                    <Button color={copied ? 'teal' : 'blue'} onClick={copy}>
+                                                        {copied ? 'Copied URL' : 'Copy URL'}
+                                                    </Button>
+                                                </Tooltip>
+                                                )}
+                                                </CopyButton>;
+
+                        let psk;
+                        if (row.psk) {
+                            psk = <CopyButton value={row.psk}>{({copied, copy}) => (
+                                    <Tooltip label={row.psk}>
+                                        <Button color={copied ? 'teal' : 'blue'} onClick={copy}>
+                                            {copied ? 'Copied PSK' : 'Copy PSK'}
+                                        </Button>
+                                    </Tooltip>
+                                    )}
+                                </CopyButton>;
+                        } else {
+                            psk = <Button disabled>Encryption Disabled</Button>;
+                        }
 
                         tableData.body.push([row.name, psk, uplink_enabled, downlink_enabled,
                             row.position_precision, row.lora_region, row.lora_hop_limit, tx_enabled,
@@ -188,36 +220,40 @@ export default function Meshtastic() {
                 <Center><QRCode value={channelUrl} /></Center>
             </Modal>
             <Modal opened={showAddChannel} onClose={() => setShowAddChannel(false)} title="Add Existing Channel">
-                <TextInput required label="URL" onChange={e => {setChannelUrl(e.target.value)}} mb="md" />
+                <TextInput required placeholder="https://meshtastic.org/e/#CgMSAQESDAgBOAFAA0gBUB5oAQ==" label="URL" onChange={e => { setChannelUrl(e.target.value); }} mb="md" />
                 <Button onClick={e => addChannelByUrl(e)}>Add Channel</Button>
             </Modal>
             <Modal opened={showNewChannel} onClose={() => setShowNewChannel(false)} title="Add New Channel">
-                <TextInput required label="Name" onChange={e => {channelProperties.name = e.target.value; setChannelNameError("")}} mb="md" error={channelNameError} />
-                <TextInput label="PSK" value={psk} rightSection={<IconReload onClick={() => generatePsk() } /> } mb="md" />
-                <Switch label="Uplink Enabled" onChange={e => {channelProperties.uplink_enabled = e.target.checked}} mb="md" />
-                <Switch label="Downlink Enabled" onChange={e => {channelProperties.downlink_enabled = e.target.checked}} mb="md" />
-                <NumberInput label="Position Precision" min={0} max={32} defaultValue={channelProperties.position_precision} onChange={e => {channelProperties.position_precision = Number(e)}} mb="md" />
+                <TextInput required label="Name" onChange={e => { channelProperties.name = e.target.value; setChannelNameError(''); }} mb="md" error={channelNameError} />
+                <TextInput label="PSK" value={psk} rightSection={<IconReload onClick={() => generatePsk()} />} mb="md" />
+                <Switch label="Uplink Enabled" onChange={e => { channelProperties.uplink_enabled = e.target.checked; }} mb="md" />
+                <Switch label="Downlink Enabled" onChange={e => { channelProperties.downlink_enabled = e.target.checked; }} mb="md" />
+                <NumberInput label="Position Precision" min={0} max={32} defaultValue={channelProperties.position_precision} onChange={e => { channelProperties.position_precision = Number(e); }} mb="md" />
                 <Select
-                    label="Region"
-                    onChange={e => {channelProperties.lora_region = String(e)}}
-                    data={['UNSET', 'US', 'EU_433', 'EU_868', 'CN', 'JP', 'ANZ', 'KR', 'TW', 'RU', 'IN', 'NZ_865', 'TH', 'LORA_24', 'UA_433', 'UA_868', 'MY_433', 'SG_923']}
-                    mb="md"
-                    defaultValue='UNSET'
+                  label="Region"
+                  onChange={e => { channelProperties.lora_region = String(e); }}
+                  data={['UNSET', 'US', 'EU_433', 'EU_868', 'CN', 'JP', 'ANZ', 'KR', 'TW', 'RU', 'IN', 'NZ_865', 'TH', 'LORA_24', 'UA_433', 'UA_868', 'MY_433', 'SG_923']}
+                  mb="md"
+                  defaultValue="UNSET"
                 />
-                <NumberInput label="Hop Limit" min={0} max={10} defaultValue={channelProperties.lora_hop_limit} onChange={e => {channelProperties.lora_hop_limit = Number(e)}} mb="md" />
-                <Switch label="TX Enabled" onChange={e => {channelProperties.lora_tx_enabled = e.target.checked}} mb="md" />
-                <NumberInput label="TX Power" min={0} max={100} defaultValue={channelProperties.lora_tx_power} onChange={e => {channelProperties.lora_tx_power = Number(e)}} mb="md" />
-                <Switch label="RX Boost Gain" onChange={e => {channelProperties.lora_sx126x_rx_boosted_gain = e.target.checked}} mb="md" />
+                <NumberInput label="Hop Limit" min={0} max={10} defaultValue={channelProperties.lora_hop_limit} onChange={e => { channelProperties.lora_hop_limit = Number(e); }} mb="md" />
+                <Switch label="TX Enabled" onChange={e => { channelProperties.lora_tx_enabled = e.target.checked; }} mb="md" />
+                <NumberInput label="TX Power" min={0} max={100} defaultValue={channelProperties.lora_tx_power} onChange={e => { channelProperties.lora_tx_power = Number(e); }} mb="md" />
+                <Switch label="RX Boost Gain" onChange={e => { channelProperties.lora_sx126x_rx_boosted_gain = e.target.checked; }} mb="md" />
                 <Select
-                    label="Modem Preset"
-                    onChange={e => {channelProperties.modem_preset = String(e)}}
-                    data={['LONG_FAST', 'LONG_SLOW', 'VERY_LONG_SLOW', 'MEDIUM_SLOW', 'MEDIUM_FAST', 'SHORT_SLOW', 'SHORT_FAST', 'LONG_MODERATE']}
-                    mb="md"
-                    defaultValue='LONG_FAST'
+                  label="Modem Preset"
+                  onChange={e => { channelProperties.modem_preset = String(e); }}
+                  data={['LONG_FAST', 'LONG_SLOW', 'VERY_LONG_SLOW', 'MEDIUM_SLOW', 'MEDIUM_FAST', 'SHORT_SLOW', 'SHORT_FAST', 'LONG_MODERATE']}
+                  mb="md"
+                  defaultValue="LONG_FAST"
                 />
-                <Button mb="md" onClick={e => {
+                <Button
+                  mb="md"
+                  onClick={e => {
                     addChannel();
-                }}>Add Channel</Button>
+                }}
+                >Add Channel
+                </Button>
             </Modal>
             <Button leftSection={<IconPlus size={14} />} onClick={() => setShowAddChannel(true)} mr="md">Add Existing Channel</Button>
             <Button leftSection={<IconPlus size={14} />} onClick={() => setShowNewChannel(true)}>Add New Channel</Button>
