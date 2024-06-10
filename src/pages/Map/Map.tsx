@@ -110,6 +110,8 @@ export default function Map() {
     }
 
     function handleFov(point:any) {
+        if (!point) return;
+
         const uid = point.device_uid;
 
         let fov;
