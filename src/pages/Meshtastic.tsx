@@ -60,6 +60,7 @@ export default function Meshtastic() {
         if (!channelProperties.name) {
             setChannelNameError('Name cannot be blank');
         } else {
+            channelProperties.psk = psk;
             axios.post(
                 apiRoutes.meshtasticChannels,
                 { ...channelProperties }
@@ -72,7 +73,7 @@ export default function Meshtastic() {
                         color: 'green',
                     });
                     setShowNewChannel(false);
-                    setPsk("");
+                    setPsk('');
                     setChannelProperties({
                         name: '',
                         psk: '',
@@ -149,7 +150,7 @@ export default function Meshtastic() {
                           rightSection={<IconQrcode size={14} />}
                           onClick={() => {
                                 setShowQrCode(true);
-                                setChannelUrl(row.url);
+                                setChannelUrl(`${row.url}?add=true`);
                                 setQrTitle(row.name);
                             }}
                         >QR Code
@@ -157,7 +158,7 @@ export default function Meshtastic() {
 
                         const delete_button = <Button
                           onClick={() => {
-                                setChannelToDelete(row.id);
+                                setChannelToDelete(row.url);
                                 setDeleteChanelOpen(true);
                             }}
                           key={`${row.hash}_delete`}
@@ -176,23 +177,23 @@ export default function Meshtastic() {
                                                     </Button>
                                                 </Tooltip>
                                                 )}
-                                                </CopyButton>;
+                                    </CopyButton>;
 
-                        let psk;
+                        let psk_button;
                         if (row.psk) {
-                            psk = <CopyButton value={row.psk}>{({copied, copy}) => (
+                            psk_button = <CopyButton value={row.psk}>{({ copied, copy }) => (
                                     <Tooltip label={row.psk}>
                                         <Button color={copied ? 'teal' : 'blue'} onClick={copy}>
                                             {copied ? 'Copied PSK' : 'Copy PSK'}
                                         </Button>
                                     </Tooltip>
                                     )}
-                                </CopyButton>;
+                                         </CopyButton>;
                         } else {
-                            psk = <Button disabled>Encryption Disabled</Button>;
+                            psk_button = <Button disabled>Encryption Disabled</Button>;
                         }
 
-                        tableData.body.push([row.name, psk, uplink_enabled, downlink_enabled,
+                        tableData.body.push([row.name, psk_button, uplink_enabled, downlink_enabled,
                             row.position_precision, row.lora_region, row.lora_hop_limit, tx_enabled,
                             row.lora_tx_power, lora_sx126x_rx_boosted_gain, row.modem_preset, url,
                             qrButton, delete_button,
@@ -214,10 +215,45 @@ export default function Meshtastic() {
         });
     }
 
+    function deleteChannel() {
+        axios.delete(
+            apiRoutes.meshtasticChannels,
+            { params: { url: channelToDelete } }
+        ).then(r => {
+            notifications.show({
+                message: 'Channel successfully deleted',
+                icon: <IconCheck />,
+                color: 'green',
+            });
+            setDeleteChanelOpen(false);
+            getChannels();
+        }).catch(err => {
+            console.log(err);
+            notifications.show({
+                title: 'Failed to delete channel',
+                message: err.response.data.error,
+                icon: <IconX />,
+                color: 'red',
+            });
+        });
+    }
+
     return (
         <>
             <Modal opened={showQrCode} onClose={() => setShowQrCode(false)} title={qrTitle}>
                 <Center><QRCode value={channelUrl} /></Center>
+            </Modal>
+            <Modal opened={deleteChannelOpen} onClose={() => setDeleteChanelOpen(false)} title="Are you sure you want to delete this channel?">
+                <Center>
+                    <Button
+                      mr="md"
+                      onClick={() => {
+                          deleteChannel();
+                      }}
+                    >Yes
+                    </Button>
+                    <Button onClick={() => setDeleteChanelOpen(false)}>No</Button>
+                </Center>
             </Modal>
             <Modal opened={showAddChannel} onClose={() => setShowAddChannel(false)} title="Add Existing Channel">
                 <TextInput required placeholder="https://meshtastic.org/e/#CgMSAQESDAgBOAFAA0gBUB5oAQ==" label="URL" onChange={e => { setChannelUrl(e.target.value); }} mb="md" />
@@ -225,7 +261,7 @@ export default function Meshtastic() {
             </Modal>
             <Modal opened={showNewChannel} onClose={() => setShowNewChannel(false)} title="Add New Channel">
                 <TextInput required label="Name" onChange={e => { channelProperties.name = e.target.value; setChannelNameError(''); }} mb="md" error={channelNameError} />
-                <TextInput label="PSK" value={psk} rightSection={<IconReload onClick={() => generatePsk()} />} mb="md" />
+                <TextInput label="PSK" value={psk} rightSection={<IconReload onClick={() => generatePsk()} />} mb="md" onChange={(e) => setPsk(e.target.value)} />
                 <Switch label="Uplink Enabled" onChange={e => { channelProperties.uplink_enabled = e.target.checked; }} mb="md" />
                 <Switch label="Downlink Enabled" onChange={e => { channelProperties.downlink_enabled = e.target.checked; }} mb="md" />
                 <NumberInput label="Position Precision" min={0} max={32} defaultValue={channelProperties.position_precision} onChange={e => { channelProperties.position_precision = Number(e); }} mb="md" />
