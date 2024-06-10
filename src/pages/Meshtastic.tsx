@@ -150,7 +150,7 @@ export default function Meshtastic() {
                           rightSection={<IconQrcode size={14} />}
                           onClick={() => {
                                 setShowQrCode(true);
-                                setChannelUrl(`${row.url}?add=true`);
+                                setChannelUrl(row.url);
                                 setQrTitle(row.name);
                             }}
                         >QR Code
