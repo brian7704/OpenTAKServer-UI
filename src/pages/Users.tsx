@@ -11,7 +11,7 @@ import {
     TextInput, useComputedColorScheme,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
-import { IconUserPlus } from '@tabler/icons-react';
+import { IconCheck, IconUserPlus, IconX } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import axios from '../axios_config';
 import { apiRoutes } from '../apiRoutes';
@@ -19,13 +19,14 @@ import { apiRoutes } from '../apiRoutes';
 export default function Users() {
     const [users, setUsers] = useState<TableData>({
         caption: '',
-        head: ['Username', 'Protocol', 'Address', 'Port', 'Path', 'Link'],
+        head: ['Username', 'Role', 'Active', 'Last Login', 'Last Login IP', 'Current Login', 'Current Login IP', 'Login Count'],
         body: [],
     });
     const [activePage, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [addUserOpen, setAddUserOpen] = useState(false);
     const [showResetPassword, setShowResetPassword] = useState(false);
+    const [showDeleteUser, setShowDeleteUser] = useState(false);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirm_password, setConfirmPassword] = useState('');
@@ -48,11 +49,22 @@ export default function Users() {
 
                 r.data.results.map((row:any) => {
                     if (tableData.body !== undefined) {
-                        const reset_password_button = <Button onClick={() => {
+                        const reset_password_button = <Button
+                          onClick={() => {
                             setShowResetPassword(true);
                             setUsername(row.username);
                         }}
-                        >Reset Password</Button>;
+                        >Reset Password
+                                                      </Button>;
+
+                        const delete_user_button = <Button
+                          disabled={row.username === localStorage.getItem('username')}
+                          onClick={() => {
+                            setUsername(row.username);
+                            setShowDeleteUser(true);
+                        }}
+                        >Delete User
+                                                   </Button>;
 
                         const active_switch = <Switch
                           disabled={row.username === localStorage.getItem('username')}
@@ -72,7 +84,7 @@ export default function Users() {
                         />;
 
                         tableData.body.push([row.username, (row.username === localStorage.getItem('username') ? row.roles[0].name : role_select),
-                            active_switch, row.last_login_at, row.last_login_ip, row.current_login_at, row.current_login_ip, row.login_count, reset_password_button]);
+                            active_switch, row.last_login_at, row.last_login_ip, row.current_login_at, row.current_login_ip, row.login_count, reset_password_button, delete_user_button]);
                     }
                     });
 
@@ -86,6 +98,28 @@ export default function Users() {
     useEffect(() => {
         getUsers();
     }, [activePage]);
+
+    function deleteUser() {
+        axios.post(apiRoutes.deleteUser, { username })
+            .then(r => {
+                if (r.status === 200) {
+                    notifications.show({
+                        message: 'Successfully deleted user',
+                        icon: <IconCheck />,
+                        color: 'green',
+                    });
+                    getUsers();
+                }
+            }).catch(err => {
+            console.log(err);
+            notifications.show({
+                title: 'Failed to delete user',
+                message: err.response.data.error,
+                icon: <IconX />,
+                color: 'red',
+            });
+        });
+    }
 
     function addUser(e:any) {
         e.preventDefault();
@@ -242,6 +276,19 @@ export default function Users() {
                   value={password}
                 />
                 <Button onClick={(e) => { resetPassword(e); }}>Change Password</Button>
+            </Modal>
+            <Modal opened={showDeleteUser} onClose={() => setShowDeleteUser(false)} title={`Are you sure you want to delete ${username}?`}>
+                <Center>
+                    <Button
+                      mr="md"
+                      onClick={() => {
+                        deleteUser();
+                        setShowDeleteUser(false);
+                    }}
+                    >Yes
+                    </Button>
+                    <Button onClick={() => setShowDeleteUser(false)}>No</Button>
+                </Center>
             </Modal>
         </>
     );
