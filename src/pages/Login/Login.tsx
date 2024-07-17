@@ -97,6 +97,7 @@ export default function Login(props: PaperProps) {
             if (r.status === 200) {
                 localStorage.setItem('loggedIn', 'true');
                 localStorage.setItem('username', username);
+                localStorage.setItem('token', r.data.response.user.authentication_token);
                 if (Object.hasOwn(r.data.response, 'tf_required') && r.data.response.tf_required) {
                     if (r.data.response.tf_method === 'authenticator') {
                         setType('authenticator');

@@ -1,5 +1,5 @@
 export const apiRoutes = {
-  login: '/api/login',
+  login: '/api/login?include_auth_token',
   logout: '/api/logout',
   eud: '/api/eud',
   users: '/api/users',

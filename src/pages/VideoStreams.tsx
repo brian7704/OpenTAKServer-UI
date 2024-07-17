@@ -1,7 +1,7 @@
 import {
     AspectRatio,
     Button,
-    Center, CloseButton, Flex,
+    Center, CloseButton, CopyButton, Flex,
     Modal,
     Pagination,
     Switch,
@@ -72,7 +72,7 @@ export default function VideoStreams() {
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
-                    head: ['Username', 'Path', 'RTSP Link', 'WebRTC Link', 'Source', 'Ready', 'Record'],
+                    head: ['Username', 'Path', 'RTSP Link', 'WebRTC Link', 'HLS Link', 'Source', 'Ready', 'Record'],
                     body: [],
                 };
 
@@ -91,7 +91,7 @@ export default function VideoStreams() {
                         const watch_button = <Button
                           key={`${row.path}_watch`}
                           onClick={() => {
-                            setVideoUrl(row.webrtc_link);
+                            setVideoUrl(`${row.hls_link}?jwt=${localStorage.getItem('token')}`);
                             setShowVideo(true);
                             setPath(row.path);
                         }}
@@ -111,7 +111,35 @@ export default function VideoStreams() {
                               setRecord(row.path, e.target.checked); getVideoStreams();
                           }}
                         />;
-                        tableData.body.push([row.username, row.path, row.rtsp_link, row.webrtc_link,
+
+                        const webrtc_button = <CopyButton value={row.webrtc_link}>{({ copied, copy }) => (
+                            <Tooltip label={row.webrtc_link}>
+                                <Button color={copied ? 'teal' : 'blue'} onClick={copy}>
+                                    {copied ? 'Copied WebRTC Link' : 'Copy WebRTC Link'}
+                                </Button>
+                            </Tooltip>
+                        )}
+                                              </CopyButton>;
+
+                        const rtsp_button = <CopyButton value={row.rtsp_link}>{({ copied, copy }) => (
+                            <Tooltip label={row.rtsp_link}>
+                                <Button color={copied ? 'teal' : 'blue'} onClick={copy}>
+                                    {copied ? 'Copied RTSP Link' : 'Copy RTSP Link'}
+                                </Button>
+                            </Tooltip>
+                        )}
+                        </CopyButton>;
+
+                        const hls_button = <CopyButton value={`${row.hls_link}?jwt=${localStorage.getItem('token')}`}>{({ copied, copy }) => (
+                            <Tooltip label={`${row.hls_link}?jwt=${localStorage.getItem('token')}`}>
+                                <Button color={copied ? 'teal' : 'blue'} onClick={copy}>
+                                    {copied ? 'Copied HLS Link' : 'Copy HLS Link'}
+                                </Button>
+                            </Tooltip>
+                        )}
+                        </CopyButton>;
+
+                        tableData.body.push([row.username, row.path, rtsp_button, webrtc_button, hls_button,
                             row.source, online_icon, record, watch_button, delete_button]);
                     }
                 });
@@ -182,7 +210,7 @@ export default function VideoStreams() {
               withArrow
               label="Start streaming in the browser using your device's camera"
             >
-                <Button onClick={() => {startStreaming()}} mb="md" leftSection={<IconVideo size={14} />}>Start Streaming</Button>
+                <Button onClick={() => { startStreaming(); }} mb="md" leftSection={<IconVideo size={14} />}>Start Streaming</Button>
             </Tooltip>
             <Table.ScrollContainer minWidth="100%">
                 <Table stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" data={videoStreams} highlightOnHover withTableBorder mb="md" />
