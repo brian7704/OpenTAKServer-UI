@@ -45,4 +45,5 @@ export const apiRoutes = {
   meshtasticChannels: '/api/meshtastic/channel',
   generateMeshtasticPsk: '/api/meshtastic/generate_psk',
   pluginPackage: '/api/packages',
+  deviceProfiles: '/api/profiles',
 };

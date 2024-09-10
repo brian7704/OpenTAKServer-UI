@@ -25,7 +25,7 @@ const navbarLinks = [
     { link: '/map', label: 'Map', icon: IconMap },
     { link: '/euds', label: 'EUDs', icon: IconDeviceMobile },
     { link: '/alerts', label: 'Alerts', icon: IconAlertTriangle },
-    { link: '/casevac', label: 'Casevac', icon: IconHeartbeat },
+    { link: '/casevac', label: 'CasEvac', icon: IconHeartbeat },
     { link: '/data_packages', label: 'Data Packages', icon: IconPackage },
     { link: '/video_streams', label: 'Video Streams', icon: IconVideo },
     { link: '/video_recordings', label: 'Video Recordings', icon: IconMovie },
@@ -36,6 +36,7 @@ const adminLinks = [
     { link: '/users', label: 'Users', icon: IconUsers },
     { link: '/jobs', label: 'Scheduled Jobs', icon: IconCalendarDue },
     { link: '/plugin_updates', label: 'Plugin Updates', icon: IconPuzzle },
+    { link: '/device_profiles', label: 'Device Profiles', icon: IconDeviceMobile },
 ];
 
 export default function Navbar() {

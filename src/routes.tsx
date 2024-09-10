@@ -16,6 +16,7 @@ const ScheduledJobs = React.lazy(() => import('./pages/ScheduledJobs'));
 const VideoRecordings = React.lazy(() => import('./pages/VideoRecordings'));
 const Meshtastic = React.lazy(() => import('./pages/Meshtastic'));
 const PluginUpdates = React.lazy(() => import('./pages/PluginUpdates'));
+const DeviceProfiles = React.lazy(() => import('./pages/DeviceProfiles'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home', element: Dashboard },
@@ -35,6 +36,7 @@ const routes = [
   { path: '/video_recordings', name: 'Video Recordings', element: VideoRecordings },
   { path: '/meshtastic', name: 'Meshtastic', element: Meshtastic },
   { path: '/plugin_updates', name: 'PluginUpdates', element: PluginUpdates },
+  { path: '/device_profiles', name: 'DeviceProfiles', element: DeviceProfiles },
 ];
 
 export default routes;

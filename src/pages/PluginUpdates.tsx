@@ -39,7 +39,7 @@ export default function PluginUpdates() {
                 if (r.status === 200) {
                     const tableData: TableData = {
                         caption: '',
-                        head: ['Icon', 'Name', 'Description', 'Version', 'Platform', 'OS Requirement', 'Revision Code', 'Delete', 'Download'],
+                        head: ['Icon', 'Name', 'Description', 'Version', 'Platform', 'OS Requirement', 'Revision Code', 'Delete'],
                         body: [],
                     };
 
