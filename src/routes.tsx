@@ -15,6 +15,7 @@ const PasswordReset = React.lazy(() => import('./pages/PasswordReset'));
 const ScheduledJobs = React.lazy(() => import('./pages/ScheduledJobs'));
 const VideoRecordings = React.lazy(() => import('./pages/VideoRecordings'));
 const Meshtastic = React.lazy(() => import('./pages/Meshtastic'));
+const PluginUpdates = React.lazy(() => import('./pages/PluginUpdates'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home', element: Dashboard },
@@ -24,7 +25,7 @@ const routes = [
   { path: '/euds', name: 'EUDs', element: EUDs },
   { path: '/map', name: 'Map', element: Map },
   { path: '/alerts', name: 'Alerts', element: Alerts },
-  { path: '/casevac', name: 'Casevac', element: Casevac },
+  { path: '/casevac', name: 'CasEvac', element: Casevac },
   { path: '/data_packages', name: 'DataPackages', element: DataPackages },
   { path: '/video_streams', name: 'VideoStreams', element: VideoStreams },
   { path: '/users', name: 'Users', element: Users },
@@ -33,6 +34,7 @@ const routes = [
   { path: '/jobs', name: 'Scheduled Jobs', element: ScheduledJobs },
   { path: '/video_recordings', name: 'Video Recordings', element: VideoRecordings },
   { path: '/meshtastic', name: 'Meshtastic', element: Meshtastic },
+  { path: '/plugin_updates', name: 'PluginUpdates', element: PluginUpdates },
 ];
 
 export default routes;

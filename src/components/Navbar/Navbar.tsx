@@ -6,6 +6,7 @@ import {
     IconVideo,
     IconDeviceMobile,
     IconDashboard,
+    IconPuzzle,
     IconUsers,
     IconMap, IconLogout, IconMoonStars, Icon2fa, IconCalendarDue, IconMovie, IconQrcode, IconX,
 } from '@tabler/icons-react';
@@ -34,6 +35,7 @@ const navbarLinks = [
 const adminLinks = [
     { link: '/users', label: 'Users', icon: IconUsers },
     { link: '/jobs', label: 'Scheduled Jobs', icon: IconCalendarDue },
+    { link: '/plugin_updates', label: 'Plugin Updates', icon: IconPuzzle },
 ];
 
 export default function Navbar() {

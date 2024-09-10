@@ -32,7 +32,7 @@ export default function Meshtastic() {
         uplink_enabled: false,
         downlink_enabled: false,
         position_precision: 32,
-                lora_region: 'UNSET',
+        lora_region: 'UNSET',
         lora_hop_limit: 3,
         lora_tx_enabled: false,
         lora_tx_power: 30,
