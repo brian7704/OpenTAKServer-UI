@@ -285,7 +285,7 @@ export default function Login(props: PaperProps) {
                           size="xs"
                         >
                             {type === 'register' && 'Already have an account? Login'}
-                            {type === 'login' && "Don't have an account? Register"}
+                            {(type === 'login' && emailEnabled) && "Don't have an account? Register"}
                             {type === 'Reset Password' && <Center inline>
                                 <IconArrowLeft style={{ width: rem(12), height: rem(12) }} stroke={1.5} />
                                 <Box ml={5}>Back to the login page</Box>
