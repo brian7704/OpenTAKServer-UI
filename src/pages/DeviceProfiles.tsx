@@ -137,6 +137,17 @@ export default function DeviceProfiles() {
         })
     }
 
+    const value_class = <Select
+        label="Value Type"
+        value={newProfile['value_class']}
+        data={[ 'String', 'Boolean', 'Float', 'Integer' ]}
+        defaultValue="String"
+        onChange={(value, option) => setNewProfile({...newProfile, value_class: option.label})}
+        mb="md"
+        allowDeselect={false}
+        required
+    />;
+
     return (
         <>
             <Button onClick={() => setAddProfile(true)} variant="filled" leftSection={<IconUpload size={14} />} mb="md">Add Device Profile</Button>
@@ -145,9 +156,9 @@ export default function DeviceProfiles() {
             </Table.ScrollContainer>
             <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
             <Modal opened={addProfile} onClose={() => setAddProfile(false)} title="Upload new plugin">
-                <TextInput label="Key" onChange={e => { setNewProfile({...newProfile, key: e.currentTarget.value}) }} />
-                <TextInput label="Value" onChange={e => { setNewProfile({...newProfile, value: e.currentTarget.value}) }} />
-                <TextInput label="Value Type" value={valueType} onChange={e => { setNewProfile({...newProfile, value_class: e.currentTarget.value}) }} mb="md" />
+                <TextInput required label="Key" onChange={e => { setNewProfile({...newProfile, key: e.currentTarget.value}) }} />
+                <TextInput required label="Value" onChange={e => { setNewProfile({...newProfile, value: e.currentTarget.value}) }} />
+                {value_class}
                 <Switch label="Install on Enrollment" onChange={(e) => setNewProfile({...newProfile, enrollment: e.target.checked})} mb="md" />
                 <Switch label="Install on Connection" onChange={(e) => setNewProfile({...newProfile, connection: e.target.checked})} mb="md" />
                 <Switch label="Active" onChange={(e) => setNewProfile({...newProfile, active: e.target.checked})} mb="md" />
