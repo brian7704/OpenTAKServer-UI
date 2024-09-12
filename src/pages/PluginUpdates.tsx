@@ -200,7 +200,7 @@ export default function PluginUpdates() {
             <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
             <Modal opened={uploadPluginOpen} onClose={() => setUploadPluginOpen(false)} title="Upload new plugin">
                 {platforms}
-                <FileInput label="Plugin File" value={plugin} onChange={setPlugin} required />
+                <FileInput label="Plugin File" value={plugin} onChange={setPlugin} required accept="application/vnd.android.package-archive" />
                 <TextInput label="Description" onChange={(e) => setDescription(e.currentTarget.value)} />
                 <FileInput label="Icon" value={icon} onChange={setIcon} mb="md" />
                 <Button loading={uploading} onClick={(e) => { upload_plugin(e); }}>Upload Plugin</Button>
