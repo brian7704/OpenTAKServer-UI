@@ -4,8 +4,8 @@ import {
     FileButton, Modal,
     Pagination,
     Table,
-    Text,
-    TableData, TextInput, useComputedColorScheme,
+    Switch,
+    TableData, useComputedColorScheme,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import React, { useEffect, useState } from 'react';
@@ -118,6 +118,23 @@ export default function DataPackages() {
         });
     }
 
+    function updateDataPackage(hash: string, install_on_enrollment: boolean | null = null, install_on_connection: boolean | null = null) {
+        axios.patch(apiRoutes.data_packages,
+            { hash, install_on_enrollment, install_on_connection })
+            .then(r => {
+                if (r.status === 200) {
+                    getDatapackages();
+                }
+            }).catch(err => {
+                notifications.show({
+                    icon: <IconX />,
+                    title: 'Failed to update data package',
+                    message: err.response.data.error,
+                    color: 'red',
+                });
+        });
+    }
+
     function getDatapackages() {
         axios.get(
             apiRoutes.data_packages,
@@ -128,7 +145,7 @@ export default function DataPackages() {
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
-                    head: ['File Name', 'Size', 'Uploader Username', 'Uploader Callsign', 'Upload Time'],
+                    head: ['File Name', 'Size', 'Uploader Username', 'Uploader Callsign', 'Upload Time', 'Install on Enrollment', 'Install on Connection'],
                     body: [],
                 };
 
@@ -143,7 +160,8 @@ export default function DataPackages() {
                             setQrHash(row.hash);
                             setQrTitle(row.filename);
                         }}
-                        >QR Code</Button>;
+                        >QR Code
+                                         </Button>;
 
                         const delete_button = <Button
                           onClick={() => {
@@ -154,9 +172,25 @@ export default function DataPackages() {
                           rightSection={<IconCircleMinus size={14} />}
                         >Delete
                                               </Button>;
+
+                        const enrollment = <Switch
+                          disabled={localStorage.getItem('administrator') !== 'true' || row.filename.endsWith('_CONFIG.zip')}
+                          checked={row.install_on_enrollment}
+                          onChange={(e) => {
+                            updateDataPackage(row.hash, e.target.checked, row.install_on_connection);
+                        }}
+                        />;
+
+                        const connection = <Switch
+                          disabled={localStorage.getItem('administrator') !== 'true' || row.filename.endsWith('_CONFIG.zip')}
+                          checked={row.install_on_connection}
+                          onChange={(e) => {
+                                updateDataPackage(row.hash, row.install_on_enrollment, e.target.checked);
+                            }}
+                        />;
                         const eud_callsign = row.eud ? row.eud.callsign : '';
                         tableData.body.push([row.filename, bytes_formatter(row.size),
-                            row.submission_user, eud_callsign, row.submission_time,
+                            row.submission_user, eud_callsign, row.submission_time, enrollment, connection,
                             download, delete_button, qrButton]);
                     }
                 });
