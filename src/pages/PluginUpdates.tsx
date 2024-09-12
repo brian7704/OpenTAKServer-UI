@@ -7,13 +7,27 @@ import {
     useComputedColorScheme,
     FileInput,
     Button,
-    Pagination, Center, Image,
+    Pagination, Center, Image, Switch,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import { IconCheck, IconCircleMinus, IconUpload, IconX } from '@tabler/icons-react';
 import axios from 'axios';
 import { notifications } from '@mantine/notifications';
 import { apiRoutes } from '@/apiRoutes.tsx';
+
+interface PluginInterface {
+    plugin: File,
+    package_name: string;
+    icon: string;
+    name: string;
+    description: string;
+    version: string;
+    platform: string;
+    os_requirement: string;
+    revision_code: string;
+    install_on_enrollment: boolean;
+    install_on_connection: boolean;
+}
 
 export default function PluginUpdates() {
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
@@ -28,7 +42,28 @@ export default function PluginUpdates() {
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [deletePackage, setDeletePackage] = useState<any>();
     const [deleteName, setDeleteName] = useState<string | null>();
-    const [packages, setPackages] = useState<TableData>({});
+    const [packages, setPackages] = useState<TableData>({
+        caption: '',
+        head: ['Icon', 'Name', 'Description', 'Version', 'Platform', 'OS Requirement', 'Revision Code', 'Install on Enrollment', 'Install on Connection', 'Delete'],
+        body: [],
+    });
+
+    function update_plugin(package_name: string, install_on_enrollment: boolean, install_on_connection: boolean): void {
+        axios.patch(apiRoutes.pluginPackage,
+            { package_name, install_on_enrollment, install_on_connection },
+            ).then(r => {
+                if (r.status === 200) {
+                    get_plugins();
+                }
+        }).catch(err => {
+            notifications.show({
+                icon: <IconX />,
+                title: 'Failed to update package',
+                message: err.response.data.error,
+                color: 'red',
+            });
+        });
+    }
 
     function get_plugins() {
         axios.get(apiRoutes.pluginPackage,
@@ -39,7 +74,7 @@ export default function PluginUpdates() {
                 if (r.status === 200) {
                     const tableData: TableData = {
                         caption: '',
-                        head: ['Icon', 'Name', 'Description', 'Version', 'Platform', 'OS Requirement', 'Revision Code', 'Delete'],
+                        head: ['Icon', 'Name', 'Description', 'Version', 'Platform', 'OS Requirement', 'Revision Code', 'Install on Enrollment', 'Install on Connection', 'Delete'],
                         body: [],
                     };
 
@@ -54,15 +89,29 @@ export default function PluginUpdates() {
                               key={`${row.package_name}_delete`}
                             ><IconCircleMinus />
                                                   </Button>;
+                            const install_on_enrollment = <Switch
+                              checked={row.install_on_enrollment}
+                              onChange={(e) => {
+                                    update_plugin(row.package_name, e.target.checked, row.install_on_connection);
+                                }}
+                            />;
+
+                            const install_on_connection = <Switch
+                              checked={row.install_on_connection}
+                              onChange={(e) => {
+                                    update_plugin(row.package_name, row.install_on_enrollment, e.target.checked);
+                                }}
+                            />;
 
                             tableData.body.push([<Image src={row.icon} h={50} fit="contain" w="auto" />, row.name, row.description,
-                                row.version, row.platform, row.os_requirement, row.revision_code, delete_button]);
-
-                            setPage(r.data.current_page);
-                            setTotalPages(r.data.total_pages);
-                            setPackages(tableData);
+                                row.version, row.platform, row.os_requirement, row.revision_code, install_on_enrollment,
+                                install_on_connection, delete_button]);
                         }
                     });
+
+                    setPage(r.data.current_page);
+                    setTotalPages(r.data.total_pages);
+                    setPackages(tableData);
                 }
             }).catch(err => {
             console.log(err);
@@ -97,6 +146,7 @@ export default function PluginUpdates() {
                     });
                     get_plugins();
                     setUploading(false);
+                    setUploadPluginOpen(false);
                 }
         }).catch(err => {
             console.log(err);

@@ -19,7 +19,6 @@ interface ProfileInterface {
     key: string;
     value: string;
     value_class: string;
-    file: any;
     enrollment: boolean;
     connection: boolean;
     active: boolean;
@@ -34,7 +33,6 @@ export default function DeviceProfiles() {
         key: '',
         value: '',
         value_class: 'String',
-        file: null,
         enrollment: false,
         connection: false,
         active: false });
@@ -42,7 +40,6 @@ export default function DeviceProfiles() {
         key: '',
         value: '',
         value_class: 'String',
-        file: new File([''], ''),
         enrollment: false,
         connection: false,
         active: false });
@@ -81,7 +78,6 @@ export default function DeviceProfiles() {
                             setEditProfile({ key: row.preference_key,
                                                     value: row.preference_value,
                                                     value_class: row.value_class,
-                                                    file: row.file,
                                                     enrollment: e.target.checked,
                                                     connection: row.connection,
                                                     active: row.active });
@@ -93,7 +89,6 @@ export default function DeviceProfiles() {
                             setEditProfile({ key: row.preference_key,
                                                     value: row.preference_value,
                                                     value_class: row.value_class,
-                                                    file: row.file,
                                                     enrollment: row.enrollment,
                                                     connection: e.target.checked,
                                                     active: row.active });
@@ -105,7 +100,6 @@ export default function DeviceProfiles() {
                             setEditProfile({ key: row.preference_key,
                                                     value: row.preference_value,
                                                     value_class: row.value_class,
-                                                    file: row.file,
                                                     enrollment: row.enrollment,
                                                     connection: row.connection,
                                                     active: e.target.checked });
@@ -113,12 +107,12 @@ export default function DeviceProfiles() {
                         />;
 
                         tableData.body.push([row.preference_key, row.preference_value, row.value_class, enrollment, connection, active, formatISO(parseISO(row.publish_time)), delete_button]);
-
-                        setPage(r.data.current_page);
-                        setTotalPages(r.data.total_pages);
-                        setProfiles(tableData);
                     }
                 });
+
+                setPage(r.data.current_page);
+                setTotalPages(r.data.total_pages);
+                setProfiles(tableData);
             }
         }).catch(err => {
             console.log(err);
@@ -136,7 +130,7 @@ export default function DeviceProfiles() {
     }, []);
 
     useEffect(() => {
-        add_profile(null, editProfile);
+        if (editProfile.key) add_profile(null, editProfile);
     }, [editProfile]);
 
     function add_profile(e:any, profile:ProfileInterface) {
@@ -146,7 +140,6 @@ export default function DeviceProfiles() {
         body.append('preference_key', profile.key);
         body.append('preference_value', profile.value);
         body.append('value_class', profile.value_class);
-        body.append('file', profile.file);
         body.append('enrollment', String(profile.enrollment));
         body.append('connection', String(profile.connection));
         body.append('active', String(profile.active));
@@ -154,7 +147,7 @@ export default function DeviceProfiles() {
             .then(r => {
                 if (r.status === 200) {
                     get_profiles();
-                    setDeleteModalOpen(false);
+                    setAddProfile(false);
                 }
             }).catch(err => {
                 console.log(err);
@@ -207,7 +200,6 @@ export default function DeviceProfiles() {
                 <TextInput required label="Key" onChange={e => { setNewProfile({ ...newProfile, key: e.currentTarget.value }); }} />
                 <TextInput required label="Value" onChange={e => { setNewProfile({ ...newProfile, value: e.currentTarget.value }); }} />
                 {value_class}
-                <FileInput label="Plugin File" value={newProfile.file} onChange={(e) => setNewProfile({ ...newProfile, file: e })} required />
                 <Switch label="Install on Enrollment" onChange={(e) => setNewProfile({ ...newProfile, enrollment: e.target.checked })} mb="md" />
                 <Switch label="Install on Connection" onChange={(e) => setNewProfile({ ...newProfile, connection: e.target.checked })} mb="md" />
                 <Switch label="Active" onChange={(e) => setNewProfile({ ...newProfile, active: e.target.checked })} mb="md" />
