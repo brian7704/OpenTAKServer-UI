@@ -6936,20 +6936,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-mantine@npm:3.0.0":
-  version: 3.0.0
-  resolution: "eslint-config-mantine@npm:3.0.0"
+"eslint-config-mantine@npm:4.0.3":
+  version: 4.0.3
+  resolution: "eslint-config-mantine@npm:4.0.3"
   peerDependencies:
-    "@typescript-eslint/eslint-plugin": ^6.8.0
-    "@typescript-eslint/parser": ^6.8.0
-    eslint: ^8.51.0
-    eslint-config-airbnb: 19.0.4
-    eslint-config-airbnb-typescript: ^17.1.0
-    eslint-plugin-import: ^2.28.1
-    eslint-plugin-jsx-a11y: ^6.7.1
-    eslint-plugin-react: ^7.33.2
-    eslint-plugin-react-hooks: ^4.6.0
-  checksum: 0a26ac09c272f9fd969610d5739007542cd3561306ac3e73e583b4553bba28f47c605bf66a20fbe5efc9c91d23d4c38d45c8a4eb0b5c22eb4875d57df9d323d1
+    "@eslint/js": ^9.9.1
+    eslint: ^9.9.1
+    eslint-plugin-jsx-a11y: ^6.9.0
+    eslint-plugin-react: ^7.35.0
+    typescript-eslint: ^8.3.0
+  checksum: 5b91705193a49f09e63aeb1678cc4f508ac2d11444b3861a56189fbe425d011ba1d4cb16d4312b43ae5154b5f360bfb7570012feea489f2f1cd21be84881f541
   languageName: node
   linkType: hard
 
@@ -10180,7 +10176,7 @@ __metadata:
     eslint: "npm:^8.53.0"
     eslint-config-airbnb: "npm:19.0.4"
     eslint-config-airbnb-typescript: "npm:^17.1.0"
-    eslint-config-mantine: "npm:3.0.0"
+    eslint-config-mantine: "npm:4.0.3"
     eslint-plugin-import: "npm:^2.29.0"
     eslint-plugin-jsx-a11y: "npm:^6.7.0"
     eslint-plugin-react: "npm:^7.33.2"
@@ -10212,7 +10208,6 @@ __metadata:
     storybook-dark-mode: "npm:^3.0.3"
     stylelint: "npm:^16.0.2"
     typescript: "npm:^5.3.3"
-    uint8-to-base64: "npm:^0.2.0"
     vite: "npm:^5.0.10"
     vite-tsconfig-paths: "npm:^4.2.2"
     vitest: "npm:^1.1.0"
@@ -12949,13 +12944,6 @@ __metadata:
   bin:
     uglifyjs: bin/uglifyjs
   checksum: 8b7fcdca69deb284fed7d2025b73eb747ce37f9aca6af53422844f46427152d5440601b6e2a033e77856a2f0591e4167153d5a21b68674ad11f662034ec13ced
-  languageName: node
-  linkType: hard
-
-"uint8-to-base64@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "uint8-to-base64@npm:0.2.0"
-  checksum: 8abcf3c915197894fad663e1fed49ee0dd6e253673bb8955fdf80357b1ced2d9517e8d80b91a984ca807db854a5d903205d6d47f636ae9369862adc48b7bad15
   languageName: node
   linkType: hard
 
