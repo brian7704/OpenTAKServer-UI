@@ -1081,16 +1081,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mantine/charts@npm:^7.7.0":
-  version: 7.7.0
-  resolution: "@mantine/charts@npm:7.7.0"
+"@mantine/charts@npm:^7.12.2":
+  version: 7.12.2
+  resolution: "@mantine/charts@npm:7.12.2"
   peerDependencies:
-    "@mantine/core": 7.7.0
-    "@mantine/hooks": 7.7.0
+    "@mantine/core": 7.12.2
+    "@mantine/hooks": 7.12.2
     react: ^18.2.0
     react-dom: ^18.2.0
     recharts: ^2.10.3
-  checksum: b78dca75a38f6e11c89359c44384388ca77809b2f50abf58f2eb16ec6e6eae86bd058c8db190df00bcb74d412c61295b0dea438cbad99d7071a51af30ffd47aa
+  checksum: fdee9e63d140455d3943d97447965d842274d092ec622ec2ce51215f5793cfb96e9688721713d3db5446d3bdf537e48d3f7ca3fc5a492312bf7457abe01491f1
   languageName: node
   linkType: hard
 
@@ -7075,7 +7075,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "opentakserver-ui@workspace:."
   dependencies:
-    "@mantine/charts": "npm:^7.7.0"
+    "@mantine/charts": "npm:^7.12.2"
     "@mantine/core": "npm:^7.12.2"
     "@mantine/form": "npm:^7.12.2"
     "@mantine/hooks": "npm:7.7.0"
