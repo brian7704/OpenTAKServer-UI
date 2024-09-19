@@ -8356,7 +8356,7 @@ __metadata:
     react-leaflet-drift-marker: "npm:^4.0.0"
     react-leaflet-fullscreen: "npm:^4.1.1"
     react-player: "npm:^2.14.1"
-    react-qr-code: "npm:^2.0.12"
+    react-qr-code: "npm:^2.0.15"
     react-router-dom: "npm:^6.21.0"
     recharts: "npm:2"
     screenfull: "npm:^6.0.2"
@@ -9114,19 +9114,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-qr-code@npm:^2.0.12":
-  version: 2.0.12
-  resolution: "react-qr-code@npm:2.0.12"
+"react-qr-code@npm:^2.0.15":
+  version: 2.0.15
+  resolution: "react-qr-code@npm:2.0.15"
   dependencies:
     prop-types: "npm:^15.8.1"
     qr.js: "npm:0.0.0"
   peerDependencies:
-    react: ^16.x || ^17.x || ^18.x
-    react-native-svg: "*"
-  peerDependenciesMeta:
-    react-native-svg:
-      optional: true
-  checksum: e02896764b7ff88fb1b8eb1d8ae7201f862a459ebc97732a8a18171c3d47a51a32341906fb673d9304d0d4dc4fd90093b1ebe42f428bb148f299d2929e2399ef
+    react: "*"
+  checksum: 6a9d73918623eecbf6204da02bae1851b584f22f0724b2e5cf529a7eee991a757a211822146f670db63c21860ccb2d245b9288f48cd58ca2bff16de0dcdbdb25
   languageName: node
   linkType: hard
 
