@@ -1068,7 +1068,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/js@npm:9.10.0":
+"@eslint/js@npm:9.10.0, @eslint/js@npm:^9.10.0":
   version: 9.10.0
   resolution: "@eslint/js@npm:9.10.0"
   checksum: 2ac45a002dc1ccf25be46ea61001ada8d77248d1313ab4e53f3735e5ae00738a757874e41f62ad6fbd49df7dffeece66e5f53ff0d7b78a99ce4c68e8fea66753
@@ -2445,7 +2445,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/leaflet-rotatedmarker@npm:^0":
+"@types/leaflet-rotatedmarker@npm:^0.2.5":
   version: 0.2.5
   resolution: "@types/leaflet-rotatedmarker@npm:0.2.5"
   dependencies:
@@ -2635,7 +2635,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^8.6.0":
+"@typescript-eslint/eslint-plugin@npm:8.6.0, @typescript-eslint/eslint-plugin@npm:^8.6.0":
   version: 8.6.0
   resolution: "@typescript-eslint/eslint-plugin@npm:8.6.0"
   dependencies:
@@ -2658,7 +2658,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^8.6.0":
+"@typescript-eslint/parser@npm:8.6.0, @typescript-eslint/parser@npm:^8.6.0":
   version: 8.6.0
   resolution: "@typescript-eslint/parser@npm:8.6.0"
   dependencies:
@@ -5686,6 +5686,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"globals@npm:^15.9.0":
+  version: 15.9.0
+  resolution: "globals@npm:15.9.0"
+  checksum: de4b553e412e7e830998578d51b605c492256fb2a9273eaeec6ec9ee519f1c5aa50de57e3979911607fd7593a4066420e01d8c3d551e7a6a236e96c521aee36c
+  languageName: node
+  linkType: hard
+
 "globalthis@npm:^1.0.3":
   version: 1.0.3
   resolution: "globalthis@npm:1.0.3"
@@ -7388,6 +7395,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "opentakserver-ui@workspace:."
   dependencies:
+    "@eslint/js": "npm:^9.10.0"
     "@mantine/charts": "npm:^7.12.2"
     "@mantine/core": "npm:^7.12.2"
     "@mantine/form": "npm:^7.12.2"
@@ -7408,7 +7416,7 @@ __metadata:
     "@testing-library/react": "npm:^16.0.1"
     "@testing-library/user-event": "npm:^14.5.1"
     "@types/leaflet": "npm:^1.9.12"
-    "@types/leaflet-rotatedmarker": "npm:^0"
+    "@types/leaflet-rotatedmarker": "npm:^0.2.5"
     "@types/leaflet.fullscreen": "npm:^3"
     "@types/react": "npm:^18.3.7"
     "@types/react-dom": "npm:^18.3.0"
@@ -7426,6 +7434,7 @@ __metadata:
     eslint-plugin-jsx-a11y: "npm:^6.10.0"
     eslint-plugin-react: "npm:^7.36.1"
     eslint-plugin-react-hooks: "npm:^4.6.2"
+    globals: "npm:^15.9.0"
     identity-obj-proxy: "npm:^3.0.0"
     jsdom: "npm:^25.0.0"
     leaflet: "npm:^1.9.4"
@@ -7453,6 +7462,7 @@ __metadata:
     storybook-dark-mode: "npm:^4.0.2"
     stylelint: "npm:^16.9.0"
     typescript: "npm:^5.6.2"
+    typescript-eslint: "npm:^8.6.0"
     vite: "npm:^5.4.6"
     vite-tsconfig-paths: "npm:^5.0.1"
     vitest: "npm:^2.1.1"
@@ -9582,6 +9592,20 @@ __metadata:
     is-typed-array: "npm:^1.1.13"
     possible-typed-array-names: "npm:^1.0.0"
   checksum: 74253d7dc488eb28b6b2711cf31f5a9dcefc9c41b0681fd1c178ed0a1681b4468581a3626d39cd4df7aee3d3927ab62be06aa9ca74e5baf81827f61641445b77
+  languageName: node
+  linkType: hard
+
+"typescript-eslint@npm:^8.6.0":
+  version: 8.6.0
+  resolution: "typescript-eslint@npm:8.6.0"
+  dependencies:
+    "@typescript-eslint/eslint-plugin": "npm:8.6.0"
+    "@typescript-eslint/parser": "npm:8.6.0"
+    "@typescript-eslint/utils": "npm:8.6.0"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: d009170af1cffece3a63784c3f6d6f5074fd42d198540f3140dd0fed4f37b1888d59abb5992624099834cae2ea4863b6c526b5f11ecbfd105f41a87e300305db
   languageName: node
   linkType: hard
 

@@ -192,6 +192,7 @@ export default function Map() {
         } else {
             const marker = L.marker(
                 [999, 999],
+                // @ts-expect-error rotationOrigin is in leaflet-rotatedmarker
                 { icon, rotationOrigin: 'center center' });
 
             if (eud.last_point !== null) marker.setLatLng([eud.last_point.latitude, eud.last_point.longitude]);
@@ -210,8 +211,10 @@ export default function Map() {
             });
 
             if (eud.last_point !== null && eud.last_point.azimuth !== null) {
+                // @ts-expect-error setRotationAngle is in leaflet-rotatedmarker
                 marker.setRotationAngle(eud.last_point.azimuth - 90); //Rotate 90 degrees counter-clockwise because the icon points to the east
             } else if (eud.last_point !== null && eud.last_point.course !== null) {
+                // @ts-expect-error setRotationAngle is in leaflet-rotatedmarker
                 marker.setRotationAngle(eud.last_point.course);
             }
 
@@ -223,6 +226,7 @@ export default function Map() {
 
     function MapContext() {
         const map = useMap();
+        // @ts-expect-error fullscreen is in leaflet-fullscreen
         const fullscreenControl = L.control.fullscreen();
         map.addControl(fullscreenControl);
 
@@ -237,12 +241,14 @@ export default function Map() {
                 if (Object.hasOwn(markers, uid)) {
                     // filter out values of 999999
                     if (point.longitude <= 180) {
-                        // @ts-ignore trust me bro
+                        // @ts-expect-error trust me bro
                         markers[uid].slideTo([point.latitude, point.longitude],
                             { duration: 1500, keepAtCenter: false });
                         if (point.azimuth !== null) {
+                            // @ts-expect-error setRotationAngle is in leaflet-rotatedmarker
                             markers[uid].setRotationAngle(point.azimuth - 90);
                         } else {
+                            // @ts-expect-error setRotationAngle is in leaflet-rotatedmarker
                             markers[uid].setRotationAngle(point.course);
                         }
                         formatDrawer(null, point);
