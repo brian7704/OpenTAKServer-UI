@@ -26,7 +26,7 @@
     "date-fns": "^3.3.1",
     "leaflet": "^1.9.4",
     "leaflet-rotatedmarker": "^0.2.0",
-    "leaflet.fullscreen": "^3.0.1",
+    "leaflet.fullscreen": "^3.0.2",
     "leaflet.marker.slideto": "^0.3.0",
     "milsymbol": "^2.2.0",
     "react": "^18.2.0",
