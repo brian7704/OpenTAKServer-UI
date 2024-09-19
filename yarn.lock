@@ -1124,12 +1124,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mantine/hooks@npm:7.7.0":
-  version: 7.7.0
-  resolution: "@mantine/hooks@npm:7.7.0"
+"@mantine/hooks@npm:7.12.2":
+  version: 7.12.2
+  resolution: "@mantine/hooks@npm:7.12.2"
   peerDependencies:
     react: ^18.2.0
-  checksum: eadf0dc8e702a0c2e255bb8116ac9cc4da05b69f9895e29af1940a1e04eb752367062262cf17171fd2f18c3f7761618a2eb7e930e88a238db008c2f6892c0390
+  checksum: 818674346619c2d30f53114a6b6da2b01cf6cf9ea1e262046964769d47c512fd75300be218651062df426822cfb38a0bc76d093798c8b4ddef66576c6fcf46e2
   languageName: node
   linkType: hard
 
@@ -7063,7 +7063,7 @@ __metadata:
     "@mantine/charts": "npm:^7.7.0"
     "@mantine/core": "npm:^7.12.2"
     "@mantine/form": "npm:^7.12.2"
-    "@mantine/hooks": "npm:7.7.0"
+    "@mantine/hooks": "npm:7.12.2"
     "@mantine/notifications": "npm:^7.5.0"
     "@mantinex/mantine-logo": "npm:^1.0.1"
     "@saithodev/ts-appversion": "npm:^2.2.0"
