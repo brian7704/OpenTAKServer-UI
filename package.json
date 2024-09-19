@@ -68,7 +68,7 @@
     "eslint": "^8.53.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-config-airbnb-typescript": "^17.1.0",
-    "eslint-config-mantine": "3.0.0",
+    "eslint-config-mantine": "4.0.3",
     "eslint-plugin-import": "^2.29.0",
     "eslint-plugin-jsx-a11y": "^6.7.0",
     "eslint-plugin-react": "^7.33.2",
