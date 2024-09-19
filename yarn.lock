@@ -1348,21 +1348,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mantine/core@npm:^7.7.0":
-  version: 7.7.0
-  resolution: "@mantine/core@npm:7.7.0"
+"@mantine/core@npm:^7.12.2":
+  version: 7.12.2
+  resolution: "@mantine/core@npm:7.12.2"
   dependencies:
     "@floating-ui/react": "npm:^0.26.9"
-    clsx: "npm:2.1.0"
+    clsx: "npm:^2.1.1"
     react-number-format: "npm:^5.3.1"
     react-remove-scroll: "npm:^2.5.7"
     react-textarea-autosize: "npm:8.5.3"
     type-fest: "npm:^4.12.0"
   peerDependencies:
-    "@mantine/hooks": 7.7.0
+    "@mantine/hooks": 7.12.2
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: d2934192c92a5193431f56af473f50e06bed584aa4f1033038bf409444c608665814c072d064ad8c3fde4a5a3a3472f8a5363b3a095e6e8195e619c1d15032fc
+  checksum: 75643e8e6f33564e98b68259aedbc9ef543832e6466e93686b832587fcd187314d493ff4cfdb143acd3d21d835b4efe1bee1da853702ab9dbd6a9a758c2c1ce8
   languageName: node
   linkType: hard
 
@@ -4474,10 +4474,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:2.1.0, clsx@npm:^2.0.0":
+"clsx@npm:^2.0.0":
   version: 2.1.0
   resolution: "clsx@npm:2.1.0"
   checksum: c09c00ad14f638366ca814097e6cab533dfa1972a358da5b557be487168acbb25b4c1395e89ffa842a8a61ba87a462d2b4885bc9d4f8410b598f3cb339599cdb
+  languageName: node
+  linkType: hard
+
+"clsx@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "clsx@npm:2.1.1"
+  checksum: c4c8eb865f8c82baab07e71bfa8897c73454881c4f99d6bc81585aecd7c441746c1399d08363dc096c550cceaf97bd4ce1e8854e1771e9998d9f94c4fe075839
   languageName: node
   linkType: hard
 
@@ -8477,7 +8484,7 @@ __metadata:
   resolution: "opentakserver-ui@workspace:."
   dependencies:
     "@mantine/charts": "npm:^7.7.0"
-    "@mantine/core": "npm:^7.7.0"
+    "@mantine/core": "npm:^7.12.2"
     "@mantine/form": "npm:^7.7.0"
     "@mantine/hooks": "npm:7.7.0"
     "@mantine/notifications": "npm:^7.5.0"
