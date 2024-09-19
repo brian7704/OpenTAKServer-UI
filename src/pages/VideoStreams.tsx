@@ -198,7 +198,7 @@ export default function VideoStreams() {
     }
 
     function startStreaming() {
-        window.open(`${window.location.origin}/webrtc/${localStorage.getItem('username')}_browser/publish`, '_blank');
+        window.open(`${window.location.origin}:8889/${localStorage.getItem('username')}_browser/publish?jwt=${localStorage.getItem('token')}`, '_blank');
     }
 
     return (
@@ -234,25 +234,25 @@ export default function VideoStreams() {
                     <Button onClick={() => setDeleteVideoOpened(false)}>No</Button>
                 </Center>
             </Modal>
-            <AspectRatio ratio={16 / 9} display={showVideo ? 'block' : 'none'} h="100%" mb="xl">
-                <Flex justify="flex-end" align="flex-start">
-                    <CloseButton
-                      style={{ zIndex: 9999 }}
-                      size={30}
-                      onClick={() => {
-                        setShowVideo(false);
-                        setVideoUrl('');
-                    }}
-                    />
-                </Flex>
-                <iframe
-                  src={videoUrl}
-                  title={path}
-                  style={{ border: 0 }}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-            </AspectRatio>
+
+
+                    <AspectRatio ratio={16 / 9} display={showVideo ? 'block' : 'none'} h="100%" mb="xl">
+                        <iframe
+                            src={videoUrl}
+                            title={path}
+                            style={{border: 0}}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                        />
+                        <Button
+                            fullWidth
+                            onClick={() => {
+                                setShowVideo(false);
+                                setVideoUrl('');
+                            }}
+
+                        >Close Stream</Button>
+                    </AspectRatio>
         </>
-    );
+);
 }
