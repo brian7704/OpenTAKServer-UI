@@ -5113,14 +5113,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.6.3":
-  version: 1.6.8
-  resolution: "axios@npm:1.6.8"
+"axios@npm:^1.7.7":
+  version: 1.7.7
+  resolution: "axios@npm:1.7.7"
   dependencies:
     follow-redirects: "npm:^1.15.6"
     form-data: "npm:^4.0.0"
     proxy-from-env: "npm:^1.1.0"
-  checksum: 0f22da6f490335479a89878bc7d5a1419484fbb437b564a80c34888fc36759ae4f56ea28d55a191695e5ed327f0bad56e7ff60fb6770c14d1be6501505d47ab9
+  checksum: 4499efc89e86b0b49ffddc018798de05fab26e3bf57913818266be73279a6418c3ce8f9e934c7d2d707ab8c095e837fc6c90608fb7715b94d357720b5f568af7
   languageName: node
   linkType: hard
 
@@ -10175,7 +10175,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^6.9.1"
     "@typescript-eslint/parser": "npm:^6.9.1"
     "@vitejs/plugin-react": "npm:^4.2.1"
-    axios: "npm:^1.6.3"
+    axios: "npm:^1.7.7"
     date-fns: "npm:^3.3.1"
     eslint: "npm:^8.53.0"
     eslint-config-airbnb: "npm:19.0.4"
@@ -10212,7 +10212,6 @@ __metadata:
     storybook-dark-mode: "npm:^3.0.3"
     stylelint: "npm:^16.0.2"
     typescript: "npm:^5.3.3"
-    uint8-to-base64: "npm:^0.2.0"
     vite: "npm:^5.0.10"
     vite-tsconfig-paths: "npm:^4.2.2"
     vitest: "npm:^1.1.0"
@@ -12949,13 +12948,6 @@ __metadata:
   bin:
     uglifyjs: bin/uglifyjs
   checksum: 8b7fcdca69deb284fed7d2025b73eb747ce37f9aca6af53422844f46427152d5440601b6e2a033e77856a2f0591e4167153d5a21b68674ad11f662034ec13ced
-  languageName: node
-  linkType: hard
-
-"uint8-to-base64@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "uint8-to-base64@npm:0.2.0"
-  checksum: 8abcf3c915197894fad663e1fed49ee0dd6e253673bb8955fdf80357b1ced2d9517e8d80b91a984ca807db854a5d903205d6d47f636ae9369862adc48b7bad15
   languageName: node
   linkType: hard
 
