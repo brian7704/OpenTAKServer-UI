@@ -51,12 +51,13 @@ export default function VideoStreams() {
                         color: 'red',
                     });
                 }
+                getVideoStreams();
             }
         }).catch(err => {
             console.log(err);
             notifications.show({
                 title: 'Recording Failed',
-                message: err.response.error,
+                message: err.response.data.error,
                 color: 'red',
             });
         });
