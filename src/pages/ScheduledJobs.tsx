@@ -15,6 +15,7 @@ export default function ScheduledJobs() {
     });
     const [editable, setEditable] = useState<string | null>(null);
     const [data, setData] = useState<Array<[]>>([]);
+    const [runningJob, setRunningJob] = useState('');
     const [interval, setInterval] = useState({
         minutes: 0,
         seconds: 0,
@@ -41,6 +42,7 @@ export default function ScheduledJobs() {
                     color: 'green',
                     icon: <IconCheck />,
                 });
+                setRunningJob('');
             }
         }).catch(error => {
             console.log(error);
@@ -50,6 +52,7 @@ export default function ScheduledJobs() {
                 color: 'red',
                 icon: <IconX />,
             });
+            setRunningJob('');
         });
     }
 
@@ -142,8 +145,10 @@ export default function ScheduledJobs() {
 
             const run_now = <Button
               onClick={(e) => {
-                    runJob(e, row.id, row.name);
+                  runJob(e, row.id, row.name);
+                  setRunningJob(row.id);
                 }}
+              loading={runningJob === row.id}
             ><IconPlayerPlay size={14} />
                             </Button>;
 
@@ -229,7 +234,7 @@ export default function ScheduledJobs() {
 
     useEffect(() => {
         parseJobs();
-    }, [data, editable]);
+    }, [data, editable, runningJob]);
 
     useEffect(() => {
         if (interval.changeJob) changeJob();
