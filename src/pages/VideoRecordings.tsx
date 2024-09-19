@@ -148,17 +148,15 @@ export default function VideoRecordings() {
             </Modal>
 
             <AspectRatio ratio={16 / 9} h="100%" display={showVideo ? 'block' : 'none'} mt="md" pb={100} mb="xl">
-                <Flex justify="flex-end" align="flex-start">
-                    <CloseButton
-                      style={{ zIndex: 9999 }}
-                      size={30}
-                      onClick={() => {
-                            setShowVideo(false);
-                            setVideoUrl('');
-                        }}
-                    />
-                </Flex>
                 <ReactPlayer style={{ position: 'relative' }} controls url={videoUrl} width="100%" height="100%" />
+                <Button
+                    fullWidth
+                    onClick={() => {
+                        setShowVideo(false);
+                        setVideoUrl('');
+                    }}
+
+                >Close Stream</Button>
             </AspectRatio>
 
         </>
