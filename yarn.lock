@@ -4220,12 +4220,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/leaflet@npm:*, @types/leaflet@npm:^1.9.8":
+"@types/leaflet@npm:*":
   version: 1.9.8
   resolution: "@types/leaflet@npm:1.9.8"
   dependencies:
     "@types/geojson": "npm:*"
   checksum: 9a635d8ced35da27d8dfe972954bd5b4c91354beef710d7cfcca0e7bff3d189eb4cfd36ff68dac2bdc4b002d50f9ed5036c2e659683131e50d227a2050c72895
+  languageName: node
+  linkType: hard
+
+"@types/leaflet@npm:^1.9.12":
+  version: 1.9.12
+  resolution: "@types/leaflet@npm:1.9.12"
+  dependencies:
+    "@types/geojson": "npm:*"
+  checksum: 067f6c91cd5b97b0bf234e5a2847bd8d00e0333f017451eb646ac2ccb9766c55ad9bd92787877b660bb62890d5ab3af408550b6d56bc5f7e36331f4f460e86bd
   languageName: node
   linkType: hard
 
@@ -10166,7 +10175,7 @@ __metadata:
     "@testing-library/jest-dom": "npm:^6.1.5"
     "@testing-library/react": "npm:^14.1.2"
     "@testing-library/user-event": "npm:^14.5.1"
-    "@types/leaflet": "npm:^1.9.8"
+    "@types/leaflet": "npm:^1.9.12"
     "@types/leaflet-rotatedmarker": "npm:^0"
     "@types/leaflet.fullscreen": "npm:^3"
     "@types/react": "npm:^18.2.36"
@@ -10212,7 +10221,6 @@ __metadata:
     storybook-dark-mode: "npm:^3.0.3"
     stylelint: "npm:^16.0.2"
     typescript: "npm:^5.3.3"
-    uint8-to-base64: "npm:^0.2.0"
     vite: "npm:^5.0.10"
     vite-tsconfig-paths: "npm:^4.2.2"
     vitest: "npm:^1.1.0"
@@ -12949,13 +12957,6 @@ __metadata:
   bin:
     uglifyjs: bin/uglifyjs
   checksum: 8b7fcdca69deb284fed7d2025b73eb747ce37f9aca6af53422844f46427152d5440601b6e2a033e77856a2f0591e4167153d5a21b68674ad11f662034ec13ced
-  languageName: node
-  linkType: hard
-
-"uint8-to-base64@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "uint8-to-base64@npm:0.2.0"
-  checksum: 8abcf3c915197894fad663e1fed49ee0dd6e253673bb8955fdf80357b1ced2d9517e8d80b91a984ca807db854a5d903205d6d47f636ae9369862adc48b7bad15
   languageName: node
   linkType: hard
 
