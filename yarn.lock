@@ -7120,7 +7120,7 @@ __metadata:
     leaflet.fullscreen: "npm:^3.0.2"
     leaflet.marker.slideto: "npm:^0.3.0"
     milsymbol: "npm:^2.2.0"
-    postcss: "npm:^8.4.32"
+    postcss: "npm:^8.4.47"
     postcss-preset-mantine: "npm:1.17.0"
     postcss-simple-vars: "npm:^7.0.1"
     prettier: "npm:^3.1.1"
@@ -7475,7 +7475,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.4.32, postcss@npm:^8.4.36":
+"postcss@npm:^8.4.36":
   version: 8.4.38
   resolution: "postcss@npm:8.4.38"
   dependencies:
@@ -7486,7 +7486,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.4.41":
+"postcss@npm:^8.4.41, postcss@npm:^8.4.47":
   version: 8.4.47
   resolution: "postcss@npm:8.4.47"
   dependencies:
