@@ -3472,11 +3472,11 @@ __metadata:
   linkType: hard
 
 "@types/video-react@npm:^0":
-  version: 0.15.6
-  resolution: "@types/video-react@npm:0.15.6"
+  version: 0.15.8
+  resolution: "@types/video-react@npm:0.15.8"
   dependencies:
     "@types/react": "npm:*"
-  checksum: 737d01275c6f087037ad573c16fcf7cfaad84b5c56b7129f01be1fe20c40bb0dfa64ad5f89632c4267d3e9d52bb12a049edeff02aacca07470f173cdbb2fb9f2
+  checksum: 6c5a8a29b01acbc9dcc03d3784a61fb0e395c47ab2cf09789d74ffec8534b38a4f9216b3e6d55d3ce64c621cd276f8d8492740f30f023144dbaf4709225a66df
   languageName: node
   linkType: hard
 
