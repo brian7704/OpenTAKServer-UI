@@ -46,4 +46,5 @@ export const apiRoutes = {
   generateMeshtasticPsk: '/api/meshtastic/generate_psk',
   pluginPackage: '/api/packages',
   deviceProfiles: '/api/profiles',
+  truststore: '/api/truststore',
 };

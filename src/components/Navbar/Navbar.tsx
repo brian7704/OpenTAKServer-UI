@@ -8,7 +8,7 @@ import {
     IconDashboard,
     IconPuzzle,
     IconUsers,
-    IconMap, IconLogout, IconMoonStars, Icon2fa, IconCalendarDue, IconMovie, IconQrcode, IconX,
+    IconMap, IconLogout, IconMoonStars, Icon2fa, IconCalendarDue, IconMovie, IconQrcode, IconX, IconCertificate,
 } from '@tabler/icons-react';
 import { NavLink, ScrollArea, Title, Modal, Center } from '@mantine/core';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -111,6 +111,7 @@ export default function Navbar() {
                     {admin_links}
                 </div> : ''}
             <div className={classes.footer}>
+                <NavLink className={classes.link} key="downloadTruststore" onClick={() => window.open(apiRoutes.truststore, "_blank")} leftSection={<IconCertificate className={classes.linkIcon} stroke={1.5} />} label="Download Truststore" />
                 <NavLink className={classes.link} key="itakQrCode" onClick={() => itak_qr_string()} leftSection={<IconQrcode className={classes.linkIcon} stroke={1.5} />} label="iTAK QR Code" />
                 <NavLink className={classes.link} key="2faSettings" component={Link} to="/tfa_setup" leftSection={<Icon2fa className={classes.linkIcon} stroke={1.5} />} label="Setup 2FA" />
                 <NavLink className={classes.link} key="darkModeSwitch" leftSection={<IconMoonStars className={classes.linkIcon} stroke={1.5} />} rightSection={<DarkModeSwitch />} label="Dark Mode" />
