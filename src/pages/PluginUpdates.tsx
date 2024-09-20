@@ -37,7 +37,8 @@ export default function PluginUpdates() {
     const [plugin, setPlugin] = useState<any>(new File([''], ''));
     const [icon, setIcon] = useState<File | null>(null);
     const [description, setDescription] = useState('');
-    const [platform, setPlatform] = useState<any>('Android');
+    const [platform, setPlatform] = useState('Android');
+    const [pluginType, setPluginType] = useState('plugin');
     const [uploading, setUploading] = useState<boolean>(false);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [deletePackage, setDeletePackage] = useState<any>();
@@ -135,6 +136,8 @@ export default function PluginUpdates() {
         body.append('apk', plugin);
         body.append('description', description);
         body.append('platform', platform);
+        body.append('plugin_type', pluginType);
+
         axios.post(apiRoutes.pluginPackage,
             body
             ).then(r => {
@@ -186,9 +189,16 @@ export default function PluginUpdates() {
 
     const platforms = <Select
       value={platform}
+      label="Platform"
       data={[{ value: 'Android', label: 'Android' }, { value: 'Windows', label: 'Windows' }]}
-      placeholder="Role"
       onChange={(value, option) => setPlatform(option.label)}
+    />;
+
+    const plugin_type = <Select
+        value={pluginType}
+        label="Plugin Type"
+        data={[{ value: 'plugin', label: 'Plugin' }, { value: 'app', label: 'App' }]}
+        onChange={(value, option) => setPluginType(option.value)}
     />;
 
     return (
@@ -200,6 +210,7 @@ export default function PluginUpdates() {
             <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
             <Modal opened={uploadPluginOpen} onClose={() => setUploadPluginOpen(false)} title="Upload new plugin">
                 {platforms}
+                {plugin_type}
                 <FileInput label="Plugin File" value={plugin} onChange={setPlugin} required accept="application/vnd.android.package-archive" />
                 <TextInput label="Description" onChange={(e) => setDescription(e.currentTarget.value)} />
                 <FileInput label="Icon" value={icon} onChange={setIcon} mb="md" />
