@@ -127,7 +127,7 @@ export default function PluginUpdates() {
 
     useEffect(() => {
         get_plugins();
-    }, []);
+    }, [activePage]);
 
     function upload_plugin(e:any) {
         e.preventDefault();
@@ -208,7 +208,7 @@ export default function PluginUpdates() {
                 <Table stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" data={packages} highlightOnHover withTableBorder mb="md" />
             </Table.ScrollContainer>
             <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
-            <Modal opened={uploadPluginOpen} onClose={() => setUploadPluginOpen(false)} title="Upload new plugin">
+            <Modal opened={uploadPluginOpen} onClose={() => setUploadPluginOpen(false)} title="Upload Plugin">
                 {platforms}
                 {plugin_type}
                 <FileInput label="Plugin File" value={plugin} onChange={setPlugin} required accept="application/vnd.android.package-archive" />
