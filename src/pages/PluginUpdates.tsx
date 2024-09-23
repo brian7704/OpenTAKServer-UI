@@ -35,7 +35,7 @@ export default function PluginUpdates() {
     const [activePage, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [plugin, setPlugin] = useState<any>(new File([''], ''));
-    const [icon, setIcon] = useState<File | null>(null);
+    const [icon, setIcon] = useState<any>(new File([''], ''));
     const [description, setDescription] = useState('');
     const [platform, setPlatform] = useState('Android');
     const [pluginType, setPluginType] = useState('plugin');
@@ -134,6 +134,7 @@ export default function PluginUpdates() {
         setUploading(true);
         const body = new FormData();
         body.append('apk', plugin);
+        body.append('icon', icon);
         body.append('description', description);
         body.append('platform', platform);
         body.append('plugin_type', pluginType);
