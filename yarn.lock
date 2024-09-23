@@ -1916,9 +1916,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/core@npm:8.3.1":
-  version: 8.3.1
-  resolution: "@storybook/core@npm:8.3.1"
+"@storybook/core@npm:8.3.2":
+  version: 8.3.2
+  resolution: "@storybook/core@npm:8.3.2"
   dependencies:
     "@storybook/csf": "npm:^0.1.11"
     "@types/express": "npm:^4.17.21"
@@ -1933,7 +1933,7 @@ __metadata:
     semver: "npm:^7.6.2"
     util: "npm:^0.12.5"
     ws: "npm:^8.2.3"
-  checksum: 86df61ac0e57f080fd26744d4520145bb6c39fe81c2127fae673358f00dbe33dee250a5f368159cef299c3726b3e6864b2d7862c40a3468476e79a540c870984
+  checksum: 0086512c212c1a27878a982fecf0258c33b7b752c8ab985f73673568b3ab304258606f0f7d5efc1db14fef70d18c81937c98bde03c51d8c69774c51d846b67d6
   languageName: node
   linkType: hard
 
@@ -7458,7 +7458,7 @@ __metadata:
     recharts: "npm:2"
     screenfull: "npm:^6.0.2"
     socket.io-client: "npm:^4.7.4"
-    storybook: "npm:^8.3.1"
+    storybook: "npm:^8.3.2"
     storybook-dark-mode: "npm:^4.0.2"
     stylelint: "npm:^16.9.0"
     typescript: "npm:^5.6.2"
@@ -9034,16 +9034,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"storybook@npm:^8.3.1":
-  version: 8.3.1
-  resolution: "storybook@npm:8.3.1"
+"storybook@npm:^8.3.2":
+  version: 8.3.2
+  resolution: "storybook@npm:8.3.2"
   dependencies:
-    "@storybook/core": "npm:8.3.1"
+    "@storybook/core": "npm:8.3.2"
   bin:
     getstorybook: ./bin/index.cjs
     sb: ./bin/index.cjs
     storybook: ./bin/index.cjs
-  checksum: da39ef6951c06b342f9bdd8371e99e71d85a6e90377f313e400501b9e195fcacf5577dd0c61c5a343933fff1a7d1ece02645ca9beefc18e791ca8b9faff2a8e1
+  checksum: 0c840f1d8e2db71fb485b23a15ca42f845f4a785234d08c2b406cdc415c3d086e2021d74c22b6ad9a970c30101b424508b6ce24ed2dee4a0fb3e60d3b952376e
   languageName: node
   linkType: hard
 
