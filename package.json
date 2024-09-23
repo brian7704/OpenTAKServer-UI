@@ -76,7 +76,7 @@
     "eslint-plugin-react-hooks": "^4.6.2",
     "globals": "^15.9.0",
     "identity-obj-proxy": "^3.0.0",
-    "jsdom": "^25.0.0",
+    "jsdom": "^25.0.1",
     "postcss": "^8.4.47",
     "postcss-preset-mantine": "1.17.0",
     "postcss-simple-vars": "^7.0.1",
