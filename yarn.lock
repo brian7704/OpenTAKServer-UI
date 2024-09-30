@@ -1776,20 +1776,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-links@npm:^8.3.1":
-  version: 8.3.1
-  resolution: "@storybook/addon-links@npm:8.3.1"
+"@storybook/addon-links@npm:^8.3.4":
+  version: 8.3.4
+  resolution: "@storybook/addon-links@npm:8.3.4"
   dependencies:
     "@storybook/csf": "npm:^0.1.11"
     "@storybook/global": "npm:^5.0.0"
     ts-dedent: "npm:^2.0.0"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0-beta
-    storybook: ^8.3.1
+    storybook: ^8.3.4
   peerDependenciesMeta:
     react:
       optional: true
-  checksum: c9c565e33a6e6f8ec6628f74383525ad29d764f4051ba282cdfec500784249af600a97e2ce9f15547f10a0b1cd536794a45ba20ae61767ac2d10760b9378cab8
+  checksum: 47e647d3b722cc0eeeb4b0424b20a3f8bcfc810aec6d374b043557e96617f58079173528f2bedbebe0ac789f1a353cd526c0844d4754b0cbff31967a5aac9a50
   languageName: node
   linkType: hard
 
@@ -7405,7 +7405,7 @@ __metadata:
     "@saithodev/ts-appversion": "npm:^2.2.0"
     "@storybook/addon-essentials": "npm:^8.3.1"
     "@storybook/addon-interactions": "npm:^8.3.1"
-    "@storybook/addon-links": "npm:^8.3.1"
+    "@storybook/addon-links": "npm:^8.3.4"
     "@storybook/blocks": "npm:^8.3.1"
     "@storybook/react": "npm:^8.3.1"
     "@storybook/react-vite": "npm:^8.3.1"

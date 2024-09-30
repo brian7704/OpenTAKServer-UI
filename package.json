@@ -47,7 +47,7 @@
     "@saithodev/ts-appversion": "^2.2.0",
     "@storybook/addon-essentials": "^8.3.1",
     "@storybook/addon-interactions": "^8.3.1",
-    "@storybook/addon-links": "^8.3.1",
+    "@storybook/addon-links": "^8.3.4",
     "@storybook/blocks": "^8.3.1",
     "@storybook/react": "^8.3.1",
     "@storybook/react-vite": "^8.3.1",
