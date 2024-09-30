@@ -1761,18 +1761,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-interactions@npm:^8.3.1":
-  version: 8.3.1
-  resolution: "@storybook/addon-interactions@npm:8.3.1"
+"@storybook/addon-interactions@npm:^8.3.4":
+  version: 8.3.4
+  resolution: "@storybook/addon-interactions@npm:8.3.4"
   dependencies:
     "@storybook/global": "npm:^5.0.0"
-    "@storybook/instrumenter": "npm:8.3.1"
-    "@storybook/test": "npm:8.3.1"
+    "@storybook/instrumenter": "npm:8.3.4"
+    "@storybook/test": "npm:8.3.4"
     polished: "npm:^4.2.2"
     ts-dedent: "npm:^2.2.0"
   peerDependencies:
-    storybook: ^8.3.1
-  checksum: e0cc4ca5ff239d7c299be4aaf946382968d5b6fdc24419e8399e503c8fb0e3d7cfdf10ccdc1626d4f7485c4a7b7a7a4bc6e3200f30edb05303ebec60b7ef99e9
+    storybook: ^8.3.4
+  checksum: 5e020d25ebd750fafdec84431f781e93a1616a1134634f0d29df09967e1cb77be97c612e92e560a03352b565af749a58597ec4b3d6e119b2177fe26d610530ba
   languageName: node
   linkType: hard
 
@@ -1974,16 +1974,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/instrumenter@npm:8.3.1":
-  version: 8.3.1
-  resolution: "@storybook/instrumenter@npm:8.3.1"
+"@storybook/instrumenter@npm:8.3.4":
+  version: 8.3.4
+  resolution: "@storybook/instrumenter@npm:8.3.4"
   dependencies:
     "@storybook/global": "npm:^5.0.0"
     "@vitest/utils": "npm:^2.0.5"
     util: "npm:^0.12.4"
   peerDependencies:
-    storybook: ^8.3.1
-  checksum: 83fd1660f5ebfcb2732715275612f2e0bf002bb7be3bafee82bac412e2557b0ffb77662f73808a09ee97d8789bea6df60cf7657912be01eceacbc5ce05541daa
+    storybook: ^8.3.4
+  checksum: 155398d374881526f166541764504a5e608b9aa01c9d6dd8e5fd51cde69fe51fcaf571a994f4cb85219ad17fbab9562c5263d1467ee186b3e6aadbaac06efd10
   languageName: node
   linkType: hard
 
@@ -2077,13 +2077,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/test@npm:8.3.1":
-  version: 8.3.1
-  resolution: "@storybook/test@npm:8.3.1"
+"@storybook/test@npm:8.3.4":
+  version: 8.3.4
+  resolution: "@storybook/test@npm:8.3.4"
   dependencies:
     "@storybook/csf": "npm:^0.1.11"
     "@storybook/global": "npm:^5.0.0"
-    "@storybook/instrumenter": "npm:8.3.1"
+    "@storybook/instrumenter": "npm:8.3.4"
     "@testing-library/dom": "npm:10.4.0"
     "@testing-library/jest-dom": "npm:6.5.0"
     "@testing-library/user-event": "npm:14.5.2"
@@ -2091,8 +2091,8 @@ __metadata:
     "@vitest/spy": "npm:2.0.5"
     util: "npm:^0.12.4"
   peerDependencies:
-    storybook: ^8.3.1
-  checksum: 22b9920fa113df61c8823df6cdb5a58f94bed2723092dd1c4c42367fc4e07d0edfb14788310c757cb720426042ff82cb4189b4083533d004d552b98903c5c74d
+    storybook: ^8.3.4
+  checksum: de122f56d127ef44c7d46a2d0ba9a0be642290c2fa9e54ecb5dde545bff1a575efd7f8646a6fcaf4ce0b05101e8080cae7c28ac82343ef96da17ebc08e276d02
   languageName: node
   linkType: hard
 
@@ -7404,7 +7404,7 @@ __metadata:
     "@mantinex/mantine-logo": "npm:^1.0.1"
     "@saithodev/ts-appversion": "npm:^2.2.0"
     "@storybook/addon-essentials": "npm:^8.3.1"
-    "@storybook/addon-interactions": "npm:^8.3.1"
+    "@storybook/addon-interactions": "npm:^8.3.4"
     "@storybook/addon-links": "npm:^8.3.1"
     "@storybook/blocks": "npm:^8.3.1"
     "@storybook/react": "npm:^8.3.1"
