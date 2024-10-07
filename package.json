@@ -42,7 +42,7 @@
     "socket.io-client": "^4.7.4"
   },
   "devDependencies": {
-    "@eslint/js": "^9.10.0",
+    "@eslint/js": "^9.12.0",
     "@mantine/notifications": "^7.12.2",
     "@mantinex/mantine-logo": "^1.0.1",
     "@saithodev/ts-appversion": "^2.2.0",
