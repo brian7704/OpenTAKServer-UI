@@ -9,7 +9,7 @@ import {
     IconPuzzle,
     IconUsers,
     IconMap, IconLogout, IconMoonStars, Icon2fa, IconCalendarDue, IconMovie, IconQrcode, IconX, IconCertificate,
-    IconHelp, IconBook, IconBrandDiscord, IconBrandGithub,
+    IconHelp, IconBook, IconBrandDiscord, IconBrandGithub, IconRefresh
 } from '@tabler/icons-react';
 import { NavLink, ScrollArea, Title, Modal, Center } from '@mantine/core';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -31,6 +31,7 @@ const navbarLinks = [
     { link: '/video_streams', label: 'Video Streams', icon: IconVideo },
     { link: '/video_recordings', label: 'Video Recordings', icon: IconMovie },
     { link: '/meshtastic', label: 'Meshtastic', icon: MeshtasticLogo },
+    { link: '/missions', label: 'Missions', icon: IconRefresh },
 ];
 
 const adminLinks = [

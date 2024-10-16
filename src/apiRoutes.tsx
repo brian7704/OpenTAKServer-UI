@@ -47,4 +47,5 @@ export const apiRoutes = {
   pluginPackage: '/api/packages',
   deviceProfiles: '/api/profiles',
   truststore: '/api/truststore',
+  missions: '/api/missions'
 };
