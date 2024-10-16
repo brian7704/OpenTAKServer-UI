@@ -75,6 +75,7 @@ export default function Login(props: PaperProps) {
                 const { roles } = user;
 
                 localStorage.setItem('email', user.email);
+                localStorage.setItem('token', user.token)
 
                 for (let i = 0; i < roles.length; i += 1) {
                     if (roles[i].name === 'administrator') {
@@ -97,7 +98,6 @@ export default function Login(props: PaperProps) {
             if (r.status === 200) {
                 localStorage.setItem('loggedIn', 'true');
                 localStorage.setItem('username', username);
-                localStorage.setItem('token', r.data.response.user.authentication_token);
                 if (Object.hasOwn(r.data.response, 'tf_required') && r.data.response.tf_required) {
                     if (r.data.response.tf_method === 'authenticator') {
                         setType('authenticator');
