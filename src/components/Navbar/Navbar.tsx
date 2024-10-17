@@ -9,7 +9,7 @@ import {
     IconPuzzle,
     IconUsers,
     IconMap, IconLogout, IconMoonStars, Icon2fa, IconCalendarDue, IconMovie, IconQrcode, IconX, IconCertificate,
-    IconHelp, IconBook, IconBrandDiscord, IconBrandGithub, IconRefresh
+    IconHelp, IconBook, IconBrandDiscord, IconBrandGithub, IconRefresh, IconUsersGroup, IconSettings
 } from '@tabler/icons-react';
 import { NavLink, ScrollArea, Title, Modal, Center } from '@mantine/core';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -36,6 +36,7 @@ const navbarLinks = [
 
 const adminLinks = [
     { link: '/users', label: 'Users', icon: IconUsers },
+    { link: '/groups', label: 'Groups', icon: IconUsersGroup },
     { link: '/jobs', label: 'Scheduled Jobs', icon: IconCalendarDue },
     { link: '/plugin_updates', label: 'Plugin Updates', icon: IconPuzzle },
     { link: '/device_profiles', label: 'Device Profiles', icon: IconDeviceMobile },
@@ -109,8 +110,9 @@ export default function Navbar() {
             </div>
             {administrator ?
                 <div className={classes.footer}>
-                    <Title order={6}>Admin</Title>
-                    {admin_links}
+                    <NavLink className={classes.link} key="admin" leftSection={<IconSettings className={classes.linkIcon} stroke={1.5} />} label="Admin" >
+                        {admin_links}
+                    </NavLink>
                 </div> : ''}
             <div className={classes.footer}>
                 <NavLink className={classes.link} key="downloadTruststore" onClick={() => window.open(apiRoutes.truststore, "_blank")} leftSection={<IconCertificate className={classes.linkIcon} stroke={1.5} />} label="Download Truststore" />
