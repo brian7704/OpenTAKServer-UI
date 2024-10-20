@@ -1,6 +1,6 @@
 import {
     Button,
-    Center, CopyButton, Modal, NumberInput,
+    Center, ComboboxData, ComboboxItem, CopyButton, Modal, NumberInput,
     Pagination, Select, Switch,
     Table,
     TableData, TextInput, Tooltip,
@@ -25,7 +25,7 @@ export default function Missions() {
     const [showInvite, setShowInvite] = useState(false);
     const [inviteMission, setInviteMission] = useState('')
     const [inviteCallsign, setInviteCallsign] = useState('')
-    const [callsigns, setCallsigns] = useState([]);
+    const [callsigns, setCallsigns] = useState<ComboboxItem[]>([]);
     const [missions, setMissions] = useState<TableData>({
         caption: '',
         head: ['Name', 'Description', 'Default Role', 'Creation Time', 'Invite Only', 'Expiration', 'Password Protected', 'Group'],
@@ -72,7 +72,6 @@ export default function Missions() {
                             </Button>;
 
                             tableData.body.push([row.name, row.description, row.defaultRole.type, row.createTime, row.inviteOnly, row.expiration, row.passwordProtected, row.group, invitation_button, qrButton, delete_button]);
-                            console.log(tableData)
                         }
                     });
                     setPage(r.data.current_page);
@@ -94,9 +93,12 @@ export default function Missions() {
         if (showInvite) {
             axios.get(apiRoutes.eud, {params: {'per_page': 200}})
                 .then(r => {
-                    if (r.status == 200) {
-                        let all_callsigns = []
-
+                    if (r.status === 200) {
+                        const all_callsigns: ComboboxItem[] = []
+                        r.data.results.map((row:any) => {
+                            all_callsigns.push({value: row.uid, label: row.callsign});
+                        });
+                        setCallsigns(all_callsigns);
                     }
                 })
         }
@@ -107,8 +109,8 @@ export default function Missions() {
             <Modal opened={showQrCode} onClose={() => setShowQrCode(false)} title={qrTitle}>
                 <Center><QRCode value={qrContent} /></Center>
             </Modal>
-            <Modal opened={showInvite} onClose={() => setShowInvite(false)}>
-                <Select label="Callsign" onChange={e => {console.log(e); setInviteCallsign(e.target.value);}} data={callsigns} />
+            <Modal opened={showInvite} onClose={() => setShowInvite(false)} title={`Invite EUD to ${inviteMission}`}>
+                <Select placeholder="Search" searchable nothingFoundMessage="Nothing found..." label="Callsign" onChange={(value, option) => {console.log(option); setInviteCallsign(String(value));}} data={callsigns} mb="md" />
                 <Button onClick={() => sendInvitation()}>Invite</Button>
             </Modal>
             <Table.ScrollContainer minWidth="100%">

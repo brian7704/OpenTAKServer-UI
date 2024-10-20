@@ -104,7 +104,7 @@ export default function Navbar() {
     };
 
     return (
-        <ScrollArea>
+        <ScrollArea type="never">
             <div>
                 {links}
             </div>
