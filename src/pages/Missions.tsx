@@ -10,7 +10,7 @@ import { notifications } from '@mantine/notifications';
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
 import {apiRoutes} from "@/apiRoutes.tsx";
-import {IconCircleMinus, IconQrcode, IconMail} from "@tabler/icons-react";
+import {IconCircleMinus, IconQrcode, IconMail, IconCheck, IconX} from "@tabler/icons-react";
 import QRCode from "react-qr-code";
 
 export default function Missions() {
@@ -28,7 +28,7 @@ export default function Missions() {
     const [callsigns, setCallsigns] = useState<ComboboxItem[]>([]);
     const [missions, setMissions] = useState<TableData>({
         caption: '',
-        head: ['Name', 'Description', 'Default Role', 'Creation Time', 'Invite Only', 'Expiration', 'Password Protected', 'Group'],
+        head: ['Name', 'Description', 'Default Role', 'Creation Time', 'Expiration', 'Password Protected'],
         body: [],
     });
 
@@ -38,12 +38,14 @@ export default function Missions() {
                 if (r.status === 200) {
                     const tableData: TableData = {
                         caption: '',
-                        head: ['Name', 'Description', 'Default Role', 'Creation Time', 'Invite Only', 'Expiration', 'Password Protected', 'Group'],
+                        head: ['Name', 'Description', 'Default Role', 'Creation Time', 'Password Protected'],
                         body: [],
                     }
 
                     r.data.results.map((row: any) => {
                         if (tableData.body !== undefined) {
+                            const password_protected = row.passwordProtected ? <IconCheck color="green" /> : <IconX color="red" />;
+
                             const qrButton = <Button
                                 rightSection={<IconQrcode size={14} />}
                                 onClick={() => {
@@ -71,7 +73,7 @@ export default function Missions() {
                             >Delete
                             </Button>;
 
-                            tableData.body.push([row.name, row.description, row.defaultRole.type, row.createTime, row.inviteOnly, row.expiration, row.passwordProtected, row.group, invitation_button, qrButton, delete_button]);
+                            tableData.body.push([row.name, row.description, row.defaultRole.type, row.createTime, password_protected, invitation_button, qrButton, delete_button]);
                         }
                     });
                     setPage(r.data.current_page);
@@ -116,6 +118,7 @@ export default function Missions() {
             <Table.ScrollContainer minWidth="100%">
                 <Table data={missions} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mt="md" mb="md" />
             </Table.ScrollContainer>
+            <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
         </>
     )
 }
