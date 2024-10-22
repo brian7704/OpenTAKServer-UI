@@ -12,6 +12,7 @@ import axios from "axios";
 import {apiRoutes} from "@/apiRoutes.tsx";
 import {IconCircleMinus, IconQrcode, IconMail, IconCheck, IconX} from "@tabler/icons-react";
 import QRCode from "react-qr-code";
+import {ax} from "vitest/dist/chunks/reporters.DAfKSDh5";
 
 export default function Missions() {
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
@@ -51,7 +52,7 @@ export default function Missions() {
                 console.log(err);
                 setInviting(false);
                 notifications.show({
-                    title: 'Error',
+                    title: 'Failed to send mission invitation',
                     message: err.response.data.error,
                     icon: <IconX/>,
                     color: 'red',
@@ -113,6 +114,29 @@ export default function Missions() {
             })
     }
 
+    function delete_mission() {
+        axios.delete(apiRoutes.missions, {params: {name: missionToDelete}})
+            .then(r => {
+                if (r.status === 200) {
+                    setDeleteMissionOpen(false);
+                    notifications.show({
+                        title: 'Success',
+                        message: `Successfully deleted ${missionToDelete}`,
+                        icon: <IconCheck/>,
+                        color: 'green',
+                    })
+                    get_missions();
+                }
+            }).catch(err => {
+                notifications.show({
+                    title: 'Failed to delete mission',
+                    message: err.response.data.error,
+                    icon: <IconX/>,
+                    color: 'red',
+                })
+        })
+    }
+
     useEffect(() => {
         get_missions();
     }, []);
@@ -140,6 +164,12 @@ export default function Missions() {
             <Modal opened={showInvite} onClose={() => setShowInvite(false)} title={`Invite EUD to ${inviteMission}`}>
                 <Select placeholder="Search" searchable nothingFoundMessage="Nothing found..." label="Callsign" onChange={(value, option) => {setInviteEud(option);}} data={callsigns} mb="md" />
                 <Button onClick={() => {setInviting(true); send_invitation();}} loading={inviting}>Invite</Button>
+            </Modal>
+            <Modal opened={deleteMissionOpen} onClose={() => setDeleteMissionOpen(false)} title={`Are you sure you want to delete ${missionToDelete}?`}>
+                <Center>
+                    <Button mr="md" onClick={() => delete_mission()}>Yes</Button>
+                    <Button onClick={() => setDeleteMissionOpen(false)}>No</Button>
+                </Center>
             </Modal>
             <Table.ScrollContainer minWidth="100%">
                 <Table data={missions} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mt="md" mb="md" />
