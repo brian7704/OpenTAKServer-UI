@@ -86,6 +86,7 @@ export default function Missions() {
 
                             const invitation_button = <Button
                                 rightSection={<IconMail size={14} /> }
+                                disabled={(row.passwordProtected && localStorage.getItem('administrator') !== 'true')}
                                 onClick={() => {
                                     setShowInvite(true);
                                     setInviteMission(row.name);
