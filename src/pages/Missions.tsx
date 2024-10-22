@@ -1,7 +1,7 @@
 import {
     Button,
     Center, Combobox, ComboboxData, ComboboxItem, CopyButton, Modal, NumberInput,
-    Pagination, Select, Switch,
+    Pagination, PasswordInput, Select, Switch,
     Table,
     TableData, TextInput, Tooltip,
     useComputedColorScheme,
@@ -10,7 +10,7 @@ import { notifications } from '@mantine/notifications';
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
 import {apiRoutes} from "@/apiRoutes.tsx";
-import {IconCircleMinus, IconQrcode, IconMail, IconCheck, IconX} from "@tabler/icons-react";
+import {IconCircleMinus, IconQrcode, IconMail, IconCheck, IconX, IconPlus} from "@tabler/icons-react";
 import QRCode from "react-qr-code";
 import {ax} from "vitest/dist/chunks/reporters.DAfKSDh5";
 
@@ -28,9 +28,19 @@ export default function Missions() {
     const [inviteEud, setInviteEud] = useState<ComboboxItem | null>()
     const [callsigns, setCallsigns] = useState<ComboboxItem[]>([]);
     const [inviting, setInviting] = useState(false);
+    const [showAddMission, setShowAddMission] = useState(false);
+    const [missionProperties, setMissionProperties] = useState({
+        name: '',
+        description: '',
+        creator_uid: '',
+        tool: 'public',
+        default_role: 'MISSION_SUBSCRIBER',
+        password: '',
+        hash_tags: '',
+    })
     const [missions, setMissions] = useState<TableData>({
         caption: '',
-        head: ['Name', 'Description', 'Default Role', 'Creation Time', 'Expiration', 'Password Protected'],
+        head: ['Name', 'Description', 'Owner', 'Default Role', 'Tool', 'Creation Time', 'Expiration', 'Password Protected'],
         body: [],
     });
 
@@ -67,7 +77,7 @@ export default function Missions() {
                 if (r.status === 200) {
                     const tableData: TableData = {
                         caption: '',
-                        head: ['Name', 'Description', 'Default Role', 'Creation Time', 'Password Protected'],
+                        head: ['Name', 'Description', 'Owner', 'Default Role', 'Tool', 'Creation Time', 'Password Protected'],
                         body: [],
                     }
 
@@ -104,7 +114,7 @@ export default function Missions() {
                             >Delete
                             </Button>;
 
-                            tableData.body.push([row.name, row.description, row.defaultRole.type, row.createTime, password_protected, invitation_button, qrButton, delete_button]);
+                            tableData.body.push([row.name, row.description, row.owner.callsign, row.defaultRole.type, row.tool, row.createTime, password_protected, invitation_button, qrButton, delete_button]);
                         }
                     });
                     setPage(r.data.current_page);
@@ -137,24 +147,81 @@ export default function Missions() {
         })
     }
 
+    function get_euds() {
+        axios.get(apiRoutes.eud, {params: {'per_page': 200}})
+            .then(r => {
+                if (r.status === 200) {
+                    const all_callsigns: ComboboxItem[] = []
+                    r.data.results.map((row:any) => {
+                        all_callsigns.push({value: row.uid, label: row.callsign});
+                    });
+                    setCallsigns(all_callsigns);
+                }
+            })
+    }
+
     useEffect(() => {
         get_missions();
-    }, []);
+    }, [activePage]);
 
     useEffect(() => {
         if (showInvite) {
-            axios.get(apiRoutes.eud, {params: {'per_page': 200}})
-                .then(r => {
-                    if (r.status === 200) {
-                        const all_callsigns: ComboboxItem[] = []
-                        r.data.results.map((row:any) => {
-                            all_callsigns.push({value: row.uid, label: row.callsign});
-                        });
-                        setCallsigns(all_callsigns);
-                    }
-                })
+            get_euds();
         }
     }, [showInvite]);
+
+    useEffect(() => {
+        get_euds();
+    }, [showAddMission]);
+
+    function add_mission() {
+        axios.post(apiRoutes.missions,
+            {
+                name: missionProperties.name,
+                description: missionProperties.description,
+                tool: missionProperties.tool,
+                default_role: missionProperties.default_role,
+                password: missionProperties.password,
+                creator_uid: missionProperties.creator_uid,
+            }).then(r => {
+                if (r.status === 200) {
+                    setShowAddMission(false);
+                    get_missions();
+                    notifications.show({
+                        title: 'Success',
+                        message: `Successfully added mission ${missionProperties.name}`,
+                        icon: <IconCheck/>,
+                        color: 'green',
+                    })
+                }
+                setMissionProperties({
+                    name: '',
+                    description: '',
+                    creator_uid: '',
+                    default_role: 'MISSION_SUBSCRIBER',
+                    password: '',
+                    hash_tags: '',
+                    tool: 'public'
+                })
+        }).catch(err => {
+            setShowAddMission(false);
+            notifications.show({
+                title: 'Failed to add mission',
+                message: err.response.data.error,
+                icon: <IconX/>,
+                color: 'red',
+            })
+            setMissionProperties({
+                name: '',
+                description: '',
+                creator_uid: '',
+                default_role: 'MISSION_SUBSCRIBER',
+                password: '',
+                hash_tags: '',
+                tool: 'public'
+            })
+        })
+    }
 
     return (
         <>
@@ -162,7 +229,15 @@ export default function Missions() {
                 <Center><QRCode value={qrContent} /></Center>
             </Modal>
             <Modal opened={showInvite} onClose={() => setShowInvite(false)} title={`Invite EUD to ${inviteMission}`}>
-                <Select placeholder="Search" searchable nothingFoundMessage="Nothing found..." label="Callsign" onChange={(value, option) => {setInviteEud(option);}} data={callsigns} mb="md" />
+                <Select
+                    placeholder="Search"
+                    searchable
+                    nothingFoundMessage="Nothing found..."
+                    label="Callsign"
+                    onChange={(value, option) => {setInviteEud(option);}}
+                    data={callsigns}
+                    allowDeselect={false}
+                    mb="md" />
                 <Button onClick={() => {setInviting(true); send_invitation();}} loading={inviting}>Invite</Button>
             </Modal>
             <Modal opened={deleteMissionOpen} onClose={() => setDeleteMissionOpen(false)} title={`Are you sure you want to delete ${missionToDelete}?`}>
@@ -171,6 +246,33 @@ export default function Missions() {
                     <Button onClick={() => setDeleteMissionOpen(false)}>No</Button>
                 </Center>
             </Modal>
+            <Modal opened={showAddMission} onClose={() => setShowAddMission(false)} title="Add Mission">
+                <TextInput required placeholder="Mission" label="Name" onChange={e => { missionProperties.name = e.target.value; }} mb="md" />
+                <TextInput placeholder="Description" label="Description" onChange={e => { missionProperties.description = e.target.value; }} mb="md" />
+                <Select
+                    required
+                    label="Default Role"
+                    onChange={e => { missionProperties.default_role = String(e); }}
+                    data={[{value: 'MISSION_SUBSCRIBER', label: 'Subscriber'}, {value: 'MISSION_OWNER', label: 'Owner'}, {value: 'MISSION_READ_ONLY', label: 'Read Only'}]}
+                    mb="md"
+                    defaultValue="MISSION_SUBSCRIBER"
+                    allowDeselect={false}
+                />
+                <Select
+                    placeholder="Search"
+                    searchable
+                    required
+                    nothingFoundMessage="Nothing found..."
+                    label="Creator"
+                    description="The callsign of the EUD that owns this mission"
+                    onChange={(value, option) => {missionProperties.creator_uid = option.value;}}
+                    data={callsigns}
+                    allowDeselect={false}
+                    mb="md" />
+                <PasswordInput label="Password" onChange={e => { missionProperties.password = e.target.value; }} mb="md" />
+                <Button onClick={() => {add_mission()}}>Add Mission</Button>
+            </Modal>
+            <Button leftSection={<IconPlus size={14} />} onClick={() => setShowAddMission(true)} mr="md">New Mission</Button>
             <Table.ScrollContainer minWidth="100%">
                 <Table data={missions} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mt="md" mb="md" />
             </Table.ScrollContainer>
