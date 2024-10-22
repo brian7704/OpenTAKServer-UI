@@ -1,6 +1,6 @@
 import {
     Button,
-    Center, ComboboxData, ComboboxItem, CopyButton, Modal, NumberInput,
+    Center, Combobox, ComboboxData, ComboboxItem, CopyButton, Modal, NumberInput,
     Pagination, Select, Switch,
     Table,
     TableData, TextInput, Tooltip,
@@ -24,13 +24,41 @@ export default function Missions() {
     const [deleteMissionOpen, setDeleteMissionOpen] = useState(false);
     const [showInvite, setShowInvite] = useState(false);
     const [inviteMission, setInviteMission] = useState('')
-    const [inviteCallsign, setInviteCallsign] = useState('')
+    const [inviteEud, setInviteEud] = useState<ComboboxItem | null>()
     const [callsigns, setCallsigns] = useState<ComboboxItem[]>([]);
+    const [inviting, setInviting] = useState(false);
     const [missions, setMissions] = useState<TableData>({
         caption: '',
         head: ['Name', 'Description', 'Default Role', 'Creation Time', 'Expiration', 'Password Protected'],
         body: [],
     });
+
+    function send_invitation() {
+        if (inviteEud) {
+            axios.post(apiRoutes.mission_invite, {
+                mission_name: inviteMission, uid: inviteEud.value
+            }).then(r => {
+                if (r.status === 200) {
+                    setInviting(false);
+                    notifications.show({
+                        title: 'Success',
+                        message: `Successfully invited ${inviteEud.label}`,
+                        icon: <IconCheck/>,
+                        color: 'green',
+                    })
+                }
+            }).catch(err => {
+                console.log(err);
+                setInviting(false);
+                notifications.show({
+                    title: 'Error',
+                    message: err.response.data.error,
+                    icon: <IconX/>,
+                    color: 'red',
+                })
+            })
+        }
+    }
 
     function get_missions() {
         axios.get(apiRoutes.missions, { params: {page: activePage} })
@@ -83,10 +111,6 @@ export default function Missions() {
             })
     }
 
-    function sendInvitation() {
-
-    }
-
     useEffect(() => {
         get_missions();
     }, []);
@@ -112,8 +136,8 @@ export default function Missions() {
                 <Center><QRCode value={qrContent} /></Center>
             </Modal>
             <Modal opened={showInvite} onClose={() => setShowInvite(false)} title={`Invite EUD to ${inviteMission}`}>
-                <Select placeholder="Search" searchable nothingFoundMessage="Nothing found..." label="Callsign" onChange={(value, option) => {console.log(option); setInviteCallsign(String(value));}} data={callsigns} mb="md" />
-                <Button onClick={() => sendInvitation()}>Invite</Button>
+                <Select placeholder="Search" searchable nothingFoundMessage="Nothing found..." label="Callsign" onChange={(value, option) => {setInviteEud(option);}} data={callsigns} mb="md" />
+                <Button onClick={() => {setInviting(true); send_invitation();}} loading={inviting}>Invite</Button>
             </Modal>
             <Table.ScrollContainer minWidth="100%">
                 <Table data={missions} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mt="md" mb="md" />
