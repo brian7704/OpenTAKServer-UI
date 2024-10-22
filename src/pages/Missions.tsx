@@ -97,6 +97,7 @@ export default function Missions() {
                                     setMissionToDelete(row.name);
                                     setDeleteMissionOpen(true);
                                 }}
+                                disabled={localStorage.getItem('administrator') !== 'true'}
                                 key={`${row.name}_delete`}
                                 rightSection={<IconCircleMinus size={14} />}
                             >Delete
