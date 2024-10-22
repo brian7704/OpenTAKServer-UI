@@ -25,6 +25,8 @@ export default function Missions() {
     const [deleteMissionOpen, setDeleteMissionOpen] = useState(false);
     const [showInvite, setShowInvite] = useState(false);
     const [inviteMission, setInviteMission] = useState('')
+    const [inviteMissionPasswordProtected, setInviteMissionPasswordProtected] = useState(false)
+    const [inviteMissionPasssword, setInviteMissionPassword] = useState('')
     const [inviteEud, setInviteEud] = useState<ComboboxItem | null>()
     const [callsigns, setCallsigns] = useState<ComboboxItem[]>([]);
     const [inviting, setInviting] = useState(false);
@@ -47,7 +49,7 @@ export default function Missions() {
     function send_invitation() {
         if (inviteEud) {
             axios.post(apiRoutes.mission_invite, {
-                mission_name: inviteMission, uid: inviteEud.value
+                mission_name: inviteMission, uid: inviteEud.value, password: inviteMissionPasssword,
             }).then(r => {
                 if (r.status === 200) {
                     setInviting(false);
@@ -97,10 +99,10 @@ export default function Missions() {
 
                             const invitation_button = <Button
                                 rightSection={<IconMail size={14} /> }
-                                disabled={(row.passwordProtected && localStorage.getItem('administrator') !== 'true')}
                                 onClick={() => {
                                     setShowInvite(true);
                                     setInviteMission(row.name);
+                                    setInviteMissionPasswordProtected(row.passwordProtected)
                                 }}>Invite</Button>
 
                             const delete_button = <Button
@@ -238,6 +240,10 @@ export default function Missions() {
                     data={callsigns}
                     allowDeselect={false}
                     mb="md" />
+                {(localStorage.getItem('administrator') !== 'true') ?
+                    <PasswordInput disabled={!inviteMissionPasswordProtected} label="Password" onChange={e => { setInviteMissionPassword(e.target.value); }} mb="md" />
+                    : ''
+                }
                 <Button onClick={() => {setInviting(true); send_invitation();}} loading={inviting}>Invite</Button>
             </Modal>
             <Modal opened={deleteMissionOpen} onClose={() => setDeleteMissionOpen(false)} title={`Are you sure you want to delete ${missionToDelete}?`}>
