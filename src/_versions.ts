@@ -11,10 +11,10 @@ export interface TsAppVersion {
 export const versions: TsAppVersion = {
     version: '0.0.0',
     name: 'opentakserver-ui',
-    versionDate: '2024-10-29T03:23:42.940Z',
-    gitCommitHash: 'g3a0ace3',
-    gitCommitDate: '2024-10-22T13:48:35.000Z',
-    versionLong: '0.0.0-g3a0ace3',
-    gitTag: 'v1.4.0rc1',
+    versionDate: '2024-11-13T03:28:33.027Z',
+    gitCommitHash: 'g60de512',
+    gitCommitDate: '2024-11-13T03:27:09.000Z',
+    versionLong: '0.0.0-g60de512',
+    gitTag: 'v1.4.0',
 };
 export default versions;
