@@ -17,6 +17,8 @@ const VideoRecordings = React.lazy(() => import('./pages/VideoRecordings'));
 const Meshtastic = React.lazy(() => import('./pages/Meshtastic'));
 const PluginUpdates = React.lazy(() => import('./pages/PluginUpdates'));
 const DeviceProfiles = React.lazy(() => import('./pages/DeviceProfiles'));
+const Missions = React.lazy(() => import('./pages/Missions'))
+const Groups = React.lazy(() => import('./pages/Groups'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home', element: Dashboard },
@@ -37,6 +39,8 @@ const routes = [
   { path: '/meshtastic', name: 'Meshtastic', element: Meshtastic },
   { path: '/plugin_updates', name: 'PluginUpdates', element: PluginUpdates },
   { path: '/device_profiles', name: 'DeviceProfiles', element: DeviceProfiles },
+  { path: '/missions', name: 'Missions', element: Missions },
+  { path: '/groups', name: 'Groups', element: Groups },
 ];
 
 export default routes;

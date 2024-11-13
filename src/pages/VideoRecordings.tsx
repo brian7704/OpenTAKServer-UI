@@ -3,7 +3,7 @@ import {
     Button,
     Center,
     CloseButton,
-    Flex,
+    Flex, Image,
     Modal,
     Pagination,
     Table,
@@ -23,7 +23,7 @@ import bytes_formatter from '@/bytes_formatter';
 export default function VideoRecordings() {
     const [videoStreams, setVideoStreams] = useState<TableData>({
         caption: '',
-        head: ['Username', 'Protocol', 'Address', 'Port', 'Path', 'Link'],
+        head: ['Thumbnail', 'Start Time', 'End Time', 'Duration', 'Resolution', 'In Progress', 'Path', 'File Size', 'Video Codec', 'Video Bitrate', 'Audio Codec', 'Audio Bitrate', 'Watch', 'Delete', 'Download'],
         body: [],
     });
     const [activePage, setPage] = useState(1);
@@ -34,6 +34,8 @@ export default function VideoRecordings() {
     const [videoUrl, setVideoUrl] = useState('');
     //const [player, setPlayer] = useState<PlayerReference | null>();
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
+    const [thumbnail, setThumbnail] = useState('');
+    const [thumbnailOpened, setThumbnailOpened] = useState(false);
 
     function getVideoRecordings() {
         axios.get(
@@ -45,12 +47,17 @@ export default function VideoRecordings() {
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
-                    head: ['Start Time', 'End Time', 'Duration', 'Resolution', 'In Progress', 'Path', 'File Size', 'Video Codec', 'Video Bitrate', 'Audio Codec', 'Audio Bitrate', 'Watch', 'Delete', 'Download'],
+                    head: ['Thumbnail', 'Start Time', 'End Time', 'Duration', 'Resolution', 'In Progress', 'Path', 'File Size', 'Video Codec', 'Video Bitrate', 'Audio Codec', 'Audio Bitrate', 'Watch', 'Delete', 'Download'],
                     body: [],
                 };
 
                 r.data.results.map((row:any) => {
                     if (tableData.body !== undefined) {
+                        const thumbnail = <Image src={row.thumbnail} onClick={() => {
+                            setThumbnail(row.thumbnail);
+                            setThumbnailOpened(true);
+                        }} />
+
                         const delete_button = <Button
                           onClick={() => {
                                 setDeleteRecordingOpen(true);
@@ -85,7 +92,7 @@ export default function VideoRecordings() {
 
                         const download_button = <Button component="a" href={`${apiRoutes.getRecording}?id=${row.id}`}><IconDownload /></Button>;
 
-                        tableData.body.push([row.start_time, row.stop_time, formattedDuration,
+                        tableData.body.push([thumbnail, row.start_time, row.stop_time, formattedDuration,
                             `${row.width} x ${row.height}`, in_progress_icon, row.path, bytes_formatter(row.file_size),
                             row.video_codec, bytes_formatter(row.video_bitrate, 2, true),
                             row.audio_codec, `${bytes_formatter(row.audio_bitrate, 2, true)}`,
@@ -145,6 +152,10 @@ export default function VideoRecordings() {
                     </Button>
                     <Button onClick={() => setDeleteRecordingOpen(false)}>No</Button>
                 </Center>
+            </Modal>
+
+            <Modal opened={thumbnailOpened} onClose={() => setThumbnailOpened(false)} title="Thumbnail" size="xl">
+                <Image src={thumbnail} />
             </Modal>
 
             <AspectRatio ratio={16 / 9} h="100%" display={showVideo ? 'block' : 'none'} mt="md" pb={100} mb="xl">

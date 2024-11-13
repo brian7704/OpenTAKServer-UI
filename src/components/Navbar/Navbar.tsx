@@ -9,7 +9,7 @@ import {
     IconPuzzle,
     IconUsers,
     IconMap, IconLogout, IconMoonStars, Icon2fa, IconCalendarDue, IconMovie, IconQrcode, IconX, IconCertificate,
-    IconHelp, IconBook, IconBrandDiscord, IconBrandGithub,
+    IconHelp, IconBook, IconBrandDiscord, IconBrandGithub, IconRefresh, IconSettings
 } from '@tabler/icons-react';
 import { NavLink, ScrollArea, Title, Modal, Center } from '@mantine/core';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -31,6 +31,7 @@ const navbarLinks = [
     { link: '/video_streams', label: 'Video Streams', icon: IconVideo },
     { link: '/video_recordings', label: 'Video Recordings', icon: IconMovie },
     { link: '/meshtastic', label: 'Meshtastic', icon: MeshtasticLogo },
+    { link: '/missions', label: 'Missions', icon: IconRefresh },
 ];
 
 const adminLinks = [
@@ -102,14 +103,15 @@ export default function Navbar() {
     };
 
     return (
-        <ScrollArea>
+        <ScrollArea type="never">
             <div>
                 {links}
             </div>
             {administrator ?
                 <div className={classes.footer}>
-                    <Title order={6}>Admin</Title>
-                    {admin_links}
+                    <NavLink className={classes.link} key="admin" leftSection={<IconSettings className={classes.linkIcon} stroke={1.5} />} label="Admin" >
+                        {admin_links}
+                    </NavLink>
                 </div> : ''}
             <div className={classes.footer}>
                 <NavLink className={classes.link} key="downloadTruststore" onClick={() => window.open(apiRoutes.truststore, "_blank")} leftSection={<IconCertificate className={classes.linkIcon} stroke={1.5} />} label="Download Truststore" />

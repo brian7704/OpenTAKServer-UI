@@ -1,7 +1,7 @@
 import {
     AspectRatio,
     Button,
-    Center, CloseButton, CopyButton, Flex,
+    Center, CopyButton,
     Modal,
     Pagination,
     Switch,
@@ -10,6 +10,7 @@ import {
     TextInput,
     Tooltip,
     useComputedColorScheme,
+    Image
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import { IconCheck, IconCircleMinus, IconPlus, IconVideo, IconX } from '@tabler/icons-react';
@@ -20,7 +21,7 @@ import { apiRoutes } from '../apiRoutes';
 export default function VideoStreams() {
     const [videoStreams, setVideoStreams] = useState<TableData>({
         caption: '',
-        head: ['Username', 'Protocol', 'Address', 'Port', 'Path', 'Link'],
+        head: ['Thumbnail', 'Username', 'Protocol', 'Address', 'Port', 'Path', 'Link'],
         body: [],
     });
     const [activePage, setPage] = useState(1);
@@ -33,6 +34,8 @@ export default function VideoStreams() {
     const [showVideo, setShowVideo] = useState(false);
     const [videoUrl, setVideoUrl] = useState('');
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
+    const [thumbnail, setThumbnail] = useState('');
+    const [thumbnailOpened, setThumbnailOpened] = useState(false);
 
     function setRecord(path:string, record:boolean) {
         axios.patch(
@@ -73,12 +76,16 @@ export default function VideoStreams() {
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
-                    head: ['Username', 'Path', 'RTSP Link', 'WebRTC Link', 'HLS Link', 'Source', 'Ready', 'Record'],
+                    head: ['Thumbnail', 'Username', 'Path', 'RTSP Link', 'WebRTC Link', 'HLS Link', 'Source', 'Ready', 'Record'],
                     body: [],
                 };
 
                 r.data.results.map((row:any) => {
                     if (tableData.body !== undefined) {
+                        const thumbnail = <Image src={row.thumbnail} onClick={() => {
+                            setThumbnail(row.thumbnail);
+                            setThumbnailOpened(true);
+                        }} />
                         const delete_button = <Button
                           onClick={() => {
                                 setDeleteVideoOpened(true);
@@ -140,7 +147,7 @@ export default function VideoStreams() {
                         )}
                         </CopyButton>;
 
-                        tableData.body.push([row.username, row.path, rtsp_button, webrtc_button, hls_button,
+                        tableData.body.push([thumbnail, row.username, row.path, rtsp_button, webrtc_button, hls_button,
                             row.source, online_icon, record, watch_button, delete_button]);
                     }
                 });
@@ -235,7 +242,9 @@ export default function VideoStreams() {
                     <Button onClick={() => setDeleteVideoOpened(false)}>No</Button>
                 </Center>
             </Modal>
-
+            <Modal opened={thumbnailOpened} onClose={() => setThumbnailOpened(false)} title="Thumbnail" size="xl">
+                <Image src={thumbnail} />
+            </Modal>
 
                     <AspectRatio ratio={16 / 9} display={showVideo ? 'block' : 'none'} h="100%" mb="xl">
                         <iframe
