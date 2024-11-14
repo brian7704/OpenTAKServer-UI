@@ -155,7 +155,9 @@ export default function Missions() {
                 if (r.status === 200) {
                     const all_callsigns: ComboboxItem[] = []
                     r.data.results.map((row:any) => {
-                        all_callsigns.push({value: row.uid, label: row.callsign});
+                        if (row.callsign) {
+                            all_callsigns.push({value: row.uid, label: row.callsign});
+                        }
                     });
                     setCallsigns(all_callsigns);
                 }
