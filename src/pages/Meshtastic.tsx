@@ -279,7 +279,7 @@ export default function Meshtastic() {
                 <Select
                   label="Modem Preset"
                   onChange={e => { channelProperties.modem_preset = String(e); }}
-                  data={['LONG_FAST', 'LONG_SLOW', 'VERY_LONG_SLOW', 'MEDIUM_SLOW', 'MEDIUM_FAST', 'SHORT_SLOW', 'SHORT_FAST', 'LONG_MODERATE']}
+                  data={['LONG_FAST', 'LONG_SLOW', 'VERY_LONG_SLOW', 'MEDIUM_SLOW', 'MEDIUM_FAST', 'SHORT_SLOW', 'SHORT_FAST', 'LONG_MODERATE', 'SHORT_TURBO']}
                   mb="md"
                   defaultValue="LONG_FAST"
                 />
