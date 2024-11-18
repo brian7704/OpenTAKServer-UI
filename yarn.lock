@@ -688,10 +688,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/js@npm:9.12.0, @eslint/js@npm:^9.12.0":
+"@eslint/js@npm:9.12.0":
   version: 9.12.0
   resolution: "@eslint/js@npm:9.12.0"
   checksum: 325650a59a1ce3d97c69441501ebaf415607248bacbe8c8ca35adc7cb73b524f592f266a75772f496b06f3239e3ee1996722a242148085f0ee5fb3dd7065897c
+  languageName: node
+  linkType: hard
+
+"@eslint/js@npm:^9.15.0":
+  version: 9.15.0
+  resolution: "@eslint/js@npm:9.15.0"
+  checksum: 56552966ab1aa95332f70d0e006db5746b511c5f8b5e0c6a9b2d6764ff6d964e0b2622731877cbc4e3f0e74c5b39191290d5f48147be19175292575130d499ab
   languageName: node
   linkType: hard
 
@@ -6737,7 +6744,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "opentakserver-ui@workspace:."
   dependencies:
-    "@eslint/js": "npm:^9.12.0"
+    "@eslint/js": "npm:^9.15.0"
     "@mantine/charts": "npm:^7.12.2"
     "@mantine/core": "npm:^7.12.2"
     "@mantine/form": "npm:^7.12.2"
