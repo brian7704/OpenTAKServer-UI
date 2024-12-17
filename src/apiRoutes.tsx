@@ -49,5 +49,6 @@ export const apiRoutes = {
   truststore: '/api/truststore',
   missions: '/api/missions',
   groups: '/api/groups',
-  mission_invite: '/api/missions/invite'
+  mission_invite: '/api/missions/invite',
+  eud_stats: '/api/eud_stats',
 };

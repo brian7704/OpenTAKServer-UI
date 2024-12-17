@@ -19,6 +19,7 @@ const PluginUpdates = React.lazy(() => import('./pages/PluginUpdates'));
 const DeviceProfiles = React.lazy(() => import('./pages/DeviceProfiles'));
 const Missions = React.lazy(() => import('./pages/Missions'))
 const Groups = React.lazy(() => import('./pages/Groups'))
+const EUDStats = React.lazy(() => import('./pages/EUDStats'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home', element: Dashboard },
@@ -41,6 +42,7 @@ const routes = [
   { path: '/device_profiles', name: 'DeviceProfiles', element: DeviceProfiles },
   { path: '/missions', name: 'Missions', element: Missions },
   { path: '/groups', name: 'Groups', element: Groups },
+  { path: '/eud_stats', name: 'EUDStats', element: EUDStats },
 ];
 
 export default routes;
