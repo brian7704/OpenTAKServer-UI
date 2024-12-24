@@ -13,7 +13,7 @@ import { IconCircleMinus, IconUpload, IconX } from '@tabler/icons-react';
 import axios from 'axios';
 import { notifications } from '@mantine/notifications';
 import { formatISO, parseISO } from 'date-fns';
-import { apiRoutes } from '@/apiRoutes.tsx';
+import { apiRoutes } from '../apiRoutes';
 
 interface ProfileInterface {
     key: string;
