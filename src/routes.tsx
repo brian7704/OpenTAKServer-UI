@@ -20,7 +20,7 @@ const DeviceProfiles = React.lazy(() => import('./pages/DeviceProfiles'));
 const Missions = React.lazy(() => import('./pages/Missions'))
 const Groups = React.lazy(() => import('./pages/Groups'))
 const EUDStats = React.lazy(() => import('./pages/EUDStats'));
-const VideoWall = React.lazy(() => import('./pages/VideoWall'));
+const VideoWall = React.lazy(() => import('./pages/VideoWall/VideoWall.tsx'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home', element: Dashboard },
