@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {ReactElement, useState} from 'react';
 import {
     IconAlertTriangle,
     IconHeartbeat,
@@ -9,7 +9,7 @@ import {
     IconPuzzle,
     IconUsers,
     IconMap, IconLogout, IconMoonStars, Icon2fa, IconCalendarDue, IconMovie, IconQrcode, IconX, IconCertificate,
-    IconHelp, IconBook, IconBrandDiscord, IconBrandGithub, IconRefresh, IconSettings
+    IconHelp, IconBook, IconBrandDiscord, IconBrandGithub, IconRefresh, IconSettings, IconPlugConnected
 } from '@tabler/icons-react';
 import { NavLink, ScrollArea, Title, Modal, Center } from '@mantine/core';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -39,6 +39,7 @@ const adminLinks = [
     { link: '/jobs', label: 'Scheduled Jobs', icon: IconCalendarDue },
     { link: '/plugin_updates', label: 'Plugin Updates', icon: IconPuzzle },
     { link: '/device_profiles', label: 'Device Profiles', icon: IconDeviceMobile },
+    { link: '/plugins', label: 'Server Plugins', icon: IconPlugConnected },
 ];
 
 export default function Navbar() {
@@ -73,6 +74,8 @@ export default function Navbar() {
         />
     ));
 
+    const plugin_links:Array<ReactElement> = [];
+
     const navigate = useNavigate();
 
     const logout = () => {
@@ -102,6 +105,27 @@ export default function Navbar() {
         });
     };
 
+    const get_plugins = () => {
+        axios.get(apiRoutes.plugins).then(r => {
+            if (r.status === 200) {
+                r.data.plugins.map((plugin:any) => {
+                    plugin_links.push(
+                        <NavLink
+                            className={classes.link}
+                            component={Link}
+                            key={plugin.distro}
+                            active={location.pathname === plugin.distro}
+                            to="/plugin"
+                            label={plugin.name}
+                            leftSection={<IconPlugConnected />}
+                            mt="md"
+                        />
+                    )
+                })
+            }
+        })
+    }
+
     return (
         <ScrollArea type="never">
             <div>
@@ -111,6 +135,9 @@ export default function Navbar() {
                 <div className={classes.footer}>
                     <NavLink className={classes.link} key="admin" leftSection={<IconSettings className={classes.linkIcon} stroke={1.5} />} label="Admin" >
                         {admin_links}
+                    </NavLink>
+                    <NavLink className={classes.link} key="admin" leftSection={<IconSettings className={classes.linkIcon} stroke={1.5} />} label="Admin" >
+                        {plugin_links}
                     </NavLink>
                 </div> : ''}
             <div className={classes.footer}>

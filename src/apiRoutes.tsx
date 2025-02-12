@@ -51,4 +51,5 @@ export const apiRoutes = {
   groups: '/api/groups',
   mission_invite: '/api/missions/invite',
   eud_stats: '/api/eud_stats',
+  plugins: '/api/plugins'
 };

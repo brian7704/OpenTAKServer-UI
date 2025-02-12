@@ -21,6 +21,7 @@ const Missions = React.lazy(() => import('./pages/Missions'))
 const Groups = React.lazy(() => import('./pages/Groups'))
 const EUDStats = React.lazy(() => import('./pages/EUDStats'));
 const VideoWall = React.lazy(() => import('./pages/VideoWall/VideoWall.tsx'));
+const Plugin = React.lazy(() => import('./pages/Plugin'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home', element: Dashboard },
@@ -45,6 +46,7 @@ const routes = [
   { path: '/groups', name: 'Groups', element: Groups },
   { path: '/eud_stats', name: 'EUDStats', element: EUDStats },
   { path: '/video_wall', name: 'Video Wall', element: VideoWall },
+  { path: '/plugin', name: 'Plugins', element: Plugin },
 ];
 
 export default routes;

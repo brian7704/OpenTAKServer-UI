@@ -150,8 +150,7 @@ export default function VideoWall() {
 
                 margin={[0,0]}
                 //width={1000}
-                allowOverlap={false}
-                onResize={handleResize}>
+                allowOverlap={false}>
                 {videos}
             </ResponsiveGridLayout>
         </>
