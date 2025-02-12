@@ -9,7 +9,7 @@ import {
     IconPuzzle,
     IconUsers,
     IconMap, IconLogout, IconMoonStars, Icon2fa, IconCalendarDue, IconMovie, IconQrcode, IconX, IconCertificate,
-    IconHelp, IconBook, IconBrandDiscord, IconBrandGithub, IconRefresh, IconSettings, IconPlugConnected
+    IconHelp, IconBook, IconBrandDiscord, IconBrandGithub, IconRefresh, IconSettings, IconPlugConnected, IconPlug
 } from '@tabler/icons-react';
 import { NavLink, ScrollArea, Title, Modal, Center } from '@mantine/core';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -118,10 +118,10 @@ export default function Navbar() {
                             className={classes.link}
                             component={Link}
                             key={plugin.distro}
-                            active={location.pathname === plugin.distro}
+                            active={location.pathname === `/plugin?name=${plugin.distro}`}
                             to={`/plugin?name=${plugin.distro}`}
                             label={plugin.name}
-                            leftSection={<IconPlugConnected />}
+                            leftSection={<IconPlugConnected className={classes.linkIcon} stroke={1.5} />}
                             mt="md"
                         />
                     )
@@ -141,7 +141,7 @@ export default function Navbar() {
                     <NavLink className={classes.link} key="admin" leftSection={<IconSettings className={classes.linkIcon} stroke={1.5} />} label="Admin" >
                         {admin_links}
                     </NavLink>
-                    <NavLink className={classes.link} key="admin" leftSection={<IconSettings className={classes.linkIcon} stroke={1.5} />} label="Admin" >
+                    <NavLink className={classes.link} key="plugins" leftSection={<IconPlug className={classes.linkIcon} stroke={1.5} />} label="Plugins" >
                         {plugins}
                     </NavLink>
                 </div> : ''}
