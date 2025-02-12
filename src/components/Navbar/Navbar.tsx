@@ -1,4 +1,4 @@
-import React, {ReactElement, useState} from 'react';
+import React, {ReactElement, useEffect, useState} from 'react';
 import {
     IconAlertTriangle,
     IconHeartbeat,
@@ -47,6 +47,11 @@ export default function Navbar() {
     const location = useLocation();
     const [showItakQr, setShowItakQr] = useState(false);
     const [qrString, setQrString] = useState('');
+    const [plugins, setPlugins]: Array<ReactElement>|any = useState();
+
+    useEffect(() => {
+        get_plugins();
+    }, []);
 
     const links = navbarLinks.map((item) => (
         <NavLink
@@ -73,8 +78,6 @@ export default function Navbar() {
           mt="md"
         />
     ));
-
-    const plugin_links:Array<ReactElement> = [];
 
     const navigate = useNavigate();
 
@@ -108,6 +111,7 @@ export default function Navbar() {
     const get_plugins = () => {
         axios.get(apiRoutes.plugins).then(r => {
             if (r.status === 200) {
+                const plugin_links:Array<ReactElement> = [];
                 r.data.plugins.map((plugin:any) => {
                     plugin_links.push(
                         <NavLink
@@ -115,13 +119,14 @@ export default function Navbar() {
                             component={Link}
                             key={plugin.distro}
                             active={location.pathname === plugin.distro}
-                            to="/plugin"
+                            to={`/plugin?name=${plugin.distro}`}
                             label={plugin.name}
                             leftSection={<IconPlugConnected />}
                             mt="md"
                         />
                     )
                 })
+                setPlugins(plugin_links)
             }
         })
     }
@@ -137,7 +142,7 @@ export default function Navbar() {
                         {admin_links}
                     </NavLink>
                     <NavLink className={classes.link} key="admin" leftSection={<IconSettings className={classes.linkIcon} stroke={1.5} />} label="Admin" >
-                        {plugin_links}
+                        {plugins}
                     </NavLink>
                 </div> : ''}
             <div className={classes.footer}>
