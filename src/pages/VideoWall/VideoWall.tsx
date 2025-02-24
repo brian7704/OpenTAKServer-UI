@@ -3,7 +3,7 @@ import ReactGridLayout, {Responsive, WidthProvider, Layout} from "react-grid-lay
 import styled from "styled-components";
 import {AspectRatio, Button, ComboboxItem, Modal, Select} from "@mantine/core";
 import classes from './video_wall.module.css'
-import React, {MouseEvent, useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import axios from "@/axios_config.tsx";
 import {apiRoutes} from "@/apiRoutes.tsx";
 import { ResizableBox } from 'react-resizable';
