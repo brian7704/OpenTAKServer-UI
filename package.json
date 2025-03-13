@@ -20,11 +20,14 @@
     "storybook:build": "storybook build"
   },
   "dependencies": {
-    "@mantine/charts": "^7.12.2",
-    "@mantine/core": "^7.12.2",
-    "@mantine/form": "^7.12.2",
-    "@mantine/hooks": "^7.12.2",
+    "@mantine/charts": "^7.17.1",
+    "@mantine/core": "^7.17.1",
+    "@mantine/form": "^7.17.1",
+    "@mantine/hooks": "^7.17.1",
     "@types/leaflet-rotatedmarker": "^0.2.5",
+    "@uiw/codemirror-extensions-color": "^4.23.10",
+    "@uiw/codemirror-extensions-langs": "^4.23.10",
+    "@uiw/react-codemirror": "^4.23.10",
     "date-fns": "^4.1.0",
     "dompurify": "^3.2.4",
     "file-entry-cache": "^10.0.0",
@@ -50,11 +53,12 @@
     "semver": "^7.6.3",
     "socket.io-client": "^4.7.4",
     "styled-components": "^6.1.13",
+    "yaml": "^2.7.0",
     "yarn": "^1.22.22"
   },
   "devDependencies": {
     "@eslint/js": "^9.12.0",
-    "@mantine/notifications": "^7.12.2",
+    "@mantine/notifications": "^7.17.1",
     "@mantinex/mantine-logo": "^1.0.1",
     "@saithodev/ts-appversion": "^2.2.0",
     "@storybook/addon-essentials": "^8.3.1",
