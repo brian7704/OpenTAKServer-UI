@@ -1,17 +1,18 @@
-import {useEffect, useState, DOMElement, ReactElement} from "react";
+import React, {useEffect, useState, ReactElement} from "react";
 import CodeMirror from '@uiw/react-codemirror';
 import { yaml } from '@codemirror/lang-yaml';
 import {useSearchParams} from "react-router-dom";
-import {Tabs, Table, TextInput, Button, Flex} from "@mantine/core";
-import {IconAlignLeft, IconSettings, IconDeviceFloppy, IconRestore} from "@tabler/icons-react";
+import {Tabs, Table, TextInput, Button, Flex, useComputedColorScheme} from "@mantine/core";
+import {IconAlignLeft, IconSettings, IconDeviceFloppy, IconRestore, IconX, IconCheck} from "@tabler/icons-react";
 import { parse, stringify } from 'yaml'
 import axios from "axios";
+import {notifications} from "@mantine/notifications";
 
 export default function Plugin() {
     const [params, setParams] = useSearchParams();
     const [originalConfig, setOriginalConfig] = useState("");
     const [editedConfig, setEditedConfig] = useState("");
-    const [rows, setRows] = useState<ReactElement[]>()
+    const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
 
     useEffect(() => {
         getConfig();
@@ -21,25 +22,56 @@ export default function Plugin() {
         axios.get(`/api/plugins/${params.get("name")}/config`).then((r) => {
             if (r.status === 200) {
                 setOriginalConfig(r.data);
-                parseConfig(r.data)
+                setEditedConfig(stringify(r.data));
             }
         })
     }
 
-    function parseConfig(config:Object) {
-        let tableRows:ReactElement[] = [];
-        Object.entries(config).forEach(([key, value]) => {
-            tableRows.push(<Table.Tr>
-                <Table.Td>
-                    <TextInput onChange={(e) => setEditedConfig(e.target.value)} label={key} value={JSON.stringify(value)} />
-                </Table.Td>
-            </Table.Tr>)
-        })
-        setRows(tableRows)
+    function undoChanges() {
+        setEditedConfig(stringify(originalConfig));
     }
 
-    function restoreDefaults() {
-        parseConfig(originalConfig);
+    function submit() {
+        // parse yaml to make sure it's valid
+        // post to backend
+        // backend plugin validates
+        // display success or failure message
+        try {
+            let config = parse(editedConfig);
+            axios.post(`/api/plugins/${params.get("name")}/config`, config).then((r) => {
+                if (r.status === 200) {
+                    notifications.show({
+                        title: 'Success',
+                        message: 'Successfully Updated Plugin Config',
+                        icon: <IconCheck />,
+                        color: 'green'
+                    })
+                }
+            }).catch((err) => {
+                notifications.show({
+                    title: 'Failed to update plugin config',
+                    message: err.data.error,
+                    icon: <IconX />,
+                    color: 'red'
+                })
+            })
+        }
+        catch (error: unknown) {
+            let message = "";
+            if (typeof error === "string") {
+                message = error
+            } else if (error instanceof Error) {
+                message = error.message
+            }
+
+            console.error(error);
+            notifications.show({
+                title: 'Error',
+                message: message,
+                icon: <IconX />,
+                color: 'red',
+            });
+        }
     }
 
     return (
@@ -47,10 +79,10 @@ export default function Plugin() {
             <Tabs defaultValue="ui">
                 <Tabs.List>
                     <Tabs.Tab value="ui" leftSection={<IconAlignLeft size={16} />}>
-
+                        UI
                     </Tabs.Tab>
                     <Tabs.Tab value="settings" leftSection={<IconSettings size={16} />}>
-
+                        Settings
                     </Tabs.Tab>
                 </Tabs.List>
 
@@ -62,15 +94,10 @@ export default function Plugin() {
                 </Tabs.Panel>
 
                 <Tabs.Panel value="settings">
-                    {/*<CodeMirror value={editedConfigFile} height="100%" extensions={[yaml()]} onChange={(e) => onChange(e)} />*/}
-                    <Table>
-                        <Table.Tbody>
-                            {rows}
-                        </Table.Tbody>
-                    </Table>
+                    <CodeMirror value={editedConfig} height="100%" extensions={[yaml()]} theme={computedColorScheme} onChange={(e) => setEditedConfig(e)} />
 
-                    <Button leftSection={<IconDeviceFloppy />}>Save</Button>
-                    <Button mb="md" leftSection={<IconRestore />} onClick={() => restoreDefaults()}>Restore Defaults</Button>
+                    <Button mt="md" mr="md" leftSection={<IconDeviceFloppy size={14} />} onClick={() => submit()}>Save</Button>
+                    <Button mt="md" leftSection={<IconRestore size={14} />} onClick={() => undoChanges()}>Undo Changes</Button>
 
                 </Tabs.Panel>
 
