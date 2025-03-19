@@ -11,7 +11,7 @@ import {
     IconMap, IconLogout, IconMoonStars, Icon2fa, IconCalendarDue, IconMovie, IconQrcode, IconX, IconCertificate,
     IconHelp, IconBook, IconBrandDiscord, IconBrandGithub, IconRefresh, IconSettings, IconPlugConnected, IconPlug
 } from '@tabler/icons-react';
-import { NavLink, ScrollArea, Title, Modal, Center } from '@mantine/core';
+import { NavLink, ScrollArea, Modal, Center } from '@mantine/core';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
 import QRCode from 'react-qr-code';
@@ -39,7 +39,6 @@ const adminLinks = [
     { link: '/jobs', label: 'Scheduled Jobs', icon: IconCalendarDue },
     { link: '/plugin_updates', label: 'Plugin Updates', icon: IconPuzzle },
     { link: '/device_profiles', label: 'Device Profiles', icon: IconDeviceMobile },
-    { link: '/plugins', label: 'Server Plugins', icon: IconPlugConnected },
 ];
 
 export default function Navbar() {

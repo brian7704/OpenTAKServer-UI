@@ -1,22 +1,62 @@
 import React, {useEffect, useState, ReactElement} from "react";
 import CodeMirror from '@uiw/react-codemirror';
 import { yaml } from '@codemirror/lang-yaml';
-import {useSearchParams} from "react-router-dom";
-import {Tabs, Table, TextInput, Button, Flex, useComputedColorScheme} from "@mantine/core";
-import {IconAlignLeft, IconSettings, IconDeviceFloppy, IconRestore, IconX, IconCheck} from "@tabler/icons-react";
+import Markdown from 'react-markdown'
+import {Link, useSearchParams} from "react-router-dom";
+import {Tabs, Text, Button, Flex, useComputedColorScheme, ScrollArea, Divider} from "@mantine/core";
+import {
+    IconAlignLeft,
+    IconSettings,
+    IconDeviceFloppy,
+    IconRestore,
+    IconX,
+    IconCheck,
+    IconInfoCircle
+} from "@tabler/icons-react";
 import { parse, stringify } from 'yaml'
 import axios from "axios";
 import {notifications} from "@mantine/notifications";
+
+interface About {
+    author: string;
+    author_email: string;
+    classifier: Array<string>;
+    description: string;
+    description_content_type: string;
+    license: string;
+    metadata_version: string
+    name: string;
+    project_url: Array<string>;
+    requires_dist: Array<string>;
+    requires_python: string;
+    summary: string;
+    version: string;
+}
 
 export default function Plugin() {
     const [params, setParams] = useSearchParams();
     const [originalConfig, setOriginalConfig] = useState("");
     const [editedConfig, setEditedConfig] = useState("");
+    const [about, setAbout] = useState<About>();
+    const [docUrl, setDocUrl] = useState("");
+    const [repoUrl, setRepoUrl] = useState("");
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
 
     useEffect(() => {
         getConfig();
+        getAbout();
     }, []);
+
+    useEffect(() => {
+        about?.project_url.forEach((value) => {
+            if (value.startsWith("Documentation")) {
+                setDocUrl(value.split(", ")[1])
+            }
+            else if (value.startsWith("Repository")) {
+                setRepoUrl(value.split(", ")[1])
+            }
+        })
+    }, [about]);
 
     function getConfig() {
         axios.get(`/api/plugins/${params.get("name")}/config`).then((r) => {
@@ -24,6 +64,16 @@ export default function Plugin() {
                 setOriginalConfig(r.data);
                 setEditedConfig(stringify(r.data));
             }
+        })
+    }
+
+    function getAbout() {
+        axios.get(`/api/plugins/${params.get("name")}/`).then((r) => {
+            if (r.status === 200) {
+                setAbout(r.data);
+            }
+        }).catch((err) => {
+            console.log(err);
         })
     }
 
@@ -37,7 +87,7 @@ export default function Plugin() {
         // backend plugin validates
         // display success or failure message
         try {
-            let config = parse(editedConfig);
+            const config = parse(editedConfig);
             axios.post(`/api/plugins/${params.get("name")}/config`, config).then((r) => {
                 if (r.status === 200) {
                     notifications.show({
@@ -47,10 +97,19 @@ export default function Plugin() {
                         color: 'green'
                     })
                 }
+                else {
+                    notifications.show({
+                        title: 'Failed to update plugin config',
+                        message: r.data.error,
+                        icon: <IconX />,
+                        color: 'red'
+                    })
+                }
             }).catch((err) => {
+                console.log(err);
                 notifications.show({
                     title: 'Failed to update plugin config',
-                    message: err.data.error,
+                    message: err.response.data.error,
                     icon: <IconX />,
                     color: 'red'
                 })
@@ -67,7 +126,7 @@ export default function Plugin() {
             console.error(error);
             notifications.show({
                 title: 'Error',
-                message: message,
+                message,
                 icon: <IconX />,
                 color: 'red',
             });
@@ -76,8 +135,11 @@ export default function Plugin() {
 
     return (
         <div>
-            <Tabs defaultValue="ui">
+            <Tabs defaultValue="about">
                 <Tabs.List>
+                    <Tabs.Tab value="about" leftSection={<IconInfoCircle size={16} /> }>
+                        About
+                    </Tabs.Tab>
                     <Tabs.Tab value="ui" leftSection={<IconAlignLeft size={16} />}>
                         UI
                     </Tabs.Tab>
@@ -86,10 +148,24 @@ export default function Plugin() {
                     </Tabs.Tab>
                 </Tabs.List>
 
+                <Tabs.Panel value="about">
+                    <ScrollArea>
+                        <Text size="md"><Text span inherit fw={700}>Name:</Text> {about?.name}</Text>
+                        <Text size="md"><Text span inherit fw={700}>Author:</Text> {about?.author}</Text>
+                        <Text size="md"><Text span inherit fw={700}>Author Email:</Text> {about?.author_email}</Text>
+                        <Text size="md"><Text span inherit fw={700}>License:</Text> {about?.license}</Text>
+                        <Text size="md"><Text span inherit fw={700}>Version:</Text> {about?.version}</Text>
+                        <Text size="md"><Text span inherit fw={700}>Documentation:</Text> <Link to={docUrl}>{docUrl}</Link></Text>
+                        <Text size="md"><Text span inherit fw={700}>Repository:</Text> <Link to={repoUrl}>{repoUrl}</Link></Text>
+                        <Divider mt="md" />
+                        <Markdown>{about?.description}</Markdown>
+                    </ScrollArea>
+                </Tabs.Panel>
+
                 <Tabs.Panel value="ui">
 
                     <Flex style={{height:"100%"}}>
-                        <iframe style={{position: "relative", flex: 1, width: "100%", height: "100vh", border: 0}} src={`/api/plugins/${params.get("name")}/ui`} />
+                        <iframe title="PluginUI" style={{position: "relative", flex: 1, width: "100%", height: "100vh", border: 0}} src={`/api/plugins/${params.get("name")}/ui`} />
                     </Flex>
                 </Tabs.Panel>
 
