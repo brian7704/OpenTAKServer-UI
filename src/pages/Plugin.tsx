@@ -40,11 +40,13 @@ export default function Plugin() {
     const [about, setAbout] = useState<About>();
     const [docUrl, setDocUrl] = useState("");
     const [repoUrl, setRepoUrl] = useState("");
+    const [showUITab, setShowUITab] = useState(true);
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
 
     useEffect(() => {
         getConfig();
         getAbout();
+        checkUi();
     }, []);
 
     useEffect(() => {
@@ -57,6 +59,19 @@ export default function Plugin() {
             }
         })
     }, [about]);
+
+    function checkUi() {
+        axios.get(`/api/plugins/${params.get("name")}/ui`).then((r) => {
+            if (r.status === 200) {
+               if (!r.data) {
+                   setShowUITab(false);
+               }
+               else {
+                   setShowUITab(true);
+               }
+            }
+        })
+    }
 
     function getConfig() {
         axios.get(`/api/plugins/${params.get("name")}/config`).then((r) => {
@@ -140,7 +155,7 @@ export default function Plugin() {
                     <Tabs.Tab value="about" leftSection={<IconInfoCircle size={16} /> }>
                         About
                     </Tabs.Tab>
-                    <Tabs.Tab value="ui" leftSection={<IconAlignLeft size={16} />}>
+                    <Tabs.Tab value="ui" leftSection={<IconAlignLeft size={16} />} display={showUITab ? 'inherit' : 'none'}>
                         UI
                     </Tabs.Tab>
                     <Tabs.Tab value="settings" leftSection={<IconSettings size={16} />}>
