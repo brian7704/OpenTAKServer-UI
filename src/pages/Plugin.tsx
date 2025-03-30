@@ -3,7 +3,7 @@ import CodeMirror from '@uiw/react-codemirror';
 import { yaml } from '@codemirror/lang-yaml';
 import Markdown from 'react-markdown'
 import {Link, useSearchParams} from "react-router-dom";
-import {Tabs, Text, Button, Flex, useComputedColorScheme, ScrollArea, Divider} from "@mantine/core";
+import {Tabs, Text, Button, Flex, useComputedColorScheme, ScrollArea, Divider, Switch} from "@mantine/core";
 import {
     IconAlignLeft,
     IconSettings,
@@ -16,6 +16,7 @@ import {
 import { parse, stringify } from 'yaml'
 import axios from "axios";
 import {notifications} from "@mantine/notifications";
+import {apiRoutes} from "@/apiRoutes.tsx";
 
 interface About {
     author: string;
@@ -41,6 +42,7 @@ export default function Plugin() {
     const [docUrl, setDocUrl] = useState("");
     const [repoUrl, setRepoUrl] = useState("");
     const [showUITab, setShowUITab] = useState(true);
+    const [enabled, setEnabled] = useState(true)
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
 
     useEffect(() => {
@@ -148,6 +150,29 @@ export default function Plugin() {
         }
     }
 
+    function togglePlugin() {
+        axios.post((enabled) ? `${apiRoutes.plugins}/${params.get("name")}/disable` : `${apiRoutes.plugins}/${params.get("name")}/enable`)
+            .then((r) => {
+                if (r.status === 200) {
+                    setEnabled(!enabled);
+                    notifications.show({
+                        title: 'Success',
+                        message: '',
+                        icon: <IconCheck />,
+                        color: 'green'
+                    })
+                }
+        }).catch((err) => {
+            console.log(err);
+            notifications.show({
+                title: 'Failed',
+                message: '',
+                icon: <IconX />,
+                color: 'red'
+            })
+        })
+    }
+
     return (
         <div>
             <Tabs defaultValue="about">
@@ -164,7 +189,7 @@ export default function Plugin() {
                 </Tabs.List>
 
                 <Tabs.Panel value="about">
-                    <ScrollArea>
+                    <ScrollArea style={{width:'100%'}}>
                         <Text size="md"><Text span inherit fw={700}>Name:</Text> {about?.name}</Text>
                         <Text size="md"><Text span inherit fw={700}>Author:</Text> {about?.author}</Text>
                         <Text size="md"><Text span inherit fw={700}>Author Email:</Text> {about?.author_email}</Text>
@@ -172,6 +197,7 @@ export default function Plugin() {
                         <Text size="md"><Text span inherit fw={700}>Version:</Text> {about?.version}</Text>
                         <Text size="md"><Text span inherit fw={700}>Documentation:</Text> <Link to={docUrl}>{docUrl}</Link></Text>
                         <Text size="md"><Text span inherit fw={700}>Repository:</Text> <Link to={repoUrl}>{repoUrl}</Link></Text>
+                        <Text size="md"><Text span inherit fw={700}>Enabled:</Text> <Switch label="Enabled" defaultChecked={enabled} onChange={() => togglePlugin()} /></Text>
                         <Divider mt="md" />
                         <Markdown>{about?.description}</Markdown>
                     </ScrollArea>
