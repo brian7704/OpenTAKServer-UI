@@ -85,19 +85,22 @@ export default function Plugin() {
     }
 
     function getAbout() {
-        axios.get(`/api/plugins/${params.get("name")}/`).then((r) => {
+        axios.get(`/api/plugins/${params.get("name")}`).then((r) => {
             if (r.status === 200) {
                 setAbout(r.data);
+                setEnabled(r.data.enabled);
             }
         }).catch((err) => {
             console.log(err);
         })
     }
 
+    // Undoes any unsaved changes the user has made to the config
     function undoChanges() {
         setEditedConfig(stringify(originalConfig));
     }
 
+    // Updates the plugin's config
     function submit() {
         // parse yaml to make sure it's valid
         // post to backend
@@ -197,7 +200,7 @@ export default function Plugin() {
                         <Text size="md"><Text span inherit fw={700}>Version:</Text> {about?.version}</Text>
                         <Text size="md"><Text span inherit fw={700}>Documentation:</Text> <Link to={docUrl}>{docUrl}</Link></Text>
                         <Text size="md"><Text span inherit fw={700}>Repository:</Text> <Link to={repoUrl}>{repoUrl}</Link></Text>
-                        <Text size="md"><Text span inherit fw={700}>Enabled:</Text> <Switch label="Enabled" defaultChecked={enabled} onChange={() => togglePlugin()} /></Text>
+                        <Switch styles={{ label: {fontWeight: 700}}} label="Enabled:" labelPosition="left" size="md" checked={enabled} onChange={() => togglePlugin()} />
                         <Divider mt="md" />
                         <Markdown>{about?.description}</Markdown>
                     </ScrollArea>
@@ -206,7 +209,7 @@ export default function Plugin() {
                 <Tabs.Panel value="ui">
 
                     <Flex style={{height:"100%"}}>
-                        <iframe title="PluginUI" style={{position: "relative", flex: 1, width: "100%", height: "100vh", border: 0}} src={`/api/plugins/${params.get("name")}/ui`} />
+                        <iframe title="PluginUI" style={{position: "relative", flex: 1, width: "100%", height: "100vh", border: 0, scrollbarColor: "transparent"}} src={`/api/plugins/${params.get("name")}/ui`} />
                     </Flex>
                 </Tabs.Panel>
 
