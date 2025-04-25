@@ -81,8 +81,7 @@ export default function EUDs() {
                 r.data.results.map((row:any) => {
                     if (tableData.body !== undefined) {
 
-                        const callsign_link = <Link to={`/eud_stats?uid=${row.uid}&callsign=${row.callsign}`}>{row.callsign}</Link>
-                        tableData.body.push([callsign_link, row.device, row.platform, row.os, row.phone_number,
+                        tableData.body.push([row.callsign, row.device, row.platform, row.os, row.phone_number,
                             row.username, row.uid, row.version, row.last_event_time, row.last_status]);
                     }
                 });
