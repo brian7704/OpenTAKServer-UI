@@ -52,7 +52,7 @@ export default function DeviceProfiles() {
     });
 
     function get_profiles() {
-        axios.get(apiRoutes.deviceProfiles)
+        axios.get(apiRoutes.deviceProfiles, { params: {page: activePage}})
         .then(r => {
             if (r.status === 200) {
                 const tableData: TableData = {
@@ -127,14 +127,14 @@ export default function DeviceProfiles() {
 
     useEffect(() => {
         get_profiles();
-    }, []);
+    }, [activePage]);
 
     useEffect(() => {
-        if (editProfile.key) add_profile(null, editProfile);
+        if (editProfile.key) {add_profile(null, editProfile);}
     }, [editProfile]);
 
     function add_profile(e:any, profile:ProfileInterface) {
-        if (e !== null) e.preventDefault();
+        if (e !== null) {e.preventDefault();}
 
         const body = new FormData();
         body.append('preference_key', profile.key);

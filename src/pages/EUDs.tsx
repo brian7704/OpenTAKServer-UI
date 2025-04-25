@@ -10,7 +10,6 @@ import { notifications } from '@mantine/notifications';
 import {IconCheck, IconDownload, IconPlus, IconX} from '@tabler/icons-react';
 import axios from '../axios_config';
 import { apiRoutes } from '../apiRoutes';
-import {Link} from "react-router-dom";
 
 interface eud {
     callsign: string;
