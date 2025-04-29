@@ -39,6 +39,7 @@ const adminLinks = [
     { link: '/jobs', label: 'Scheduled Jobs', icon: IconCalendarDue },
     { link: '/plugin_updates', label: 'Plugin Updates', icon: IconPuzzle },
     { link: '/device_profiles', label: 'Device Profiles', icon: IconDeviceMobile },
+    { link: '/server_plugin_manager', label: 'Server Plugin Manager', icon: IconPlugConnected },
 ];
 
 export default function Navbar() {
