@@ -55,35 +55,25 @@ export default function Navbar() {
     }, []);
 
     useEffect(() => {
-        console.log(pluginNavLinks);
-        console.log(location.pathname);
-    }, [pluginNavLinks]);
-
-    useEffect(() => {
         generatePluginLinks();
     }, [plugins]);
 
     function generatePluginLinks() {
-        console.log(plugins)
         if (plugins !== null) {
             const links = plugins.map((plugin: any) => (
                 <NavLink
                     className={classes.link}
                     component={Link}
                     key={plugin.distro}
-                    active={location.pathname === `/plugins/${plugin.distro}` || undefined}
-                    to={`/plugins/${plugin.distro}`}
+                    active={location.pathname + location.search === `/plugin?name=${plugin.distro}` || undefined}
+                    to={`/plugin?name=${plugin.distro}`}
                     label={plugin.name}
                     leftSection={<IconPlugConnected className={classes.linkIcon} stroke={1.5}/>}
                     mt="md"
                     onClick={() => {generatePluginLinks()}}
                 />
             ))
-            console.log(links);
             setPluginNavLinks(links)
-        }
-        else {
-            console.log("Plugins null?")
         }
     }
 

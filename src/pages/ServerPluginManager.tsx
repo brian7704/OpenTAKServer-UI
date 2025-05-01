@@ -86,7 +86,6 @@ export default function ServerPluginManager() {
     }, [about]);
 
     function getAvailablePluginInfo(pluginName:string) {
-        console.log(`Getings available plugin ${pluginName}`);
         axios.get(`https://repo.opentakserver.io/brian/prod/${pluginName}`, {headers: {"Accept": "application/json"}})
             .then((r) => {
                 let metadata;
@@ -118,7 +117,6 @@ export default function ServerPluginManager() {
     }
 
     function getInstalledPluginInfo(pluginDistro: string) {
-        console.log(`getting installed ${pluginDistro}`)
         axios.get(`${apiRoutes.plugins}/${pluginDistro}`).then((r) => {
             if (r.status === 200) {
                 setAbout(r.data);
@@ -147,8 +145,8 @@ export default function ServerPluginManager() {
                 r.data.plugins.forEach((plugin: InstalledPlugin) => {
                     plugins_list.push(plugin.name.toLowerCase())
                     tableData.body?.push([plugin.name.toLowerCase(), <Button><IconInfoCircle onClick={() => {console.log(`Clicked installed ${plugin.distro}`); setShowInfo(true); getInstalledPluginInfo(plugin.distro)}} /></Button>,
-                        <Button disabled={!installedPlugins?.includes(plugin.name.toLowerCase())}><IconDownload /></Button>,
-                        <Button disabled={installedPlugins?.includes(plugin.name.toLowerCase())}><IconCircleMinus /></Button>])
+                        <Button disabled><IconDownload /></Button>,
+                        <Button><IconCircleMinus /></Button>])
                 });
                 setInstalledPlugins(plugins_list);
                 setPlugins(tableData);
@@ -163,8 +161,8 @@ export default function ServerPluginManager() {
 
                 r.data.result.projects.map((p:string) => {
                     const row = [p, <Button><IconInfoCircle onClick={() => {console.log(`Clicked ${p}`); setShowInfo(true); getAvailablePluginInfo(p)}} /></Button>,
-                        <Button disabled={!installedPlugins?.includes(p)}><IconDownload /></Button>,
-                        <Button disabled={installedPlugins?.includes(p)}><IconCircleMinus /></Button>
+                        <Button disabled={installedPlugins?.includes(p)}><IconDownload /></Button>,
+                        <Button disabled={!installedPlugins?.includes(p)}><IconCircleMinus /></Button>
                     ];
                     if (!installedPlugins?.includes(p)) {
                         tableData.body?.push(row);
@@ -176,6 +174,11 @@ export default function ServerPluginManager() {
         }).catch((err) => {
             console.log(err);
             setLoading(false);
+            notifications.show({
+                message: 'Failed to get available plugins',
+                icon: <IconX />,
+                color: 'red',
+            })
         })
     }
 
