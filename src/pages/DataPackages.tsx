@@ -45,7 +45,8 @@ export default function DataPackages() {
     const [dataPackageToDelete, setDataPackageToDelete] = useState('');
     const [generatingDataPackage, setGeneratingDataPackage] = useState(false);
     const [showQrCode, setShowQrCode] = useState(false);
-    const [qrHash, setQrHash] = useState(false);
+    const [qrLink, setQrLink] = useState('');
+    const [qrHash, setQrHash] = useState('')
     const [qrTitle, setQrTitle] = useState('');
 
     useEffect(() => {
@@ -157,6 +158,8 @@ export default function DataPackages() {
                           rightSection={<IconQrcode size={14} />}
                           onClick={() => {
                             setShowQrCode(true);
+                            const dp_link = encodeURIComponent(`${window.location.protocol}//${window.location.hostname}:8443/Marti/api/sync/metadata/${row.hash}/tool`)
+                            setQrLink(`tak://com.atakmap.app/import?url=${dp_link}`);
                             setQrHash(row.hash);
                             setQrTitle(row.filename);
                         }}
@@ -249,7 +252,7 @@ export default function DataPackages() {
                 </Center>
             </Modal>
             <Modal title={qrTitle} opened={showQrCode} onClose={() => setShowQrCode(false)} p="md" pb="lg">
-                <Center><QRCode value={`${window.location.protocol}//${window.location.hostname}/Marti/api/sync/metadata/${qrHash}/tool`} />;</Center>
+                <Center><QRCode value={qrLink} /></Center>
             </Modal>
             <Table.ScrollContainer minWidth="100%">
                 <Table data={dataPackages} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mt="md" mb="md" />

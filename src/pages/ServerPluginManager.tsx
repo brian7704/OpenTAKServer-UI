@@ -11,7 +11,7 @@ import axios from 'axios';
 import { notifications } from '@mantine/notifications';
 import { formatISO, parseISO } from 'date-fns';
 import { apiRoutes } from '../apiRoutes';
-import {Link} from "react-router-dom";
+import {Link} from "react-router";
 import Markdown from "react-markdown";
 import { compareSemVer } from 'semver-parser';
 
@@ -38,7 +38,7 @@ interface InstalledPlugin {
     routes: [""]
 }
 
-export default function ServerPlugins() {
+export default function ServerPluginManager() {
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
     const [showInfo, setShowInfo] = useState(false);
     const [about, setAbout] = useState<About>({} as About);
@@ -63,6 +63,10 @@ export default function ServerPlugins() {
     }, [installedPlugins]);
 
     useEffect(() => {
+        console.log(`showInfo is ${showInfo}`)
+    }, [showInfo]);
+
+    useEffect(() => {
         let project_urls: string[] = [];
         if (Object.hasOwn(about, "project_urls")) {
             project_urls = about.project_urls;
@@ -82,6 +86,7 @@ export default function ServerPlugins() {
     }, [about]);
 
     function getAvailablePluginInfo(pluginName:string) {
+        console.log(`Getings available plugin ${pluginName}`);
         axios.get(`https://repo.opentakserver.io/brian/prod/${pluginName}`, {headers: {"Accept": "application/json"}})
             .then((r) => {
                 let metadata;
@@ -113,6 +118,7 @@ export default function ServerPlugins() {
     }
 
     function getInstalledPluginInfo(pluginDistro: string) {
+        console.log(`getting installed ${pluginDistro}`)
         axios.get(`${apiRoutes.plugins}/${pluginDistro}`).then((r) => {
             if (r.status === 200) {
                 setAbout(r.data);
@@ -140,7 +146,7 @@ export default function ServerPlugins() {
                 };
                 r.data.plugins.forEach((plugin: InstalledPlugin) => {
                     plugins_list.push(plugin.name.toLowerCase())
-                    tableData.body?.push([plugin.name.toLowerCase(), <Button><IconInfoCircle onClick={() => {setShowInfo(true); getInstalledPluginInfo(plugin.distro)}} /></Button>,
+                    tableData.body?.push([plugin.name.toLowerCase(), <Button><IconInfoCircle onClick={() => {console.log(`Clicked installed ${plugin.distro}`); setShowInfo(true); getInstalledPluginInfo(plugin.distro)}} /></Button>,
                         <Button disabled={!installedPlugins?.includes(plugin.name.toLowerCase())}><IconDownload /></Button>,
                         <Button disabled={installedPlugins?.includes(plugin.name.toLowerCase())}><IconCircleMinus /></Button>])
                 });
@@ -156,18 +162,16 @@ export default function ServerPlugins() {
                 const tableData: TableData = {...plugins};
 
                 r.data.result.projects.map((p:string) => {
-                    const row = [p, <Button><IconInfoCircle onClick={() => {setShowInfo(true); getAvailablePluginInfo(p)}} /></Button>,
+                    const row = [p, <Button><IconInfoCircle onClick={() => {console.log(`Clicked ${p}`); setShowInfo(true); getAvailablePluginInfo(p)}} /></Button>,
                         <Button disabled={!installedPlugins?.includes(p)}><IconDownload /></Button>,
                         <Button disabled={installedPlugins?.includes(p)}><IconCircleMinus /></Button>
                     ];
-                    console.log(row);
                     if (!installedPlugins?.includes(p)) {
                         tableData.body?.push(row);
                     }
                 });
                 setPlugins(tableData);
             }
-            console.log("Done fetching available")
             setLoading(false);
         }).catch((err) => {
             console.log(err);

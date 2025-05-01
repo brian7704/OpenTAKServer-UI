@@ -15,7 +15,7 @@ import {
     IconLogout,
     IconAlertTriangle,
 } from '@tabler/icons-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { notifications } from '@mantine/notifications';
 import Logo from './images/ots-logo.png';
 import { AppContent } from './components/AppContent';

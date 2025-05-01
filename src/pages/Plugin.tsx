@@ -1,9 +1,9 @@
-import React, {useEffect, useState, ReactElement} from "react";
+import React, {useEffect, useState} from "react";
 import CodeMirror from '@uiw/react-codemirror';
 import { yaml } from '@codemirror/lang-yaml';
 import Markdown from 'react-markdown'
-import {Link, useSearchParams} from "react-router-dom";
-import {Tabs, Text, Button, Flex, useComputedColorScheme, ScrollArea, Divider, Switch} from "@mantine/core";
+import {Link, useSearchParams} from "react-router";
+import {Tabs, Text, Button, useComputedColorScheme, ScrollArea, Divider, Switch} from "@mantine/core";
 import {
     IconAlignLeft,
     IconSettings,
@@ -43,6 +43,7 @@ export default function Plugin() {
     const [repoUrl, setRepoUrl] = useState("");
     const [showUITab, setShowUITab] = useState(true);
     const [enabled, setEnabled] = useState(true)
+    const [plugin, setPlugin] = useState('');
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
 
     useEffect(() => {
@@ -208,9 +209,9 @@ export default function Plugin() {
 
                 <Tabs.Panel value="ui">
 
-                    <Flex style={{height:"100%"}}>
-                        <iframe title="PluginUI" style={{position: "relative", flex: 1, width: "100%", height: "100vh", border: 0, scrollbarColor: "transparent"}} src={`/api/plugins/${params.get("name")}/ui`} />
-                    </Flex>
+                    <ScrollArea type="never" scrollbars={false} style={{height:"90vh"}}>
+                        <iframe title="PluginUI" style={{overflow:"hidden", position: "relative", flex: 1, width: "100%", height: "90vh", border: 0, scrollbarColor: "transparent"}} src={`/api/plugins/${params.get("name")}/ui`} />
+                    </ScrollArea>
                 </Tabs.Panel>
 
                 <Tabs.Panel value="settings">

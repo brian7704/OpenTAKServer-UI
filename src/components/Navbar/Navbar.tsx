@@ -12,7 +12,7 @@ import {
     IconHelp, IconBook, IconBrandDiscord, IconBrandGithub, IconRefresh, IconSettings, IconPlugConnected, IconPlug
 } from '@tabler/icons-react';
 import { NavLink, ScrollArea, Modal, Center } from '@mantine/core';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { notifications } from '@mantine/notifications';
 import QRCode from 'react-qr-code';
 import classes from './Navbar.module.css';
@@ -47,18 +47,52 @@ export default function Navbar() {
     const location = useLocation();
     const [showItakQr, setShowItakQr] = useState(false);
     const [qrString, setQrString] = useState('');
-    const [plugins, setPlugins]: Array<ReactElement>|any = useState();
+    const [plugins, setPlugins] = useState([]);
+    const [pluginNavLinks, setPluginNavLinks] = useState<ReactElement[]>([]);
 
     useEffect(() => {
         get_plugins();
     }, []);
+
+    useEffect(() => {
+        console.log(pluginNavLinks);
+        console.log(location.pathname);
+    }, [pluginNavLinks]);
+
+    useEffect(() => {
+        generatePluginLinks();
+    }, [plugins]);
+
+    function generatePluginLinks() {
+        console.log(plugins)
+        if (plugins !== null) {
+            const links = plugins.map((plugin: any) => (
+                <NavLink
+                    className={classes.link}
+                    component={Link}
+                    key={plugin.distro}
+                    active={location.pathname === `/plugins/${plugin.distro}` || undefined}
+                    to={`/plugins/${plugin.distro}`}
+                    label={plugin.name}
+                    leftSection={<IconPlugConnected className={classes.linkIcon} stroke={1.5}/>}
+                    mt="md"
+                    onClick={() => {generatePluginLinks()}}
+                />
+            ))
+            console.log(links);
+            setPluginNavLinks(links)
+        }
+        else {
+            console.log("Plugins null?")
+        }
+    }
 
     const links = navbarLinks.map((item) => (
         <NavLink
           className={classes.link}
           component={Link}
           key={item.label}
-          active={location.pathname === item.link || undefined}
+          active={location.pathname === item.link}
           to={item.link}
           label={item.label}
           leftSection={<item.icon className={classes.linkIcon} stroke={1.5} />}
@@ -111,22 +145,7 @@ export default function Navbar() {
     const get_plugins = () => {
         axios.get(apiRoutes.plugins).then(r => {
             if (r.status === 200) {
-                const plugin_links:Array<ReactElement> = [];
-                r.data.plugins.map((plugin:any) => {
-                    plugin_links.push(
-                        <NavLink
-                            className={classes.link}
-                            component={Link}
-                            key={plugin.distro}
-                            active={location.pathname === `/plugin?name=${plugin.distro}`}
-                            to={`/plugin?name=${plugin.distro}`}
-                            label={plugin.name}
-                            leftSection={<IconPlugConnected className={classes.linkIcon} stroke={1.5} />}
-                            mt="md"
-                        />
-                    )
-                })
-                setPlugins(plugin_links)
+                setPlugins(r.data.plugins)
             }
         })
     }
@@ -142,7 +161,7 @@ export default function Navbar() {
                         {admin_links}
                     </NavLink>
                     <NavLink className={classes.link} key="plugins" leftSection={<IconPlug className={classes.linkIcon} stroke={1.5} />} label="Plugins" >
-                        {plugins}
+                        {pluginNavLinks}
                     </NavLink>
                 </div> : ''}
             <div className={classes.footer}>
