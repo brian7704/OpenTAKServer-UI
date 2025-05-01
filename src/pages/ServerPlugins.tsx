@@ -3,7 +3,7 @@ import {
     Table,
     TableData,
     useComputedColorScheme,
-    Button, Text, Switch, Divider, ScrollArea,
+    Button, Text, Switch, Divider, ScrollArea, LoadingOverlay,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import {IconCircleMinus, IconDownload, IconInfoCircle, IconUpload, IconX} from '@tabler/icons-react';
@@ -13,7 +13,7 @@ import { formatISO, parseISO } from 'date-fns';
 import { apiRoutes } from '../apiRoutes';
 import {Link} from "react-router-dom";
 import Markdown from "react-markdown";
-import { compareSemVer, isValidSemVer, parseSemVer } from 'semver-parser';
+import { compareSemVer } from 'semver-parser';
 
 interface About {
     author: string;
@@ -25,34 +25,53 @@ interface About {
     metadata_version: string
     name: string;
     project_urls: Array<string>;
+    project_url: Array<string>;
     requires_dist: Array<string>;
     requires_python: string;
     summary: string;
     version: string;
 }
 
+interface InstalledPlugin {
+    distro: string;
+    name: string;
+    routes: [""]
+}
+
 export default function ServerPlugins() {
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
     const [showInfo, setShowInfo] = useState(false);
-    const [about, setAbout] = useState<About>();
+    const [about, setAbout] = useState<About>({} as About);
     const [docUrl, setDocUrl] = useState("");
     const [repoUrl, setRepoUrl] = useState("");
+    const [installedPlugins, setInstalledPlugins] = useState<string[]|null>(null)
+    const [loading, setLoading] = useState(true);
     const [plugins, setPlugins] = useState<TableData>({
         caption: '',
-        head: ['Name', 'Show Info', 'Install'],
+        head: ['Name', 'Show Info', 'Install', 'Delete'],
         body: [],
     });
 
     useEffect(() => {
-        getPluginList()
+        getInstalledPlugins();
     }, [])
 
     useEffect(() => {
-        console.log(`SHOWINFO ${showInfo}`)
-    }, [showInfo]);
+        if (installedPlugins !== null) {
+            getAvailablePlugins();
+        }
+    }, [installedPlugins]);
 
     useEffect(() => {
-        about?.project_urls.forEach((value) => {
+        let project_urls: string[] = [];
+        if (Object.hasOwn(about, "project_urls")) {
+            project_urls = about.project_urls;
+        }
+        else if (Object.hasOwn(about, "project_url")) {
+            project_urls = about.project_url;
+        }
+
+        project_urls.forEach((value) => {
             if (value.startsWith("Documentation")) {
                 setDocUrl(value.split(", ")[1])
             }
@@ -62,56 +81,103 @@ export default function ServerPlugins() {
         })
     }, [about]);
 
-    function getPluginInfo(pluginName:string) {
-        console.log(`Getting ${pluginName}`);
+    function getAvailablePluginInfo(pluginName:string) {
         axios.get(`https://repo.opentakserver.io/brian/prod/${pluginName}`, {headers: {"Accept": "application/json"}})
             .then((r) => {
-            if (r.status === 200) {
-                console.log(r.data);
-                let highestVersion: string|null = null;
                 let metadata;
-                Object.entries(r.data.result).forEach(([key, value]) => {
-                    if (highestVersion === null) {
-                        highestVersion = key;
-                        metadata = value;
-                    } else if (compareSemVer(highestVersion, key, false) === 1) {
-                        highestVersion = key;
-                        metadata = key;
+                if (r.status === 200) {
+                    let highestVersion: string|null = null;
+                    Object.entries(r.data.result).forEach(([key, value]) => {
+                        if (highestVersion === null) {
+                            highestVersion = key;
+                            metadata = value;
+                        } else if (compareSemVer(highestVersion, key, false) === 1) {
+                            highestVersion = key;
+                            metadata = key;
+                        }
+                    });
+                    if (metadata) {
+                        setAbout(metadata);
                     }
-                });
-
-                console.log(`Highest version is ${highestVersion}`)
-                console.log(metadata)
-                setAbout(metadata);
+                }
                 return metadata;
+        }).catch((err) => {
+            console.log(err);
+            notifications.show({
+                title: 'Failed to create data package',
+                message: `Response Code: ${err.response.status}`,
+                icon: <IconX />,
+                color: 'red',
+            })
+        })
+    }
+
+    function getInstalledPluginInfo(pluginDistro: string) {
+        axios.get(`${apiRoutes.plugins}/${pluginDistro}`).then((r) => {
+            if (r.status === 200) {
+                setAbout(r.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+            notifications.show({
+                title: 'Failed to get plugin info',
+                message: err.response.data.error,
+                icon: <IconX />,
+                color: 'red',
+            })
+        })
+    }
+
+    function getInstalledPlugins() {
+        setLoading(true);
+        axios.get(apiRoutes.plugins).then(r => {
+            if (r.status === 200) {
+                const plugins_list: string[] = []
+                const tableData: TableData = {
+                    caption: '',
+                    head: ['Name', 'Show Info', 'Install', 'Delete'],
+                    body: [],
+                };
+                r.data.plugins.forEach((plugin: InstalledPlugin) => {
+                    plugins_list.push(plugin.name.toLowerCase())
+                    tableData.body?.push([plugin.name.toLowerCase(), <Button><IconInfoCircle onClick={() => {setShowInfo(true); getInstalledPluginInfo(plugin.distro)}} /></Button>,
+                        <Button disabled={!installedPlugins?.includes(plugin.name.toLowerCase())}><IconDownload /></Button>,
+                        <Button disabled={installedPlugins?.includes(plugin.name.toLowerCase())}><IconCircleMinus /></Button>])
+                });
+                setInstalledPlugins(plugins_list);
+                setPlugins(tableData);
             }
         })
     }
 
-    function getPluginList() {
+    function getAvailablePlugins() {
         axios.get("https://repo.opentakserver.io/brian/prod", {headers: {"Accept": "application/json"}}).then((r) => {
             if (r.status === 200) {
-                const tableData: TableData = {
-                    caption: '',
-                    head: ['Name', 'Show Info', 'Install'],
-                    body: [],
-                };
+                const tableData: TableData = {...plugins};
 
                 r.data.result.projects.map((p:string) => {
-                    if (tableData.body !== undefined) {
-                        tableData.body.push([p, <Button><IconInfoCircle onClick={() => {setShowInfo(true); getPluginInfo(p)}} /></Button>, <Button><IconDownload /></Button>]);
+                    const row = [p, <Button><IconInfoCircle onClick={() => {setShowInfo(true); getAvailablePluginInfo(p)}} /></Button>,
+                        <Button disabled={!installedPlugins?.includes(p)}><IconDownload /></Button>,
+                        <Button disabled={installedPlugins?.includes(p)}><IconCircleMinus /></Button>
+                    ];
+                    console.log(row);
+                    if (!installedPlugins?.includes(p)) {
+                        tableData.body?.push(row);
                     }
                 });
-
                 setPlugins(tableData);
             }
+            console.log("Done fetching available")
+            setLoading(false);
         }).catch((err) => {
             console.log(err);
+            setLoading(false);
         })
     }
 
     return (
         <>
+            <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
             <Table.ScrollContainer minWidth="100%">
                 <Table data={plugins} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mb="md" />
             </Table.ScrollContainer>
