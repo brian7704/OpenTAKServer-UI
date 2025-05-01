@@ -144,7 +144,7 @@ export default function ServerPluginManager() {
                 };
                 r.data.plugins.forEach((plugin: InstalledPlugin) => {
                     plugins_list.push(plugin.name.toLowerCase())
-                    tableData.body?.push([plugin.name.toLowerCase(), <Button><IconInfoCircle onClick={() => {console.log(`Clicked installed ${plugin.distro}`); setShowInfo(true); getInstalledPluginInfo(plugin.distro)}} /></Button>,
+                    tableData.body?.push([plugin.name.toLowerCase(), <Button onClick={(e) => {e.preventDefault(); console.log(`Clicked ${plugin.name}`); setShowInfo(true); getInstalledPluginInfo(plugin.distro)}}><IconInfoCircle /></Button>,
                         <Button disabled><IconDownload /></Button>,
                         <Button><IconCircleMinus /></Button>])
                 });
@@ -160,7 +160,7 @@ export default function ServerPluginManager() {
                 const tableData: TableData = {...plugins};
 
                 r.data.result.projects.map((p:string) => {
-                    const row = [p, <Button><IconInfoCircle onClick={() => {console.log(`Clicked ${p}`); setShowInfo(true); getAvailablePluginInfo(p)}} /></Button>,
+                    const row = [p, <Button onClick={(e) => {e.preventDefault(); console.log(`Clickeded ${p}`); setShowInfo(true); getAvailablePluginInfo(p)}}><IconInfoCircle /></Button>,
                         <Button disabled={installedPlugins?.includes(p)}><IconDownload /></Button>,
                         <Button disabled={!installedPlugins?.includes(p)}><IconCircleMinus /></Button>
                     ];
