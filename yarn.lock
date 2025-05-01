@@ -925,48 +925,48 @@
     "@lezer/highlight" "^1.0.0"
     "@lezer/lr" "^1.4.0"
 
-"@mantine/charts@^7.17.1":
-  version "7.17.1"
-  resolved "https://registry.npmjs.org/@mantine/charts/-/charts-7.17.1.tgz"
-  integrity sha512-qS6UOF1wayF86h+s1pI/rUJiZVkj4244JTgFToLsgvYIKoQaSibHjUjdBDfsMTLEIz4nunfPct0r75JR9YBBVQ==
+"@mantine/charts@^7.17.5":
+  version "7.17.5"
+  resolved "https://registry.npmjs.org/@mantine/charts/-/charts-7.17.5.tgz"
+  integrity sha512-VDDRwUqTsZYqYSYqcc8wXrdiKIvkqRcoDQXKdiuSin7ebQtk29QnPDQmcM536HQpVlUuemI7iTJNTUmhdc7ALQ==
 
-"@mantine/core@^7.17.1", "@mantine/core@>=7.0.0", "@mantine/core@7.17.1":
-  version "7.17.1"
-  resolved "https://registry.npmjs.org/@mantine/core/-/core-7.17.1.tgz"
-  integrity sha512-V8O3Ftq4la4I4wNDkTfH4Slkt/pCEU32pTE/DkO46zua0VFxfOAJeLjaol0s11//T+bXx82DtjMsd9APWPuFhA==
+"@mantine/core@^7.17.5", "@mantine/core@>=7.0.0", "@mantine/core@7.17.5":
+  version "7.17.5"
+  resolved "https://registry.npmjs.org/@mantine/core/-/core-7.17.5.tgz"
+  integrity sha512-66g/lr281cDPfucjtPw8gFo/yNS9G5iSKqysvPGuDpUBG2bEw8FsJMIsU0bMXtravToIpa3vJRrFUuPndPGnpQ==
   dependencies:
     "@floating-ui/react" "^0.26.28"
     clsx "^2.1.1"
     react-number-format "^5.4.3"
     react-remove-scroll "^2.6.2"
-    react-textarea-autosize "8.5.6"
+    react-textarea-autosize "8.5.9"
     type-fest "^4.27.0"
 
-"@mantine/form@^7.17.1":
-  version "7.17.1"
-  resolved "https://registry.npmjs.org/@mantine/form/-/form-7.17.1.tgz"
-  integrity sha512-IGZEzf/UUawIFYpLDI/F0oIkDImleaRzppkFqpTih4iBanlMIrguHOozm399xUK7+cTlQqWypd7vGVgBPTBnwQ==
+"@mantine/form@^7.17.5":
+  version "7.17.5"
+  resolved "https://registry.npmjs.org/@mantine/form/-/form-7.17.5.tgz"
+  integrity sha512-24xkjs8486uOoevymHx2xgZ69j8mM9EG01LMOOMmEHV2k+0HwrCvwPL/2ISCnzWfHZBSwrq9ZTw7KZ6HPnU0nQ==
   dependencies:
     fast-deep-equal "^3.1.3"
     klona "^2.0.6"
 
-"@mantine/hooks@^7.17.1", "@mantine/hooks@>=7.0.0", "@mantine/hooks@7.17.1":
-  version "7.17.1"
-  resolved "https://registry.npmjs.org/@mantine/hooks/-/hooks-7.17.1.tgz"
-  integrity sha512-mkHLrXMPd5xdI5WD7UOLwNEpdh/i6A7HaRDTXvjDE2/S0N8VmAE+BlvdyvWRMi7ODp2zVqJdP8cF1tgUn+Z0fA==
+"@mantine/hooks@^7.17.5", "@mantine/hooks@>=7.0.0", "@mantine/hooks@7.17.5":
+  version "7.17.5"
+  resolved "https://registry.npmjs.org/@mantine/hooks/-/hooks-7.17.5.tgz"
+  integrity sha512-Q/3AHI1fjl+W7xQ3jEoMmSoTxLqxMI2gPfxIjd73OPmRpPenYWR1zk/diirXXm2t7JOrAbmpA3/O1gzmgqzc/Q==
 
-"@mantine/notifications@^7.17.1":
-  version "7.17.1"
-  resolved "https://registry.npmjs.org/@mantine/notifications/-/notifications-7.17.1.tgz"
-  integrity sha512-jsCNkkjgtsGYIMbCrzBY0UBckoXyeaSWbEoJdvMlfA+LaeOQrSLxa+ot+1+wPaoZxR+1Q1xOwC1X5bTxHKudBA==
+"@mantine/notifications@^7.17.5":
+  version "7.17.5"
+  resolved "https://registry.npmjs.org/@mantine/notifications/-/notifications-7.17.5.tgz"
+  integrity sha512-dLbrSm7ct97fb0Yv8ImVj9mVNkjnD/xkDCP1PANt/shM9xDh0TguqQTvborb+8Wxh1g+RtWVML/an5rVsHbKmg==
   dependencies:
-    "@mantine/store" "7.17.1"
+    "@mantine/store" "7.17.5"
     react-transition-group "4.4.5"
 
-"@mantine/store@7.17.1":
-  version "7.17.1"
-  resolved "https://registry.npmjs.org/@mantine/store/-/store-7.17.1.tgz"
-  integrity sha512-is1c0FycakMsbTElKGWO59LarjMIk24JUXfjP/QIrB0XqpXreq3u7aN4hoNqr1IftTZSfVBii4W8pVFeWaV55g==
+"@mantine/store@7.17.5":
+  version "7.17.5"
+  resolved "https://registry.npmjs.org/@mantine/store/-/store-7.17.5.tgz"
+  integrity sha512-HQzy4rBlUFyw+39TgiAV+TGuQivMWYeQlnMctKJlaxwVY5ZTdF2IpJ/JZcjkGrmrZvBwUQ8IOMFvt2eZc20P1Q==
 
 "@mantinex/mantine-logo@^1.0.1":
   version "1.0.1"
@@ -6040,10 +6040,10 @@ react-style-singleton@^2.2.2, react-style-singleton@^2.2.3:
     get-nonce "^1.0.0"
     tslib "^2.0.0"
 
-react-textarea-autosize@8.5.6:
-  version "8.5.6"
-  resolved "https://registry.npmjs.org/react-textarea-autosize/-/react-textarea-autosize-8.5.6.tgz"
-  integrity sha512-aT3ioKXMa8f6zHYGebhbdMD2L00tKeRX1zuVuDx9YQK/JLLRSaSxq3ugECEmUB9z2kvk6bFSIoRHLkkUv0RJiw==
+react-textarea-autosize@8.5.9:
+  version "8.5.9"
+  resolved "https://registry.npmjs.org/react-textarea-autosize/-/react-textarea-autosize-8.5.9.tgz"
+  integrity sha512-U1DGlIQN5AwgjTyOEnI1oCcMuEr1pv1qOtklB2l4nyMGbHzWrI0eFsYK0zos2YWqAolJyG0IWJaqWmWj5ETh0A==
   dependencies:
     "@babel/runtime" "^7.20.13"
     use-composed-ref "^1.3.0"
@@ -6310,6 +6310,11 @@ screenfull@^6.0.2:
   version "6.0.2"
   resolved "https://registry.npmjs.org/screenfull/-/screenfull-6.0.2.tgz"
   integrity sha512-AQdy8s4WhNvUZ6P8F6PB21tSPIYKniic+Ogx0AacBMjKP1GUHN2E9URxQHtCusiwxudnCKkdy4GrHXPPJSkCCw==
+
+semver-parser@^4.1.8:
+  version "4.1.8"
+  resolved "https://registry.npmjs.org/semver-parser/-/semver-parser-4.1.8.tgz"
+  integrity sha512-VFJx75RLTS4hHoiFG+JzDP5dE89JUQS0+/h4Zvcqw8djO6HInA5N7BtvbYBOD6W1u9eOfax7v3xf6CoSIAQBSg==
 
 semver@^5.6.0:
   version "5.7.2"
