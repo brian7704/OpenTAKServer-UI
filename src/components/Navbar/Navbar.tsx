@@ -1,4 +1,4 @@
-import React, {ReactElement, useEffect, useState} from 'react';
+import React, {ReactElement, useCallback, useEffect, useState} from 'react';
 import {
     IconAlertTriangle,
     IconHeartbeat,
@@ -25,9 +25,23 @@ import {
     IconSettings,
     IconPlugConnected,
     IconPlug,
-    IconEdit, IconCircle, IconCircleMinus
+    IconEdit,
+    IconCircleMinus
 } from '@tabler/icons-react';
-import {NavLink, ScrollArea, Modal, Center, NumberInput, Flex, Button, Switch, Paper, Text} from '@mantine/core';
+import {
+    NavLink,
+    ScrollArea,
+    Modal,
+    Center,
+    NumberInput,
+    Flex,
+    Button,
+    Switch,
+    Paper,
+    Text,
+    Tooltip
+} from '@mantine/core';
+import { formatISO, parseISO } from 'date-fns';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { notifications } from '@mantine/notifications';
 import QRCode from 'react-qr-code';
@@ -59,15 +73,38 @@ const adminLinks = [
     { link: '/server_plugin_manager', label: 'Server Plugin Manager', icon: IconPlugConnected },
 ];
 
+interface ATAKQrCode {
+    qr_string: string;
+    sub: string;
+    iat: number;
+    iss: string;
+    aud: string;
+    max: number;
+    nbf: number|undefined;
+    exp: number|undefined;
+    disabled: boolean;
+}
+
 export default function Navbar() {
     const administrator = localStorage.getItem('administrator') === 'true';
     const location = useLocation();
-    const [showAtakQr, setShowAtakQr] = useState(false);
-    const [atakQrString, setAtakQrString] = useState('');
     const [showItakQr, setShowItakQr] = useState(false);
     const [itakQrString, setItakQrString] = useState('');
     const [plugins, setPlugins] = useState([]);
     const [pluginNavLinks, setPluginNavLinks] = useState<ReactElement[]>([]);
+
+    const [showAtakQr, setShowAtakQr] = useState(false);
+    const [atakQR, setAtakQR] = useState<ATAKQrCode>({
+        qr_string: "",
+        sub: "",
+        iat: 0,
+        iss: "",
+        aud: "",
+        max: 0,
+        nbf: undefined,
+        exp: undefined,
+        disabled: false,
+    });
 
     useEffect(() => {
         get_plugins();
@@ -160,15 +197,52 @@ export default function Navbar() {
     }
 
     function getAtakQr() {
-        axios.get(apiRoutes.atakQrString, {}).then(r => {
+        axios.get<ATAKQrCode>(apiRoutes.atakQrString, {}).then(r => {
             if (r.status === 200) {
-                setAtakQrString(r.data.qr_string);
+                setAtakQR(r.data)
                 setShowAtakQr(true);
             }
         }).catch(err => {
             console.log(err);
+            setShowAtakQr(true)
+        })
+    }
+
+    function generateAtakQr() {
+        axios.post<ATAKQrCode>(apiRoutes.atakQrString, atakQR).then(r => {
+            if (r.status === 200) {
+                setAtakQR(r.data);
+            }
+        }).catch(err => {
+            console.log(err);
             notifications.show({
-                title: 'Failed to get QR code string',
+                title: 'Failed to generate QR code',
+                message: err.response.data.error,
+                icon: <IconX />,
+                color: 'red',
+            });
+        })
+    }
+
+    function deleteAtakQr() {
+        axios.delete(apiRoutes.atakQrString).then(r => {
+            if (r.status === 200) {
+                setAtakQR({
+                    qr_string: "",
+                    sub: "",
+                    iat: 0,
+                    iss: "",
+                    aud: "",
+                    max: 0,
+                    nbf: undefined,
+                    exp: undefined,
+                    disabled: false,
+                });
+            }
+        }).catch(err => {
+            console.log(err);
+            notifications.show({
+                title: 'Failed to delete QR code',
                 message: err.response.data.error,
                 icon: <IconX />,
                 color: 'red',
@@ -211,20 +285,48 @@ export default function Navbar() {
                 </Center>
             </Modal>
             <Modal opened={showAtakQr} onClose={() => setShowAtakQr(false)} title="ATAK QR Code">
-                <DateTimePicker disabled={atakQrString !== ''} label="Expiration Date" clearable />
-                <NumberInput disabled={atakQrString !== ''} label="Max Uses" />
-                <Switch mt="md" disabled={atakQrString === ''} label="Enabled" />
+                <DateTimePicker onChange={(date) => {
+                    console.log(`Date is ${date}`);
+                    if (date !== "Invalid Date") {
+                        setAtakQR({...atakQR, exp: parseISO(date).getTime()});
+                    }}}
+                    valueFormat="YYYY-MM-DD HH:mm:ss"
+                    value={atakQR.exp !== undefined ? formatISO(new Date(atakQR.exp * 1000)) : ""}
+                    disabled={atakQR?.qr_string !== ""}
+                    label="Expiration Date"
+                    clearable
+                    clearButtonProps={{
+                        onClick: () => {
+                            console.log("clear clicked");
+                            setAtakQR({...atakQR, exp: undefined})
+                        }
+                    }} timePickerProps={{
+                        withDropdown: true,
+                        popoverProps: { withinPortal: false },
+                        format: '24h',
+                    }} />
+                <NumberInput value={atakQR.max > 0 ? atakQR.max : undefined} disabled={atakQR.qr_string !== ''} label="Max Uses" onChange={(value) => {
+                    const max = `${value}`
+                    setAtakQR({...atakQR, max: parseInt(max, 10)})
+                }} />
+                <Switch mt="md" disabled={atakQR.qr_string === ''} checked={!atakQR.disabled} onClick={(e) => setAtakQR({...atakQR, disabled: !e.currentTarget.checked})} label="Enabled" />
 
                 <Center>
-                    <Button mt="md" mr="md" mb="md" leftSection={<IconRefresh size={14} />}>Generate</Button>
-                    <Button mt="md" mr="md" mb="md" disabled={atakQrString === ''} leftSection={<IconEdit size={14} />}>Edit</Button>
-                    <Button mt="md" mr="md" mb="md" disabled={atakQrString === ''} leftSection={<IconCircleMinus size={14} />}>Delete</Button>
+                    <Tooltip multiline label="Generating a new QR code will invalidate the current one">
+                        <Button mt="md" mr="md" mb="md" onClick={() => generateAtakQr()} leftSection={<IconRefresh size={14} />}>Generate</Button>
+                    </Tooltip>
+                    <Tooltip multiline label="Editing the QR code will invalidate the current one">
+                        <Button mt="md" mr="md" mb="md" disabled={atakQR.qr_string === ''} leftSection={<IconEdit size={14} />}>Edit</Button>
+                    </Tooltip>
+                    <Button mt="md" mr="md" mb="md" onClick={() => deleteAtakQr()} disabled={atakQR.qr_string === ''} leftSection={<IconCircleMinus size={14} />}>Delete</Button>
                 </Center>
-                <Flex direction="column" gap="md" align="center" display={atakQrString === '' ? "none" : "flex"}>
+                <Flex direction="column" gap="md" align="center" display={atakQR.qr_string === '' ? "none" : "flex"}>
                     <Paper p="md" shadow="xl" withBorder bg="white">
-                        <QRCode value={atakQrString} />
+                        <QRCode value={atakQR.qr_string} />
                     </Paper>
-                    <Button component="a" href="</Center>">Open ATAK</Button>
+                    <Tooltip label="Tap here if you're reading this on the EUD you want to connect to OpenTAKServer">
+                        <Button component="a" href={atakQR.qr_string}>Open ATAK</Button>
+                    </Tooltip>
                     <Text ta="center" fw={700}>Remember to treat this QR code like a password and don't share it with anyone.</Text>
                 </Flex>
             </Modal>
