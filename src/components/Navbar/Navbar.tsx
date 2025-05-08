@@ -80,8 +80,8 @@ interface ATAKQrCode {
     iss: string;
     aud: string;
     max: number;
-    nbf: number|undefined;
-    exp: number|undefined;
+    nbf: number|null;
+    exp: number|null;
     disabled: boolean;
 }
 
@@ -101,8 +101,8 @@ export default function Navbar() {
         iss: "",
         aud: "",
         max: 0,
-        nbf: undefined,
-        exp: undefined,
+        nbf: null,
+        exp: null,
         disabled: false,
     });
 
@@ -234,8 +234,8 @@ export default function Navbar() {
                     iss: "",
                     aud: "",
                     max: 0,
-                    nbf: undefined,
-                    exp: undefined,
+                    nbf: null,
+                    exp: null,
                     disabled: false,
                 });
             }
@@ -288,17 +288,16 @@ export default function Navbar() {
                 <DateTimePicker onChange={(date) => {
                     console.log(`Date is ${date}`);
                     if (date !== "Invalid Date") {
-                        setAtakQR({...atakQR, exp: parseISO(date).getTime()});
+                        setAtakQR({...atakQR, exp: Math.floor(parseISO(date).getTime() / 1000)});
                     }}}
-                    valueFormat="YYYY-MM-DD HH:mm:ss"
-                    value={atakQR.exp !== undefined ? formatISO(new Date(atakQR.exp * 1000)) : ""}
+                    valueFormat="YYYY-MM-DD HH:mm:ss ZZ"
+                    value={atakQR.exp !== null ? formatISO(new Date(atakQR.exp * 1000)) : null}
                     disabled={atakQR?.qr_string !== ""}
                     label="Expiration Date"
                     clearable
                     clearButtonProps={{
                         onClick: () => {
-                            console.log("clear clicked");
-                            setAtakQR({...atakQR, exp: undefined})
+                            setAtakQR({...atakQR, exp: null})
                         }
                     }} timePickerProps={{
                         withDropdown: true,
@@ -309,15 +308,9 @@ export default function Navbar() {
                     const max = `${value}`
                     setAtakQR({...atakQR, max: parseInt(max, 10)})
                 }} />
-                <Switch mt="md" disabled={atakQR.qr_string === ''} checked={!atakQR.disabled} onClick={(e) => setAtakQR({...atakQR, disabled: !e.currentTarget.checked})} label="Enabled" />
 
                 <Center>
-                    <Tooltip multiline label="Generating a new QR code will invalidate the current one">
-                        <Button mt="md" mr="md" mb="md" onClick={() => generateAtakQr()} leftSection={<IconRefresh size={14} />}>Generate</Button>
-                    </Tooltip>
-                    <Tooltip multiline label="Editing the QR code will invalidate the current one">
-                        <Button mt="md" mr="md" mb="md" disabled={atakQR.qr_string === ''} leftSection={<IconEdit size={14} />}>Edit</Button>
-                    </Tooltip>
+                    <Button mt="md" mr="md" mb="md" onClick={() => generateAtakQr()} disabled={atakQR.qr_string !== ''} leftSection={<IconRefresh size={14} />}>Generate</Button>
                     <Button mt="md" mr="md" mb="md" onClick={() => deleteAtakQr()} disabled={atakQR.qr_string === ''} leftSection={<IconCircleMinus size={14} />}>Delete</Button>
                 </Center>
                 <Flex direction="column" gap="md" align="center" display={atakQR.qr_string === '' ? "none" : "flex"}>
