@@ -25,7 +25,6 @@ import {
     IconSettings,
     IconPlugConnected,
     IconPlug,
-    IconEdit,
     IconCircleMinus
 } from '@tabler/icons-react';
 import {
@@ -36,7 +35,6 @@ import {
     NumberInput,
     Flex,
     Button,
-    Switch,
     Paper,
     Text,
     Tooltip
@@ -79,10 +77,11 @@ interface ATAKQrCode {
     iat: number;
     iss: string;
     aud: string;
-    max: number;
+    max: number|string;
     nbf: number|null;
     exp: number|null;
     disabled: boolean;
+    total_uses: number;
 }
 
 export default function Navbar() {
@@ -100,10 +99,11 @@ export default function Navbar() {
         iat: 0,
         iss: "",
         aud: "",
-        max: 0,
+        max: "",
         nbf: null,
         exp: null,
         disabled: false,
+        total_uses: 0
     });
 
     useEffect(() => {
@@ -233,10 +233,11 @@ export default function Navbar() {
                     iat: 0,
                     iss: "",
                     aud: "",
-                    max: 0,
+                    max: "",
                     nbf: null,
                     exp: null,
                     disabled: false,
+                    total_uses: 0
                 });
             }
         }).catch(err => {
@@ -286,10 +287,10 @@ export default function Navbar() {
             </Modal>
             <Modal opened={showAtakQr} onClose={() => setShowAtakQr(false)} title="ATAK QR Code">
                 <DateTimePicker onChange={(date) => {
-                    console.log(`Date is ${date}`);
                     if (date !== "Invalid Date") {
                         setAtakQR({...atakQR, exp: Math.floor(parseISO(date).getTime() / 1000)});
                     }}}
+                    minDate={new Date()}
                     valueFormat="YYYY-MM-DD HH:mm:ss ZZ"
                     value={atakQR.exp !== null ? formatISO(new Date(atakQR.exp * 1000)) : null}
                     disabled={atakQR?.qr_string !== ""}
@@ -304,7 +305,12 @@ export default function Navbar() {
                         popoverProps: { withinPortal: false },
                         format: '24h',
                     }} />
-                <NumberInput value={atakQR.max > 0 ? atakQR.max : undefined} disabled={atakQR.qr_string !== ''} label="Max Uses" onChange={(value) => {
+                <NumberInput hideControls min={1} value={atakQR.max} disabled={atakQR.qr_string !== ''} label="Max Uses" onChange={(value) => {
+                    const max = `${value}`
+                    setAtakQR({...atakQR, max: parseInt(max, 10)})
+                }} />
+
+                <NumberInput display={Number(atakQR.max) > 0 && atakQR.qr_string !== '' ? "block" : "none"} min={0} value={atakQR.total_uses} disabled label="Total Uses" onChange={(value) => {
                     const max = `${value}`
                     setAtakQR({...atakQR, max: parseInt(max, 10)})
                 }} />
