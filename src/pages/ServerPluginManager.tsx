@@ -3,7 +3,7 @@ import {
     Table,
     TableData,
     useComputedColorScheme,
-    Button, Text, Switch, Divider, ScrollArea, LoadingOverlay,
+    Button, Text, Divider, ScrollArea, LoadingOverlay,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import {IconCheck, IconCircleMinus, IconDownload, IconInfoCircle, IconUpload, IconX} from '@tabler/icons-react';
@@ -196,7 +196,7 @@ export default function ServerPluginManager() {
                     plugins_list.push(plugin.name.toLowerCase())
                     tableData.body?.push([plugin.name.toLowerCase(), <Button onClick={(e) => {e.preventDefault(); setShowInfo(true); getInstalledPluginInfo(plugin.distro)}}><IconInfoCircle /></Button>,
                         <Button disabled><IconDownload /></Button>,
-                        <Button onClick={(e) => {e.preventDefault(); setShowCommandOutput(true); setPlugin({'plugin_distro': plugin.distro, 'action': 'delete'}); setCommandOutputTitle(`Deleting ${plugin.name}`) }}><IconCircleMinus /></Button>])
+                        <Button onClick={(e) => {e.preventDefault(); setShowCommandOutput(true); setPlugin({'plugin_name': plugin.name, 'action': 'delete'}); setCommandOutputTitle(`Deleting ${plugin.name}`) }}><IconCircleMinus /></Button>])
                 });
                 setInstalledPlugins(plugins_list);
                 setPlugins(tableData);
@@ -211,7 +211,7 @@ export default function ServerPluginManager() {
 
                 r.data.result.projects.map((p:string) => {
                     const row = [p, <Button onClick={(e) => {e.preventDefault(); setShowInfo(true); getAvailablePluginInfo(p)}}><IconInfoCircle /></Button>,
-                        <Button onClick={(e) => {e.preventDefault(); setShowCommandOutput(true); setPlugin({'plugin_distro': p, 'action': 'install'}); setCommandOutputTitle(`Installing ${p}`)}}><IconDownload /></Button>,
+                        <Button onClick={(e) => {e.preventDefault(); setShowCommandOutput(true); setPlugin({'plugin_name': p, 'action': 'install'}); setCommandOutputTitle(`Installing ${p}`)}}><IconDownload /></Button>,
                         <Button disabled><IconCircleMinus /></Button>
                     ];
                     if (!installedPlugins?.includes(p)) {

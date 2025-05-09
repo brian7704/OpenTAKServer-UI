@@ -3,7 +3,7 @@ import CodeMirror from '@uiw/react-codemirror';
 import { yaml } from '@codemirror/lang-yaml';
 import Markdown from 'react-markdown'
 import {Link, useSearchParams} from "react-router";
-import {Tabs, Text, Button, useComputedColorScheme, ScrollArea, Divider, Switch} from "@mantine/core";
+import {Tabs, Text, Button, useComputedColorScheme, ScrollArea, Divider, Switch, Flex} from "@mantine/core";
 import {
     IconAlignLeft,
     IconSettings,
@@ -32,6 +32,7 @@ interface About {
     requires_python: string;
     summary: string;
     version: string;
+    distro: string;
 }
 
 export default function Plugin() {
@@ -43,14 +44,17 @@ export default function Plugin() {
     const [repoUrl, setRepoUrl] = useState("");
     const [showUITab, setShowUITab] = useState(true);
     const [enabled, setEnabled] = useState(true)
-    const [plugin, setPlugin] = useState('');
+    const [pluginName, setPluginName] = useState('');
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
 
     useEffect(() => {
-        getConfig();
         getAbout();
+    }, [params]);
+
+    useEffect(() => {
+        getConfig();
         checkUi();
-    }, []);
+    }, [about]);
 
     useEffect(() => {
         about?.project_url.forEach((value) => {
@@ -64,25 +68,35 @@ export default function Plugin() {
     }, [about]);
 
     function checkUi() {
-        axios.get(`/api/plugins/${params.get("name")}/ui`).then((r) => {
-            if (r.status === 200) {
-               if (!r.data) {
-                   setShowUITab(false);
-               }
-               else {
-                   setShowUITab(true);
-               }
-            }
-        })
+        if (about?.distro !== undefined) {
+            axios.get(`/api/plugins/${about?.distro}/ui`).then((r) => {
+                if (r.status === 200) {
+                    if (!r.data) {
+                        setShowUITab(false);
+                    } else {
+                        setShowUITab(true);
+                    }
+                }
+            })
+        }
     }
 
     function getConfig() {
-        axios.get(`/api/plugins/${params.get("name")}/config`).then((r) => {
-            if (r.status === 200) {
-                setOriginalConfig(r.data);
-                setEditedConfig(stringify(r.data));
-            }
-        })
+        if (about?.distro !== undefined) {
+            axios.get(`/api/plugins/${about?.distro}/config`).then((r) => {
+                if (r.status === 200) {
+                    setOriginalConfig(r.data);
+                    setEditedConfig(stringify(r.data));
+                }
+            }).catch((err) => {
+                console.log(err);
+                notifications.show({
+                    message: "Failed to get plugin config",
+                    icon: <IconX />,
+                    color: 'red'
+                })
+            })
+        }
     }
 
     function getAbout() {
@@ -93,6 +107,12 @@ export default function Plugin() {
             }
         }).catch((err) => {
             console.log(err);
+            notifications.show({
+                title: "Error getting plugin data",
+                message: err.response.data.error,
+                icon: <IconX />,
+                color: 'red'
+            })
         })
     }
 
@@ -109,7 +129,7 @@ export default function Plugin() {
         // display success or failure message
         try {
             const config = parse(editedConfig);
-            axios.post(`/api/plugins/${params.get("name")}/config`, config).then((r) => {
+            axios.post(`/api/plugins/${about?.distro}/config`, config).then((r) => {
                 if (r.status === 200) {
                     notifications.show({
                         title: 'Success',
@@ -155,7 +175,7 @@ export default function Plugin() {
     }
 
     function togglePlugin() {
-        axios.post((enabled) ? `${apiRoutes.plugins}/${params.get("name")}/disable` : `${apiRoutes.plugins}/${params.get("name")}/enable`)
+        axios.post((enabled) ? `${apiRoutes.plugins}/${about?.distro}/disable` : `${apiRoutes.plugins}/${about?.distro}/enable`)
             .then((r) => {
                 if (r.status === 200) {
                     setEnabled(!enabled);
@@ -210,7 +230,7 @@ export default function Plugin() {
                 <Tabs.Panel value="ui">
 
                     <ScrollArea type="never" scrollbars={false} style={{height:"90vh"}}>
-                        <iframe title="PluginUI" style={{overflow:"hidden", position: "relative", flex: 1, width: "100%", height: "90vh", border: 0, scrollbarColor: "transparent"}} src={`/api/plugins/${params.get("name")}/ui`} />
+                        <iframe title="PluginUI" style={{overflow:"hidden", position: "relative", flex: 1, width: "100%", height: "90vh", border: 0, scrollbarColor: "transparent"}} src={`/api/plugins/${about?.distro}/ui`} />
                     </ScrollArea>
                 </Tabs.Panel>
 
