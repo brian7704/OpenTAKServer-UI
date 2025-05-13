@@ -1,7 +1,7 @@
 import {
     Button,
     Center, ComboboxItem, Modal,
-    Pagination, PasswordInput, Select,
+    Pagination, Paper, PasswordInput, Select,
     Table,
     TableData, TextInput,
     useComputedColorScheme,
@@ -229,7 +229,11 @@ export default function Missions() {
     return (
         <>
             <Modal opened={showQrCode} onClose={() => setShowQrCode(false)} title={qrTitle}>
-                <Center><QRCode value={qrContent} /></Center>
+                <Center>
+                    <Paper p="md" shadow="xl" withBorder bg="white">
+                        <QRCode value={qrContent} />
+                    </Paper>
+                </Center>
             </Modal>
             <Modal opened={showInvite} onClose={() => setShowInvite(false)} title={`Invite EUD to ${inviteMission}`}>
                 <Select

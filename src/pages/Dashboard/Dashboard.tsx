@@ -164,20 +164,6 @@ export default function Dashboard() {
             <Center>
                 <Flex direction={{ base: 'column', xs: 'row' }}>
                     <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md">
-                        <Center mb="md"><Title order={4}>CoT Router</Title></Center>
-                        <Center>{alerts.cot_router ? <IconCheck color="green" /> : <IconX color="red" />}</Center>
-                    </Paper>
-                    <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md">
-                        <Center mb="md"><Title order={4}>TCP</Title></Center>
-                        <Center>{tcpEnabled ? <IconCheck color="green" /> : <IconX color="red" />}</Center>
-                        <Switch label="Enabled" checked={tcpEnabled} onChange={() => toggleTCP()} mt="md" />
-                    </Paper>
-                    <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md">
-                        <Center mb="md"><Title order={4}>SSL</Title></Center>
-                        <Center>{sslEnabled ? <IconCheck color="green" /> : <IconX color="red" />}</Center>
-                        <Switch label="Enabled" checked={sslEnabled} onChange={() => toggleSSL()} mt="md" />
-                    </Paper>
-                    <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md">
                         <Center mb="md"><Title order={4}>Online EUDs</Title></Center>
                         <Center><Text>{alerts.online_euds ? Object.keys(alerts.online_euds).length : 0}</Text></Center>
                     </Paper>

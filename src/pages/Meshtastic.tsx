@@ -1,7 +1,7 @@
 import {
     Button,
     Center, CopyButton, Modal, NumberInput,
-    Pagination, Select, Switch,
+    Pagination, Paper, Select, Switch,
     Table,
     TableData, TextInput, Tooltip,
     useComputedColorScheme,
@@ -241,7 +241,11 @@ export default function Meshtastic() {
     return (
         <>
             <Modal opened={showQrCode} onClose={() => setShowQrCode(false)} title={qrTitle}>
-                <Center><QRCode value={channelUrl} /></Center>
+                <Center>
+                    <Paper p="md" shadow="xl" withBorder bg="white">
+                        <QRCode value={channelUrl} />
+                    </Paper>
+                </Center>
             </Modal>
             <Modal opened={deleteChannelOpen} onClose={() => setDeleteChanelOpen(false)} title="Are you sure you want to delete this channel?">
                 <Center>

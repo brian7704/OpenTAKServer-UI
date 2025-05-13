@@ -5,7 +5,7 @@ import {
     Pagination,
     Table,
     Switch,
-    TableData, useComputedColorScheme,
+    TableData, useComputedColorScheme, Paper,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import React, { useEffect, useState } from 'react';
@@ -252,7 +252,11 @@ export default function DataPackages() {
                 </Center>
             </Modal>
             <Modal title={qrTitle} opened={showQrCode} onClose={() => setShowQrCode(false)} p="md" pb="lg">
-                <Center><QRCode value={qrLink} /></Center>
+                <Center>
+                    <Paper p="md" shadow="xl" withBorder bg="white">
+                        <QRCode value={qrLink} />
+                    </Paper>
+                </Center>
             </Modal>
             <Table.ScrollContainer minWidth="100%">
                 <Table data={dataPackages} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mt="md" mb="md" />

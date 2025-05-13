@@ -145,10 +145,10 @@ export default function TFASetup() {
                         <Text>Open an authenticator app on your device and scan the following QRcode (or enter the code
                             below manually) to start receiving codes
                         </Text>
-                        <Paper shadow="xl" radius="md" p="xl" withBorder w="min-content">
+                        <Paper shadow="xl" radius="md" p="xl" withBorder w="min-content" bg="white">
                             <Stack align="center">
                                 <QRCode value={qrValue} />
-                                <Text ta="center">{qrKey}</Text>
+                                <Text ta="center" color="black">{qrKey}</Text>
                             </Stack>
                         </Paper>
                     </Stack>
