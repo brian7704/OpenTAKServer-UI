@@ -44,10 +44,11 @@ export default function Plugin() {
     const [repoUrl, setRepoUrl] = useState("");
     const [showUITab, setShowUITab] = useState(true);
     const [enabled, setEnabled] = useState(true)
-    const [pluginName, setPluginName] = useState('');
+    const [pluginName, setPluginName] = useState<string|null>(null);
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
 
     useEffect(() => {
+        setPluginName(params.get('name'))
         getAbout();
     }, [params]);
 
@@ -68,8 +69,8 @@ export default function Plugin() {
     }, [about]);
 
     function checkUi() {
-        if (about?.distro !== undefined) {
-            axios.get(`/api/plugins/${about?.distro}/ui`).then((r) => {
+        if (pluginName !== null) {
+            axios.get(`/api/plugins/${pluginName}/ui`).then((r) => {
                 if (r.status === 200) {
                     if (!r.data) {
                         setShowUITab(false);
@@ -82,21 +83,19 @@ export default function Plugin() {
     }
 
     function getConfig() {
-        if (about?.distro !== undefined) {
-            axios.get(`/api/plugins/${about?.distro}/config`).then((r) => {
-                if (r.status === 200) {
-                    setOriginalConfig(r.data);
-                    setEditedConfig(stringify(r.data));
-                }
-            }).catch((err) => {
-                console.log(err);
-                notifications.show({
-                    message: "Failed to get plugin config",
-                    icon: <IconX />,
-                    color: 'red'
-                })
+        axios.get(`/api/plugins/${params.get('name')}/config`).then((r) => {
+            if (r.status === 200) {
+                setOriginalConfig(r.data);
+                setEditedConfig(stringify(r.data));
+            }
+        }).catch((err) => {
+            console.log(err);
+            notifications.show({
+                message: "Failed to get plugin config",
+                icon: <IconX />,
+                color: 'red'
             })
-        }
+        })
     }
 
     function getAbout() {
@@ -129,7 +128,7 @@ export default function Plugin() {
         // display success or failure message
         try {
             const config = parse(editedConfig);
-            axios.post(`/api/plugins/${about?.distro}/config`, config).then((r) => {
+            axios.post(`/api/plugins/${params.get('name')}/config`, config).then((r) => {
                 if (r.status === 200) {
                     notifications.show({
                         title: 'Success',
@@ -175,7 +174,7 @@ export default function Plugin() {
     }
 
     function togglePlugin() {
-        axios.post((enabled) ? `${apiRoutes.plugins}/${about?.distro}/disable` : `${apiRoutes.plugins}/${about?.distro}/enable`)
+        axios.post((enabled) ? `${apiRoutes.plugins}/${params.get('name')}/disable` : `${apiRoutes.plugins}/${params.get('name')}/enable`)
             .then((r) => {
                 if (r.status === 200) {
                     setEnabled(!enabled);
@@ -230,7 +229,7 @@ export default function Plugin() {
                 <Tabs.Panel value="ui">
 
                     <ScrollArea type="never" scrollbars={false} style={{height:"90vh"}}>
-                        <iframe title="PluginUI" style={{overflow:"hidden", position: "relative", flex: 1, width: "100%", height: "90vh", border: 0, scrollbarColor: "transparent"}} src={`/api/plugins/${about?.distro}/ui`} />
+                        {pluginName && <iframe title="PluginUI" style={{overflow:"hidden", position: "relative", flex: 1, width: "100%", height: "90vh", border: 0, scrollbarColor: "transparent"}} src={`/api/plugins/${pluginName}/ui`} />}
                     </ScrollArea>
                 </Tabs.Panel>
 
