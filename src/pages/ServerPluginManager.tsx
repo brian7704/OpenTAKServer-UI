@@ -9,7 +9,6 @@ import React, { useEffect, useState } from 'react';
 import {IconCheck, IconCircleMinus, IconDownload, IconInfoCircle, IconUpload, IconX} from '@tabler/icons-react';
 import axios from 'axios';
 import { notifications } from '@mantine/notifications';
-import { formatISO, parseISO } from 'date-fns';
 import { socket } from '@/socketio';
 import { apiRoutes } from '../apiRoutes';
 import {Link} from "react-router";
@@ -196,7 +195,7 @@ export default function ServerPluginManager() {
                     plugins_list.push(plugin.name.toLowerCase())
                     tableData.body?.push([plugin.name.toLowerCase(), <Button onClick={(e) => {e.preventDefault(); setShowInfo(true); getInstalledPluginInfo(plugin.distro)}}><IconInfoCircle /></Button>,
                         <Button disabled><IconDownload /></Button>,
-                        <Button onClick={(e) => {e.preventDefault(); setShowCommandOutput(true); setPlugin({'plugin_name': plugin.name, 'action': 'delete'}); setCommandOutputTitle(`Deleting ${plugin.name}`) }}><IconCircleMinus /></Button>])
+                        <Button onClick={(e) => {e.preventDefault(); setShowCommandOutput(true); setPlugin({'plugin_name': plugin.name, 'action': 'delete', 'plugin_distro': plugin.distro}); setCommandOutputTitle(`Deleting ${plugin.name}`) }}><IconCircleMinus /></Button>])
                 });
                 setInstalledPlugins(plugins_list);
                 setPlugins(tableData);
