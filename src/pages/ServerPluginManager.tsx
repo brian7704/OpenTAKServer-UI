@@ -15,6 +15,7 @@ import {Link} from "react-router";
 import Markdown from "react-markdown";
 import { compareSemVer } from 'semver-parser';
 import CodeMirror, {ViewPlugin} from "@uiw/react-codemirror";
+import semver from "semver";
 
 interface About {
     author: string;
@@ -134,17 +135,16 @@ export default function ServerPluginManager() {
                 let metadata;
                 if (r.status === 200) {
                     let highestVersion: string|null = null;
-                    // TODO: Uncomment this once I figure out the semverParser issue with +post in the version
-                    /*Object.entries(r.data.result).forEach(([key, value]) => {
+                    Object.entries(r.data.result).forEach(([key, value]) => {
                         if (highestVersion === null) {
                             highestVersion = key;
                             metadata = value;
-                        } else if (compareSemVer(highestVersion, key, false) === 1) {
+                        } else if (semver.gt(highestVersion, key)) {
                             highestVersion = key;
                             metadata = key;
 
                         }
-                    });*/
+                    });
                     Object.entries(r.data.result).forEach(([key, value]) => {
                         highestVersion = key;
                         metadata = value;

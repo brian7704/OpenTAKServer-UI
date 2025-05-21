@@ -10,10 +10,11 @@ import {
 import { notifications } from '@mantine/notifications';
 import React, { useEffect, useState } from 'react';
 import { IconDownload, IconCircleMinus, IconX, IconCheck, IconQrcode } from '@tabler/icons-react';
-import QRCode from 'react-qr-code';
+import { QRCode } from 'react-qrcode-logo';
 import axios from '@/axios_config';
 import { apiRoutes } from '@/apiRoutes';
 import bytes_formatter from '@/bytes_formatter';
+import Logo from "@/images/ots-logo.png";
 
 interface data_package {
     filename: string;
@@ -254,7 +255,7 @@ export default function DataPackages() {
             <Modal title={qrTitle} opened={showQrCode} onClose={() => setShowQrCode(false)} p="md" pb="lg">
                 <Center>
                     <Paper p="md" shadow="xl" withBorder bg="white">
-                        <QRCode value={qrLink} />
+                        <QRCode value={qrLink} size={350} quietZone={0} logoImage={Logo} eyeRadius={50} ecLevel="L" qrStyle="dots" removeQrCodeBehindLogo logoPaddingStyle="circle" logoWidth={100} logoHeight={100} />
                     </Paper>
                 </Center>
             </Modal>

@@ -39,10 +39,11 @@ import {
     Text,
     Tooltip
 } from '@mantine/core';
+import Logo from '../../images/ots-logo.png';
 import { formatISO, parseISO } from 'date-fns';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { notifications } from '@mantine/notifications';
-import QRCode from 'react-qr-code';
+import { QRCode } from 'react-qrcode-logo';
 import classes from './Navbar.module.css';
 import DarkModeSwitch from '../DarkModeSwitch';
 import axios from '../../axios_config';
@@ -281,7 +282,7 @@ export default function Navbar() {
             <Modal opened={showItakQr} onClose={() => setShowItakQr(false)} p="md" title="iTAK Connection Details">
                 <Center>
                     <Paper p="md" shadow="xl" withBorder bg="white">
-                        <QRCode value={itakQrString} />
+                        <QRCode size={300} logoPaddingStyle="circle" value={itakQrString} quietZone={0} logoImage={Logo} removeQrCodeBehindLogo qrStyle="dots" ecLevel="H" eyeRadius={50} />
                     </Paper>
                 </Center>
             </Modal>
@@ -321,7 +322,7 @@ export default function Navbar() {
                 </Center>
                 <Flex direction="column" gap="md" align="center" display={atakQR.qr_string === '' ? "none" : "flex"}>
                     <Paper p="md" shadow="xl" withBorder bg="white">
-                        <QRCode value={atakQR.qr_string} />
+                        <QRCode size={350} value={atakQR.qr_string} quietZone={0} logoImage={Logo} eyeRadius={50} ecLevel="L" qrStyle="dots" removeQrCodeBehindLogo logoPaddingStyle="circle" logoWidth={100} logoHeight={100} />
                     </Paper>
                     <Tooltip label="Tap here if you're reading this on the EUD you want to connect to OpenTAKServer">
                         <Button component="a" href={atakQR.qr_string}>Open ATAK</Button>

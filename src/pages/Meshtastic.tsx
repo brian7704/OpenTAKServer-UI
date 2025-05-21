@@ -9,9 +9,10 @@ import {
 import { notifications } from '@mantine/notifications';
 import React, { useEffect, useState } from 'react';
 import { IconCircleMinus, IconX, IconCheck, IconQrcode, IconPlus, IconReload } from '@tabler/icons-react';
-import QRCode from 'react-qr-code';
+import { QRCode } from 'react-qrcode-logo';
 import axios from '@/axios_config';
 import { apiRoutes } from '@/apiRoutes';
+import Logo from "@/images/ots-logo.png";
 
 export default function Meshtastic() {
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
@@ -243,7 +244,7 @@ export default function Meshtastic() {
             <Modal opened={showQrCode} onClose={() => setShowQrCode(false)} title={qrTitle}>
                 <Center>
                     <Paper p="md" shadow="xl" withBorder bg="white">
-                        <QRCode value={channelUrl} />
+                        <QRCode value={channelUrl} size={350} quietZone={0} logoImage={Logo} eyeRadius={50} ecLevel="L" qrStyle="dots" removeQrCodeBehindLogo logoPaddingStyle="circle" logoWidth={100} logoHeight={100} />
                     </Paper>
                 </Center>
             </Modal>

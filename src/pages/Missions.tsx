@@ -11,7 +11,8 @@ import React, { useEffect, useState } from 'react';
 import axios from "axios";
 import {apiRoutes} from "@/apiRoutes.tsx";
 import {IconCircleMinus, IconQrcode, IconMail, IconCheck, IconX, IconPlus} from "@tabler/icons-react";
-import QRCode from "react-qr-code";
+import { QRCode } from 'react-qrcode-logo';
+import Logo from "@/images/ots-logo.png";
 
 export default function Missions() {
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
@@ -231,7 +232,7 @@ export default function Missions() {
             <Modal opened={showQrCode} onClose={() => setShowQrCode(false)} title={qrTitle}>
                 <Center>
                     <Paper p="md" shadow="xl" withBorder bg="white">
-                        <QRCode value={qrContent} />
+                        <QRCode value={qrContent} size={350} quietZone={0} logoImage={Logo} eyeRadius={50} ecLevel="L" qrStyle="dots" removeQrCodeBehindLogo logoPaddingStyle="circle" logoWidth={100} logoHeight={100} />
                     </Paper>
                 </Center>
             </Modal>
