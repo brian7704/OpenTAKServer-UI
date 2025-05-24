@@ -282,7 +282,7 @@ export default function Navbar() {
             <Modal opened={showItakQr} onClose={() => setShowItakQr(false)} p="md" title="iTAK Connection Details">
                 <Center>
                     <Paper p="md" shadow="xl" withBorder bg="white">
-                        <QRCode size={300} logoPaddingStyle="circle" value={itakQrString} quietZone={0} logoImage={Logo} removeQrCodeBehindLogo qrStyle="dots" ecLevel="H" eyeRadius={50} />
+                        <QRCode size={350} value={itakQrString} quietZone={10} logoImage={Logo} qrStyle="dots" ecLevel="H" eyeRadius={50} logoWidth={100} logoHeight={100} />
                     </Paper>
                 </Center>
             </Modal>
@@ -297,6 +297,7 @@ export default function Navbar() {
                     disabled={atakQR?.qr_string !== ""}
                     label="Expiration Date"
                     clearable
+                    firstDayOfWeek={0}
                     clearButtonProps={{
                         onClick: () => {
                             setAtakQR({...atakQR, exp: null})
@@ -322,7 +323,7 @@ export default function Navbar() {
                 </Center>
                 <Flex direction="column" gap="md" align="center" display={atakQR.qr_string === '' ? "none" : "flex"}>
                     <Paper p="md" shadow="xl" withBorder bg="white">
-                        <QRCode size={350} value={atakQR.qr_string} quietZone={0} logoImage={Logo} eyeRadius={50} ecLevel="L" qrStyle="dots" removeQrCodeBehindLogo logoPaddingStyle="circle" logoWidth={100} logoHeight={100} />
+                        <QRCode size={350} value={atakQR.qr_string} quietZone={10} logoImage={Logo} eyeRadius={50} ecLevel="L" qrStyle="dots" logoWidth={100} logoHeight={100} />
                     </Paper>
                     <Tooltip label="Tap here if you're reading this on the EUD you want to connect to OpenTAKServer">
                         <Button component="a" href={atakQR.qr_string}>Open ATAK</Button>
