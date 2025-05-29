@@ -13,9 +13,7 @@ import { socket } from '@/socketio';
 import { apiRoutes } from '../apiRoutes';
 import {Link} from "react-router";
 import Markdown from "react-markdown";
-import { compareSemVer } from 'semver-parser';
 import CodeMirror, {ViewPlugin} from "@uiw/react-codemirror";
-import semver from "semver";
 
 interface About {
     author: string;
@@ -88,6 +86,52 @@ export default function ServerPluginManager() {
         }
     }
 
+    function pep440_gt(version1: string, version2: string) {
+        const PEP440_REGEX = /^([0-9])\.([0-9])\.([0-9])\.?(post[0-9]+)?\.?(dev)?(a|b|rc)?(\+[0-9a-zA-Z]{7}?)/
+        if (!PEP440_REGEX.test(version1) || !PEP440_REGEX.test(version2)) {
+            return false;
+        }
+        else if (version1 === version2) {
+            return false;
+        }
+
+        const version1_regex = PEP440_REGEX.exec(version1);
+        const version2_regex = PEP440_REGEX.exec(version2);
+
+        if (version2_regex === null && version1_regex !== null) {
+            return true;
+        }
+        else if (version1_regex === null || version2_regex === null) {
+            return false;
+        }
+
+        // Major Version
+        if (version1_regex[1] > version2_regex[1]) {
+            return true;
+        }
+        // Minor Version
+        else if (version1_regex[1] === version2_regex[1] && version1_regex[2] > version2_regex[2]) {
+            return true;
+        }
+        // Patch number
+        else if (version1_regex[1] === version2_regex[1] && version1_regex[2] === version2_regex[2] && version1_regex[3] > version2_regex[3]) {
+            return true;
+        }
+        // Major, minor, and patch match. Check for post
+        else if (version1_regex[1] === version2_regex[1] && version1_regex[2] === version2_regex[2] && version1_regex[3] === version2_regex[3]) {
+            if (version1_regex[4] && !version2_regex[4]) {
+                return true;
+            }
+
+            const version1_post = parseInt(version1_regex[4].replace("post", ""), 10);
+            const version2_post = parseInt(version2_regex[4].replace("post", ""), 10);
+            if (version1_post > version2_post) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     useEffect(() => {
         getInstalledPlugins();
 
@@ -136,19 +180,16 @@ export default function ServerPluginManager() {
                 if (r.status === 200) {
                     let highestVersion: string|null = null;
                     Object.entries(r.data.result).forEach(([key, value]) => {
+                        console.log(key);
                         if (highestVersion === null) {
                             highestVersion = key;
                             metadata = value;
-                        } else if (semver.gt(highestVersion, key)) {
+                        } else if (pep440_gt(key, highestVersion)) {
                             highestVersion = key;
-                            metadata = key;
-
+                            metadata = value;
                         }
                     });
-                    Object.entries(r.data.result).forEach(([key, value]) => {
-                        highestVersion = key;
-                        metadata = value;
-                    });
+
                     if (metadata) {
                         setAbout(metadata);
                     }
