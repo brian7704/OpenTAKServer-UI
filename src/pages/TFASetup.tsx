@@ -148,7 +148,7 @@ export default function TFASetup() {
                         </Text>
                         <Paper shadow="xl" radius="md" p="xl" withBorder w="min-content" bg="white">
                             <Stack align="center">
-                                <QRCode value={qrValue} size={350} quietZone={0} logoImage={Logo} eyeRadius={50} ecLevel="L" qrStyle="dots" removeQrCodeBehindLogo logoPaddingStyle="circle" logoWidth={100} logoHeight={100} />
+                                <QRCode value={qrValue} size={350} quietZone={10} logoImage={Logo} eyeRadius={50} ecLevel="L" qrStyle="dots" logoPaddingStyle="circle" logoWidth={100} logoHeight={100} />
                                 <Text ta="center" color="black">{qrKey}</Text>
                             </Stack>
                         </Paper>
