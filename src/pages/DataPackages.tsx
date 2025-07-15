@@ -255,7 +255,7 @@ export default function DataPackages() {
             <Modal title={qrTitle} opened={showQrCode} onClose={() => setShowQrCode(false)} p="md" pb="lg">
                 <Center>
                     <Paper p="md" shadow="xl" withBorder bg="white">
-                        <QRCode value={qrLink} size={350} quietZone={10} logoImage={Logo} eyeRadius={50} ecLevel="L" qrStyle="dots" logoPaddingStyle="circle" logoWidth={100} logoHeight={100} />
+                        <QRCode value={qrLink} size={350} quietZone={10} logoImage={Logo} eyeRadius={50} ecLevel="L" qrStyle="dots" logoWidth={100} logoHeight={100} />
                     </Paper>
                 </Center>
             </Modal>
