@@ -288,7 +288,7 @@ export default function Navbar() {
             </Modal>
             <Modal opened={showAtakQr} onClose={() => setShowAtakQr(false)} title="ATAK QR Code">
                 <DateTimePicker onChange={(date) => {
-                    if (date !== "Invalid Date") {
+                    if (date !== "Invalid Date" && date !== null) {
                         setAtakQR({...atakQR, exp: Math.floor(parseISO(date).getTime() / 1000)});
                     }}}
                     minDate={new Date()}
