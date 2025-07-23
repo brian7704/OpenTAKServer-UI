@@ -1,7 +1,7 @@
 import {
     Button,
     Center, ComboboxItem, Modal,
-    Pagination, PasswordInput, Select,
+    Pagination, Paper, PasswordInput, Select,
     Table,
     TableData, TextInput,
     useComputedColorScheme,
@@ -11,7 +11,8 @@ import React, { useEffect, useState } from 'react';
 import axios from "axios";
 import {apiRoutes} from "@/apiRoutes.tsx";
 import {IconCircleMinus, IconQrcode, IconMail, IconCheck, IconX, IconPlus} from "@tabler/icons-react";
-import QRCode from "react-qr-code";
+import { QRCode } from 'react-qrcode-logo';
+import Logo from "@/images/ots-logo.png";
 
 export default function Missions() {
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
@@ -229,7 +230,11 @@ export default function Missions() {
     return (
         <>
             <Modal opened={showQrCode} onClose={() => setShowQrCode(false)} title={qrTitle}>
-                <Center><QRCode value={qrContent} /></Center>
+                <Center>
+                    <Paper p="md" shadow="xl" withBorder bg="white">
+                        <QRCode value={qrContent} size={350} quietZone={10} logoImage={Logo} eyeRadius={50} ecLevel="L" qrStyle="dots" logoWidth={100} logoHeight={100} />
+                    </Paper>
+                </Center>
             </Modal>
             <Modal opened={showInvite} onClose={() => setShowInvite(false)} title={`Invite EUD to ${inviteMission}`}>
                 <Select

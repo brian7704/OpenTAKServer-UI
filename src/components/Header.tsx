@@ -11,7 +11,7 @@ import {
 } from '@tabler/icons-react';
 import cx from 'clsx';
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import Logo from '../images/ots-logo.png';
 import classes from './Header.module.css';
 import axios from '../axios_config';

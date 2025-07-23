@@ -19,7 +19,7 @@ import {
     useComputedColorScheme,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { upperFirst } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconArrowLeft, IconCheck, IconX } from '@tabler/icons-react';
@@ -104,7 +104,7 @@ export default function Login(props: PaperProps) {
                     } else if (r.data.response.tf_method === 'email') {
                         setType('email');
                     }
-                } else getUser();
+                } else {getUser();}
             }
         }).catch(err => {
             notifications.show({
@@ -278,9 +278,9 @@ export default function Login(props: PaperProps) {
                           type="button"
                           c="dimmed"
                           onClick={() => {
-                            if (type === 'login') setType('register');
-                            else if (type === 'register') setType('login');
-                            else if (type === 'Reset Password') setType('login');
+                            if (type === 'login') {setType('register');}
+                            else if (type === 'register') {setType('login');}
+                            else if (type === 'Reset Password') {setType('login');}
                         }}
                           size="xs"
                         >
@@ -294,9 +294,9 @@ export default function Login(props: PaperProps) {
                         <Button
                           radius="xl"
                           onClick={(e) => {
-                            if (type === 'login') handleLogin(e);
-                            else if (type === 'register') handleRegister(e);
-                            else if (type === 'Reset Password') handleReset(e);
+                            if (type === 'login') {handleLogin(e);}
+                            else if (type === 'register') {handleRegister(e);}
+                            else if (type === 'Reset Password') {handleReset(e);}
                           }}
                           display={type === 'login' || type === 'register' || type === 'Reset Password' ? 'block' : 'None'}
                         >

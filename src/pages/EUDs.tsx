@@ -10,6 +10,7 @@ import { notifications } from '@mantine/notifications';
 import {IconCheck, IconDownload, IconPlus, IconX} from '@tabler/icons-react';
 import axios from '../axios_config';
 import { apiRoutes } from '../apiRoutes';
+import {Link} from "react-router";
 
 interface eud {
     callsign: string;
@@ -80,7 +81,8 @@ export default function EUDs() {
                 r.data.results.map((row:any) => {
                     if (tableData.body !== undefined) {
 
-                        tableData.body.push([row.callsign, row.device, row.platform, row.os, row.phone_number,
+                        const callsign_link = <Link to={`/eud_stats?uid=${row.uid}&callsign=${row.callsign}`}>{row.callsign}</Link>
+                        tableData.body.push([callsign_link, row.device, row.platform, row.os, row.phone_number,
                             row.username, row.uid, row.version, row.last_event_time, row.last_status]);
                     }
                 });

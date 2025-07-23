@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Badge, Button, Center, LoadingOverlay, Paper, PinInput, Radio, Stack, Text, Title } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IconCheck, IconX } from '@tabler/icons-react';
-import QRCode from 'react-qr-code';
+import { QRCode } from 'react-qrcode-logo';
 import axios from '../axios_config';
 import { apiRoutes } from '../apiRoutes';
+import Logo from "@/images/ots-logo.png";
 
 export default function TFASetup() {
     const [tfPrimaryMethod, setTfPrimaryMethod] = useState<string | undefined>(undefined);
@@ -21,7 +22,7 @@ export default function TFASetup() {
             setTfPrimaryMethod(r.data.response.tf_primary_method);
         }).catch(err => {
             let message = '';
-            if (err.status === 401) message = 'Not logged in';
+            if (err.status === 401) {message = 'Not logged in';}
 
             notifications.show({
                 title: 'Failed to get 2FA methods',
@@ -64,7 +65,7 @@ export default function TFASetup() {
                 }
             }).catch(err => {
                 let message = '';
-                if (err.status === 401) message = 'Not logged in';
+                if (err.status === 401) {message = 'Not logged in';}
 
                 notifications.show({
                     title: 'Failed to set 2FA method',
@@ -145,10 +146,10 @@ export default function TFASetup() {
                         <Text>Open an authenticator app on your device and scan the following QRcode (or enter the code
                             below manually) to start receiving codes
                         </Text>
-                        <Paper shadow="xl" radius="md" p="xl" withBorder w="min-content">
+                        <Paper shadow="xl" radius="md" p="xl" withBorder w="min-content" bg="white">
                             <Stack align="center">
-                                <QRCode value={qrValue} />
-                                <Text ta="center">{qrKey}</Text>
+                                <QRCode value={qrValue} size={350} quietZone={10} logoImage={Logo} eyeRadius={50} ecLevel="L" qrStyle="dots" logoWidth={100} logoHeight={100} />
+                                <Text ta="center" color="black">{qrKey}</Text>
                             </Stack>
                         </Paper>
                     </Stack>

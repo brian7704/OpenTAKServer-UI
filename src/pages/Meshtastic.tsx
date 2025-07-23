@@ -1,7 +1,7 @@
 import {
     Button,
     Center, CopyButton, Modal, NumberInput,
-    Pagination, Select, Switch,
+    Pagination, Paper, Select, Switch,
     Table,
     TableData, TextInput, Tooltip,
     useComputedColorScheme,
@@ -9,9 +9,10 @@ import {
 import { notifications } from '@mantine/notifications';
 import React, { useEffect, useState } from 'react';
 import { IconCircleMinus, IconX, IconCheck, IconQrcode, IconPlus, IconReload } from '@tabler/icons-react';
-import QRCode from 'react-qr-code';
+import { QRCode } from 'react-qrcode-logo';
 import axios from '@/axios_config';
 import { apiRoutes } from '@/apiRoutes';
+import Logo from "@/images/ots-logo.png";
 
 export default function Meshtastic() {
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
@@ -241,7 +242,11 @@ export default function Meshtastic() {
     return (
         <>
             <Modal opened={showQrCode} onClose={() => setShowQrCode(false)} title={qrTitle}>
-                <Center><QRCode value={channelUrl} /></Center>
+                <Center>
+                    <Paper p="md" shadow="xl" withBorder bg="white">
+                        <QRCode value={channelUrl} size={350} quietZone={10} logoImage={Logo} eyeRadius={50} ecLevel="L" qrStyle="dots" logoWidth={100} logoHeight={100} />
+                    </Paper>
+                </Center>
             </Modal>
             <Modal opened={deleteChannelOpen} onClose={() => setDeleteChanelOpen(false)} title="Are you sure you want to delete this channel?">
                 <Center>

@@ -104,86 +104,8 @@ export default function Dashboard() {
             });
     }, []);
 
-    function toggleSSL() {
-        axios.get((sslEnabled) ? apiRoutes.stopSSL : apiRoutes.startSSL)
-            .then(r => {
-                if (r.status === 200) {
-                    let message = 'The SSL server has been started';
-                    if (sslEnabled) message = 'The SSL server has been stopped';
-
-                    notifications.show({
-                        title: 'Success',
-                        message,
-                        icon: <IconCheck />,
-                        color: 'green',
-                    });
-                    setSslEnabled(!sslEnabled);
-                }
-            }).catch(err => {
-                console.log(err);
-                notifications.show({
-                    title: 'Error',
-                    message: err.response.data.error,
-                    icon: <IconX />,
-                    color: 'red',
-                });
-        });
-    }
-
-    function toggleTCP() {
-        axios.get((tcpEnabled) ? apiRoutes.stopTCP : apiRoutes.startTCP)
-            .then(r => {
-                if (r.status === 200) {
-                    let message = 'The TCP server has been started';
-                    if (tcpEnabled) message = 'The TCP server has been stopped';
-
-                    notifications.show({
-                        title: 'Success',
-                        message,
-                        icon: <IconCheck />,
-                        color: 'green',
-                    });
-                    setTcpEnabled(!tcpEnabled);
-                }
-            }).catch(err => {
-            console.log(err);
-            notifications.show({
-                title: 'Error',
-                message: err.response.data.error,
-                icon: <IconX />,
-                color: 'red',
-            });
-        });
-    }
-
     return (
         <ScrollArea>
-            <Center>
-                <Title mb="xl" order={2}>OpenTAKServer Status</Title>
-            </Center>
-            <Center>
-                <Flex direction={{ base: 'column', xs: 'row' }}>
-                    <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md">
-                        <Center mb="md"><Title order={4}>CoT Router</Title></Center>
-                        <Center>{alerts.cot_router ? <IconCheck color="green" /> : <IconX color="red" />}</Center>
-                    </Paper>
-                    <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md">
-                        <Center mb="md"><Title order={4}>TCP</Title></Center>
-                        <Center>{tcpEnabled ? <IconCheck color="green" /> : <IconX color="red" />}</Center>
-                        <Switch label="Enabled" checked={tcpEnabled} onChange={() => toggleTCP()} mt="md" />
-                    </Paper>
-                    <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md">
-                        <Center mb="md"><Title order={4}>SSL</Title></Center>
-                        <Center>{sslEnabled ? <IconCheck color="green" /> : <IconX color="red" />}</Center>
-                        <Switch label="Enabled" checked={sslEnabled} onChange={() => toggleSSL()} mt="md" />
-                    </Paper>
-                    <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md">
-                        <Center mb="md"><Title order={4}>Online EUDs</Title></Center>
-                        <Center><Text>{alerts.online_euds ? Object.keys(alerts.online_euds).length : 0}</Text></Center>
-                    </Paper>
-                </Flex>
-            </Center>
-            <Divider my="lg" />
             <Center>
                 <Title mb="xl" order={2}>Server Status</Title>
             </Center>

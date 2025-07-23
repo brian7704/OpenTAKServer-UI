@@ -1,6 +1,6 @@
 import {Paper, Title, useComputedColorScheme} from "@mantine/core";
 import {useEffect, useState} from "react";
-import {useSearchParams} from "react-router-dom";
+import {useSearchParams} from "react-router";
 import axios from "axios";
 import {apiRoutes} from "@/apiRoutes.tsx";
 import {LineChart} from "@mantine/charts";
