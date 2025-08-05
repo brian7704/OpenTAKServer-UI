@@ -30,7 +30,7 @@ export default function VideoStreams() {
     const [deleteVideoOpened, setDeleteVideoOpened] = useState(false);
     const [deletePath, setDeletePath] = useState('');
     const [path, setPath] = useState('');
-    const [source, setSource] = useState('');
+    const [source, setSource] = useState<string|null>(null);
     const [showVideo, setShowVideo] = useState(false);
     const [videoUrl, setVideoUrl] = useState('');
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
@@ -203,6 +203,8 @@ export default function VideoStreams() {
                 color: 'red',
             });
         });
+        setPath("");
+        setSource(null);
     }
 
     function startStreaming() {
