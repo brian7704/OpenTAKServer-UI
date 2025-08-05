@@ -53,4 +53,5 @@ export const apiRoutes = {
   eud_stats: '/api/eud_stats',
   plugins: '/api/plugins',
   atakQrString: '/api/atak_qr_string',
+  pluginRepo: '/api/plugins/repo',
 };

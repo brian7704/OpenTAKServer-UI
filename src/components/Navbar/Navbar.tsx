@@ -122,8 +122,8 @@ export default function Navbar() {
                     className={classes.link}
                     component={Link}
                     key={plugin.distro}
-                    active={location.pathname + location.search === `/plugin?name=${plugin.name.toLowerCase()}` || undefined}
-                    to={`/plugin?name=${plugin.name.toLowerCase()}`}
+                    active={location.pathname + location.search === `/plugin?name=${plugin.distro}` || undefined}
+                    to={`/plugin?name=${plugin.distro}`}
                     label={plugin.name}
                     leftSection={<IconPlugConnected className={classes.linkIcon} stroke={1.5}/>}
                     mt="md"

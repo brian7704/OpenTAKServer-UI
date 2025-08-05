@@ -57,6 +57,7 @@ export default function ServerPluginManager() {
     const [commandOutputTitle, setCommandOutputTitle] = useState("");
     const [refreshButtonDisabled, setRefreshButtonDisabled] = useState(true);
     const [showModelClose, setShowModelClose] = useState(false);
+    const [pluginRepo, setPluginRepo] = useState('https://repo.opentakserver.io/brian/prod/');
     const [plugins, setPlugins] = useState<TableData>({
         caption: '',
         head: ['Name', 'Show Info', 'Install', 'Delete'],
@@ -133,7 +134,7 @@ export default function ServerPluginManager() {
     }
 
     useEffect(() => {
-        getInstalledPlugins();
+        getPluginRepo();
 
         socket.on('plugin_package_manager', pluginPackageManager);
 
@@ -141,6 +142,10 @@ export default function ServerPluginManager() {
             socket.off('plugin_package_manager', pluginPackageManager);
         }
     }, [])
+
+    useEffect(() => {
+        getInstalledPlugins();
+    }, [pluginRepo]);
 
     useEffect(() => {
         if (installedPlugins !== null) {
@@ -173,8 +178,24 @@ export default function ServerPluginManager() {
         }
     }, [plugin]);
 
+    function getPluginRepo() {
+        axios.get(apiRoutes.pluginRepo).then((r) => {
+            if (r.status === 200) {
+                setPluginRepo(r.data.repo_url);
+            }
+        }).catch((err) => {
+            console.log(err);
+            notifications.show({
+                title: 'Failed to get repo URL',
+                message: err.response.data.error,
+                icon: <IconX />,
+                color: 'red',
+            })
+        })
+    }
+
     function getAvailablePluginInfo(pluginName:string) {
-        axios.get(`https://repo.opentakserver.io/brian/prod/${pluginName}`, {headers: {"Accept": "application/json"}})
+        axios.get(`${pluginRepo}/${pluginName}`, {headers: {"Accept": "application/json"}})
             .then((r) => {
                 let metadata;
                 if (r.status === 200) {
@@ -223,15 +244,10 @@ export default function ServerPluginManager() {
     }
 
     function getInstalledPlugins() {
-        setLoading(true);
         axios.get(apiRoutes.plugins).then(r => {
             if (r.status === 200) {
                 const plugins_list: string[] = []
-                const tableData: TableData = {
-                    caption: '',
-                    head: ['Name', 'Show Info', 'Install', 'Delete'],
-                    body: [],
-                };
+                const tableData: TableData = {...plugins};
                 r.data.plugins.forEach((plugin: InstalledPlugin) => {
                     plugins_list.push(plugin.name.toLowerCase())
                     tableData.body?.push([plugin.name.toLowerCase(), <Button onClick={(e) => {e.preventDefault(); setShowInfo(true); getInstalledPluginInfo(plugin.distro)}}><IconInfoCircle /></Button>,
@@ -241,17 +257,27 @@ export default function ServerPluginManager() {
                 setInstalledPlugins(plugins_list);
                 setPlugins(tableData);
             }
+            setLoading(false);
+        }).catch((err) => {
+            console.log(err);
+            setLoading(false);
+            notifications.show({
+                message: 'Failed to get installed plugins',
+                icon: <IconX />,
+                color: 'red',
+            })
         })
     }
 
     function getAvailablePlugins() {
-        axios.get("https://repo.opentakserver.io/brian/prod", {headers: {"Accept": "application/json"}}).then((r) => {
+        setLoading(true);
+        axios.get(pluginRepo, {headers: {"Accept": "application/json"}}).then((r) => {
             if (r.status === 200) {
                 const tableData: TableData = {...plugins};
 
                 r.data.result.projects.map((p:string) => {
                     const row = [p, <Button onClick={(e) => {e.preventDefault(); setShowInfo(true); getAvailablePluginInfo(p)}}><IconInfoCircle /></Button>,
-                        <Button onClick={(e) => {e.preventDefault(); setShowCommandOutput(true); setPlugin({'plugin_name': p, 'action': 'install'}); setCommandOutputTitle(`Installing ${p}`)}}><IconDownload /></Button>,
+                        <Button onClick={(e) => {e.preventDefault(); setShowCommandOutput(true); setPlugin({'plugin_distro': p, 'action': 'install'}); setCommandOutputTitle(`Installing ${p}`)}}><IconDownload /></Button>,
                         <Button disabled><IconCircleMinus /></Button>
                     ];
                     if (!installedPlugins?.includes(p)) {
