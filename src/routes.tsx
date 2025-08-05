@@ -20,7 +20,6 @@ const DeviceProfiles = React.lazy(() => import('./pages/DeviceProfiles'));
 const Missions = React.lazy(() => import('./pages/Missions'))
 const Groups = React.lazy(() => import('./pages/Groups'))
 const EUDStats = React.lazy(() => import('./pages/EUDStats'));
-const VideoWall = React.lazy(() => import('./pages/VideoWall/VideoWall.tsx'));
 const Plugin = React.lazy(() => import('./pages/Plugin'));
 const ServerPluginManager = React.lazy(() => import('./pages/ServerPluginManager.tsx'));
 
@@ -46,7 +45,6 @@ const routes = [
   { path: '/missions', name: 'Missions', element: Missions },
   { path: '/groups', name: 'Groups', element: Groups },
   { path: '/eud_stats', name: 'EUDStats', element: EUDStats },
-  { path: '/video_wall', name: 'Video Wall', element: VideoWall },
   { path: '/plugin', name: 'Plugins', element: Plugin },
   { path: '/server_plugin_manager', name:'Server Plugin Manager', element: ServerPluginManager },
 ];
