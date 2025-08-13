@@ -3,7 +3,7 @@ import {
     Table,
     TableData,
     useComputedColorScheme,
-    Button, Text, Divider, ScrollArea, LoadingOverlay,
+    Button, Text, Divider, ScrollArea, LoadingOverlay, Center,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import {IconCheck, IconCircleMinus, IconDownload, IconInfoCircle, IconUpload, IconX} from '@tabler/icons-react';
@@ -70,7 +70,7 @@ export default function ServerPluginManager() {
             setRefreshButtonDisabled(false);
             notifications.show({
                 title: 'Success',
-                message: `Please refresh your browser`,
+                message: `Please restart OpenTAKServer and refresh your browser`,
                 icon: <IconCheck />,
                 color: 'green',
             })
@@ -276,8 +276,9 @@ export default function ServerPluginManager() {
                 const tableData: TableData = {...plugins};
 
                 r.data.result.projects.map((p:string) => {
-                    const row = [p, <Button onClick={(e) => {e.preventDefault(); setShowInfo(true); getAvailablePluginInfo(p)}}><IconInfoCircle /></Button>,
-                        <Button onClick={(e) => {e.preventDefault(); setShowCommandOutput(true); setPlugin({'plugin_distro': p, 'action': 'install'}); setCommandOutputTitle(`Installing ${p}`)}}><IconDownload /></Button>,
+                    const plugin_distro = p.replace(/-/g, "_");
+                    const row = [plugin_distro, <Button onClick={(e) => {e.preventDefault(); setShowInfo(true); getAvailablePluginInfo(plugin_distro)}}><IconInfoCircle /></Button>,
+                        <Button onClick={(e) => {e.preventDefault(); setShowCommandOutput(true); setPlugin({plugin_distro, 'action': 'install'}); setCommandOutputTitle(`Installing ${p}`)}}><IconDownload /></Button>,
                         <Button disabled><IconCircleMinus /></Button>
                     ];
                     if (!installedPlugins?.includes(p)) {
@@ -331,7 +332,8 @@ export default function ServerPluginManager() {
 
             <Modal withCloseButton={showModelClose} title={commandOutputTitle} closeOnClickOutside={false} closeOnEscape={false} w="50vw" size="xl" opened={showCommandOutput} onClose={() => {setShowCommandOutput(false); setCommandOutput("")}}>
                 <CodeMirror extensions={[scrollBottom]} lang="shell" maxHeight="60vh" value={commandOutput} height="100%" theme={computedColorScheme} readOnly />
-                <Button mt="md" disabled={refreshButtonDisabled} onClick={() => window.location.reload()}>Refresh Browser</Button>
+                <Text pt="5dp" ta="center" fw={700} display={refreshButtonDisabled ? "none" : "block"}>Please restart OpenTAKServer and refresh your browser.</Text>
+                <Center><Button mt="md" disabled={refreshButtonDisabled} onClick={() => window.location.reload()}>Refresh Browser</Button></Center>
             </Modal>
         </>
     );
