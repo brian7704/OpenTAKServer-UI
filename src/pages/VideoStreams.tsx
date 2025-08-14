@@ -248,7 +248,7 @@ export default function VideoStreams() {
                 <Image src={thumbnail} />
             </Modal>
 
-                    <AspectRatio ratio={16 / 9} display={showVideo ? 'block' : 'none'} h="100%" mb="xl">
+                    <AspectRatio ratio={16 / 9} display={showVideo ? 'block' : 'none'} h="100%" mb="xl" mt="md">
                         <iframe
                             src={videoUrl}
                             title={path}
