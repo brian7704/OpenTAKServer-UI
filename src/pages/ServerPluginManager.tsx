@@ -3,7 +3,7 @@ import {
     Table,
     TableData,
     useComputedColorScheme,
-    Button, Text, Divider, ScrollArea, LoadingOverlay, Center,
+    Button, Text, Divider, ScrollArea, LoadingOverlay, Center, FileInput,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import {IconCheck, IconCircleMinus, IconDownload, IconInfoCircle, IconUpload, IconX} from '@tabler/icons-react';
@@ -43,6 +43,14 @@ interface CommandOutput {
     success: boolean;
 }
 
+interface Plugin {
+    plugin_name?: string|null;
+    action: string|null;
+    plugin_distro?: string|null;
+    plugin_file?: File|null|undefined;
+    plugin_file_name?: string|null;
+}
+
 export default function ServerPluginManager() {
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
     const [showInfo, setShowInfo] = useState(false);
@@ -53,11 +61,13 @@ export default function ServerPluginManager() {
     const [loading, setLoading] = useState(true);
     const [showCommandOutput, setShowCommandOutput] = useState(false);
     const [commandOutput, setCommandOutput] = useState("");
-    const [plugin, setPlugin] = useState<{}|null>(null);
+    const [plugin, setPlugin] = useState<Plugin|null>(null);
     const [commandOutputTitle, setCommandOutputTitle] = useState("");
     const [refreshButtonDisabled, setRefreshButtonDisabled] = useState(true);
     const [showModelClose, setShowModelClose] = useState(false);
     const [pluginRepo, setPluginRepo] = useState('https://repo.opentakserver.io/brian/prod/');
+    const [showUploadModal, setShowUploadModal] = useState(false);
+    const [installingPlugin, setInstallingPlugin] = useState(false);
     const [plugins, setPlugins] = useState<TableData>({
         caption: '',
         head: ['Name', 'Show Info', 'Install', 'Delete'],
@@ -68,6 +78,7 @@ export default function ServerPluginManager() {
         setCommandOutput((commandOutput) => commandOutput + data.message)
         if (Object.hasOwn(data, "success") && data.success) {
             setRefreshButtonDisabled(false);
+            setInstallingPlugin(false);
             notifications.show({
                 title: 'Success',
                 message: `Please restart OpenTAKServer and refresh your browser`,
@@ -78,6 +89,7 @@ export default function ServerPluginManager() {
         else if (Object.hasOwn(data, "success") && !data.success) {
             setRefreshButtonDisabled(true);
             setShowModelClose(true);
+            setInstallingPlugin(false);
             notifications.show({
                 title: 'Error',
                 message: `Check command output`,
@@ -173,8 +185,29 @@ export default function ServerPluginManager() {
     }, [about]);
 
     useEffect(() => {
-        if (plugin !== null) {
+        if (plugin === null) {
+
+        }
+        else if (plugin.action !== "install_local") {
             socket.emit('plugin_package_manager', plugin);
+        }
+        else if (plugin.action === "install_local" && plugin.plugin_file != undefined) {
+            const formData = new FormData();
+            formData.append('file', plugin.plugin_file);
+            axios.post(apiRoutes.plugins, formData).then((r) => {
+                if (r.status === 200) {
+                    socket.emit('plugin_package_manager', {...plugin, 'plugin_file': null});
+                }
+            }).catch((err) => {
+                setInstallingPlugin(false);
+                console.log(err);
+                notifications.show({
+                    title: 'Failed to upload plugin',
+                    message: err.response.data.error,
+                    icon: <IconX />,
+                    color: 'red'
+                })
+            })
         }
     }, [plugin]);
 
@@ -248,11 +281,11 @@ export default function ServerPluginManager() {
             if (r.status === 200) {
                 const plugins_list: string[] = []
                 const tableData: TableData = {...plugins};
-                r.data.plugins.forEach((plugin: InstalledPlugin) => {
-                    plugins_list.push(plugin.name.toLowerCase())
-                    tableData.body?.push([plugin.name.toLowerCase(), <Button onClick={(e) => {e.preventDefault(); setShowInfo(true); getInstalledPluginInfo(plugin.distro)}}><IconInfoCircle /></Button>,
+                r.data.plugins.forEach((installedPlugin: InstalledPlugin) => {
+                    plugins_list.push(installedPlugin.name.toLowerCase())
+                    tableData.body?.push([installedPlugin.name.toLowerCase(), <Button onClick={(e) => {e.preventDefault(); setShowInfo(true); getInstalledPluginInfo(installedPlugin.distro)}}><IconInfoCircle /></Button>,
                         <Button disabled><IconDownload /></Button>,
-                        <Button onClick={(e) => {e.preventDefault(); setShowCommandOutput(true); setPlugin({'plugin_name': plugin.name, 'action': 'delete', 'plugin_distro': plugin.distro}); setCommandOutputTitle(`Deleting ${plugin.name}`) }}><IconCircleMinus /></Button>])
+                        <Button onClick={(e) => {e.preventDefault(); setShowCommandOutput(true); setPlugin({...plugin, 'plugin_name': installedPlugin.name, 'action': 'delete', 'plugin_distro': installedPlugin.distro}); setCommandOutputTitle(`Deleting ${installedPlugin.name}`) }}><IconCircleMinus /></Button>])
                 });
                 setInstalledPlugins(plugins_list);
                 setPlugins(tableData);
@@ -278,7 +311,7 @@ export default function ServerPluginManager() {
                 r.data.result.projects.map((p:string) => {
                     const plugin_distro = p.replace(/-/g, "_");
                     const row = [plugin_distro, <Button onClick={(e) => {e.preventDefault(); setShowInfo(true); getAvailablePluginInfo(plugin_distro)}}><IconInfoCircle /></Button>,
-                        <Button onClick={(e) => {e.preventDefault(); setShowCommandOutput(true); setPlugin({plugin_distro, 'action': 'install'}); setCommandOutputTitle(`Installing ${p}`)}}><IconDownload /></Button>,
+                        <Button onClick={(e) => {e.preventDefault(); setShowCommandOutput(true); setPlugin({...plugin, plugin_distro, 'action': 'install', 'plugin_name': p}); setCommandOutputTitle(`Installing ${p}`)}}><IconDownload /></Button>,
                         <Button disabled><IconCircleMinus /></Button>
                     ];
                     if (!installedPlugins?.includes(p)) {
@@ -313,6 +346,14 @@ export default function ServerPluginManager() {
     return (
         <>
             <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
+
+            <Button mb="md" onClick={() => setShowUploadModal(true)}>Upload Plugin</Button>
+            <Modal title="Upload Plugin" w="50vw" size="xl" opened={showUploadModal} onClose={() => setShowUploadModal(false)} closeOnEscape={!installingPlugin} closeOnClickOutside={!installingPlugin} withCloseButton={!installingPlugin}>
+                <FileInput mb="md" clearable={!installingPlugin} disabled={installingPlugin} label="Select your zip, whl, or tar.gz file" onChange={(file) => {setInstallingPlugin(true); setPlugin({...plugin, 'plugin_file': file, 'action': 'install_local', 'plugin_file_name': file?.name})}} />
+                <CodeMirror basicSetup={{ lineNumbers: false }} extensions={[scrollBottom]} lang="shell" maxHeight="60vh" value={commandOutput} height="100%" theme={computedColorScheme} readOnly />
+                <Center><Button mt="md" disabled={installingPlugin} onClick={() => window.location.reload()}>Refresh Browser</Button></Center>
+            </Modal>
+
             <Table.ScrollContainer minWidth="100%">
                 <Table data={plugins} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mb="md" />
             </Table.ScrollContainer>
@@ -332,7 +373,7 @@ export default function ServerPluginManager() {
 
             <Modal withCloseButton={showModelClose} title={commandOutputTitle} closeOnClickOutside={false} closeOnEscape={false} w="50vw" size="xl" opened={showCommandOutput} onClose={() => {setShowCommandOutput(false); setCommandOutput("")}}>
                 <CodeMirror extensions={[scrollBottom]} lang="shell" maxHeight="60vh" value={commandOutput} height="100%" theme={computedColorScheme} readOnly />
-                <Text pt="5dp" ta="center" fw={700} display={refreshButtonDisabled ? "none" : "block"}>Please restart OpenTAKServer and refresh your browser.</Text>
+                <Text mt="md" ta="center" fw={700} display={refreshButtonDisabled ? "none" : "block"}>Please restart OpenTAKServer and refresh your browser.</Text>
                 <Center><Button mt="md" disabled={refreshButtonDisabled} onClick={() => window.location.reload()}>Refresh Browser</Button></Center>
             </Modal>
         </>

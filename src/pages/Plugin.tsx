@@ -91,7 +91,8 @@ export default function Plugin() {
         }).catch((err) => {
             console.log(err);
             notifications.show({
-                message: "Failed to get plugin config",
+                title: "Failed to get plugin config",
+                message: "Please restart OpenTAKServer",
                 icon: <IconX />,
                 color: 'red'
             })
