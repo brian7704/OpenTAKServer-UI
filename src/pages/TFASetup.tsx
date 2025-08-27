@@ -50,11 +50,11 @@ export default function TFASetup() {
             ).then(r => {
                 if (r.status === 200) {
                     if (setup === 'authenticator') {
-                        const issuer = r.data.response.tf_authr_issuer;
-                        const username = r.data.response.tf_authr_username;
-                        const key = r.data.response.tf_authr_key;
+                        const issuer: string = r.data.response.tf_authr_issuer;
+                        const username: string = r.data.response.tf_authr_username;
+                        const key: string = r.data.response.tf_authr_key;
                         setQrKey(key);
-                        setQrValue(`otpauth://totp/${issuer}:${username}?secret=${key}&issuer=${issuer}`);
+                        setQrValue(`otpauth://totp/${issuer}:${username}?secret=${key.replaceAll("-", "")}&issuer=${issuer}`);
                     } else if (setup === 'disable') {
                         notifications.show({
                             message: 'You have successfully disabled two-factor authentication',
@@ -149,7 +149,7 @@ export default function TFASetup() {
                         <Paper shadow="xl" radius="md" p="xl" withBorder w="min-content" bg="white">
                             <Stack align="center">
                                 <QRCode value={qrValue} size={350} quietZone={10} logoImage={Logo} eyeRadius={50} ecLevel="L" qrStyle="dots" logoWidth={100} logoHeight={100} />
-                                <Text ta="center" color="black">{qrKey}</Text>
+                                <Text ta="center" c="black">{qrKey}</Text>
                             </Stack>
                         </Paper>
                     </Stack>
