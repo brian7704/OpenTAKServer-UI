@@ -1,22 +1,22 @@
-import React, {useEffect, useState} from "react";
-import CodeMirror from '@uiw/react-codemirror';
+import { apiRoutes } from "@/apiRoutes.tsx";
 import { yaml } from '@codemirror/lang-yaml';
-import Markdown from 'react-markdown'
-import {Link, useSearchParams} from "react-router";
-import {Tabs, Text, Button, useComputedColorScheme, ScrollArea, Divider, Switch, Flex} from "@mantine/core";
+import { Button, Divider, ScrollArea, Switch, Tabs, Text, useComputedColorScheme } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import {
     IconAlignLeft,
-    IconSettings,
-    IconDeviceFloppy,
-    IconRestore,
-    IconX,
     IconCheck,
-    IconInfoCircle
+    IconDeviceFloppy,
+    IconInfoCircle,
+    IconRestore,
+    IconSettings,
+    IconX
 } from "@tabler/icons-react";
-import { parse, stringify } from 'yaml'
+import CodeMirror from '@uiw/react-codemirror';
 import axios from "axios";
-import {notifications} from "@mantine/notifications";
-import {apiRoutes} from "@/apiRoutes.tsx";
+import { useEffect, useState } from "react";
+import Markdown from 'react-markdown';
+import { Link, useSearchParams } from "react-router";
+import { parse, stringify } from 'yaml';
 
 interface About {
     author: string;
@@ -136,9 +136,9 @@ export default function Plugin() {
                         message: 'Successfully Updated Plugin Config',
                         icon: <IconCheck />,
                         color: 'green'
-                    })
-                }
-                else {
+                    });
+                    window.location.reload();
+                } else {
                     notifications.show({
                         title: 'Failed to update plugin config',
                         message: r.data.error,
