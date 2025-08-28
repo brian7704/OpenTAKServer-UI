@@ -58,6 +58,8 @@ export default function Dashboard() {
         boot_time: '',
         uptime: 0,
     });
+    const [cotHealth, setCotHealth] = useState<Record<string, any>>({ status: '' });
+    const [eudHealth, setEudHealth] = useState<Record<string, any>>({ status: '' });
 
     useEffect(() => {
             axios.get(
@@ -102,7 +104,36 @@ export default function Dashboard() {
             }).catch(err => {
                 console.log(err);
             });
+            axios.get(apiRoutes.health_cot).then(r => {
+                if (r.status === 200) {
+                    setCotHealth(r.data);
+                }
+            }).catch(err => {
+                console.log(err);
+            });
+            axios.get(apiRoutes.health_eud).then(r => {
+                if (r.status === 200) {
+                    setEudHealth(r.data);
+                }
+            }).catch(err => {
+                console.log(err);
+            });
     }, []);
+
+    const getStatusColor = (status: string) => {
+        switch ((status || '').toLowerCase()) {
+            case 'ok':
+            case 'good':
+            case 'healthy':
+                return 'green.2';
+            case 'warn':
+            case 'warning':
+            case 'degraded':
+                return 'yellow.2';
+            default:
+                return 'red.2';
+        }
+    };
 
     return (
         <ScrollArea>
@@ -153,6 +184,25 @@ export default function Dashboard() {
                         <Center mb="md"><Title order={4}>Uptime</Title></Center>
                         <Flex><Text fw={700}>Uptime:</Text><Space w="md" /><Text>{formatDuration(intervalToDuration({ start: 0, end: uptime.uptime * 1000 }))}</Text></Flex>
                         <Flex><Text fw={700}>Boot Time:</Text><Space w="md" />{uptime.boot_time}</Flex>
+                    </Paper>
+                </Flex>
+            </Center>
+            <Center>
+                <Title mb="xl" order={2}>Service Health</Title>
+            </Center>
+            <Center mb="xl">
+                <Flex direction={{ base: 'column', xs: 'row' }}>
+                    <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md" bg={getStatusColor(cotHealth.status)}>
+                        <Center mb="md"><Title order={4}>CoT Parser</Title></Center>
+                        {Object.entries(cotHealth).filter(([key]) => key !== 'status').map(([key, value]) => (
+                            <Flex key={key}><Text fw={700}>{key}:</Text><Space w="md" /><Text>{String(value)}</Text></Flex>
+                        ))}
+                    </Paper>
+                    <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md" bg={getStatusColor(eudHealth.status)}>
+                        <Center mb="md"><Title order={4}>EUD Handler</Title></Center>
+                        {Object.entries(eudHealth).filter(([key]) => key !== 'status').map(([key, value]) => (
+                            <Flex key={key}><Text fw={700}>{key}:</Text><Space w="md" /><Text>{String(value)}</Text></Flex>
+                        ))}
                     </Paper>
                 </Flex>
             </Center>
