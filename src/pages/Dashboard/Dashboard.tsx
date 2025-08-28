@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { notifications } from '@mantine/notifications';
-import {Text, Center, Title, Divider, Paper, Flex, Switch, Space, ScrollArea} from '@mantine/core';
-import { IconCheck, IconX } from '@tabler/icons-react';
 import { DonutChart } from '@mantine/charts';
-import { intervalToDuration, formatDuration } from 'date-fns';
-import { versions } from '../../_versions';
-import axios from '../../axios_config';
-import { apiRoutes } from '../../apiRoutes';
-import bytes_formatter from '../../bytes_formatter';
 import '@mantine/charts/styles.css';
+import { Center, Divider, Flex, Paper, ScrollArea, Space, Text, Title } from '@mantine/core';
+import { formatDuration, intervalToDuration } from 'date-fns';
+import { useEffect, useState } from 'react';
+import { versions } from '../../_versions';
+import { apiRoutes } from '../../apiRoutes';
+import axios from '../../axios_config';
+import bytes_formatter from '../../bytes_formatter';
 
 export default function Dashboard() {
     const [tcpEnabled, setTcpEnabled] = useState(true);
@@ -122,13 +120,9 @@ export default function Dashboard() {
 
     const getStatusColor = (status: string) => {
         switch ((status || '').toLowerCase()) {
-            case 'ok':
-            case 'good':
-            case 'healthy':
+            case 'operational-healthy':
                 return 'green.2';
-            case 'warn':
-            case 'warning':
-            case 'degraded':
+            case 'operational-errors':
                 return 'yellow.2';
             default:
                 return 'red.2';
