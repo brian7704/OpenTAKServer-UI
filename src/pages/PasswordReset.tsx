@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import {useNavigate, useSearchParams} from 'react-router';
+import { apiRoutes } from '@/apiRoutes';
 import {
     Box, Button,
     Center,
@@ -10,12 +9,13 @@ import {
     Stack,
     Title, useComputedColorScheme,
 } from '@mantine/core';
-import axios from 'axios';
 import { notifications } from '@mantine/notifications';
 import { IconCheck, IconX } from '@tabler/icons-react';
-import Logo from '../images/ots-logo.png';
+import axios from 'axios';
+import { useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router';
 import { Header } from '../components/Header';
-import { apiRoutes } from '@/apiRoutes';
+import Logo from '../images/ots-logo.png';
 
 export default function PasswordReset() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -34,11 +34,15 @@ export default function PasswordReset() {
         ).then(r => {
             if (r.status === 200) {
                 notifications.show({
-                    message: 'Your password has been changed',
+                    message: 'Your password has been changed. You will be logged out.',
                     color: 'green',
                     icon: <IconCheck />,
                 });
                 navigate('/login');
+                axios.post(apiRoutes.logout).finally(() => {
+                    localStorage.clear();
+                    navigate('/login');
+                });
             }
         }).catch(err => {
             notifications.show({

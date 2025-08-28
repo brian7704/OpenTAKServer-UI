@@ -10,11 +10,12 @@ import {
     TableData,
     TextInput, useComputedColorScheme,
 } from '@mantine/core';
-import React, { useEffect, useState } from 'react';
-import { IconCheck, IconUserPlus, IconX } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
-import axios from '../axios_config';
+import { IconCheck, IconUserPlus, IconX } from '@tabler/icons-react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { apiRoutes } from '../apiRoutes';
+import axios from '../axios_config';
 
 export default function Users() {
     const [users, setUsers] = useState<TableData>({
@@ -32,6 +33,7 @@ export default function Users() {
     const [confirm_password, setConfirmPassword] = useState('');
     const [role, setRole] = useState('');
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
+    const navigate = useNavigate();
 
     function getUsers() {
         axios.get(
@@ -215,10 +217,17 @@ export default function Users() {
                     getUsers();
                     setShowResetPassword(false);
                     setPassword('');
+                    const isSelf = username === localStorage.getItem('username');
                     notifications.show({
-                        message: `${username}'s password has been changed`,
+                        message: isSelf ? 'Your password has been changed. You will be logged out.' : `${username}'s password has been changed`,
                         color: 'green',
                     });
+                    if (isSelf) {
+                        axios.post(apiRoutes.logout).finally(() => {
+                            localStorage.clear();
+                            navigate('/login');
+                        });
+                    }
                 }
             }).catch(err => {
                 notifications.show({
