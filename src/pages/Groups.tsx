@@ -10,7 +10,7 @@ import { notifications } from '@mantine/notifications';
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
 import {apiRoutes} from "@/apiRoutes.tsx";
-import {IconCircleMinus} from "@tabler/icons-react";
+import {IconCircleMinus, IconX} from "@tabler/icons-react";
 
 export default function Groups() {
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
@@ -21,16 +21,14 @@ export default function Groups() {
     const [showAddGroup, setShowAddGroup] = useState(false);
     const [groups, setGroups] = useState<TableData>({
         caption: '',
-        head: ['Name', 'Direction', 'Created', 'Type', 'Bit Position', 'Active', 'Description'],
+        head: ['Name', 'Created', 'Type', 'Bit Position', 'Description'],
         body: [],
     });
     const [newGroupProperties, setNewGroupProperties] = useState(
-        {group_name: '',
-            direction: '',
+        {   name: '',
             created: '',
-            group_type: '',
+            type: '',
             bitpos: 0,
-            active: true,
             description: ''
         }
     );
@@ -41,7 +39,7 @@ export default function Groups() {
                 if (r.status === 200) {
                     const tableData: TableData = {
                         caption: '',
-                        head: ['Name', 'Direction', 'Created', 'Type', 'Bit Position', 'Active', 'Description'],
+                        head: ['Name', 'Created', 'Type', 'Bit Position', 'Description'],
                         body: [],
                     }
 
@@ -57,7 +55,7 @@ export default function Groups() {
                             >Delete
                             </Button>;
 
-                            tableData.body.push([row.name, row.direction, row.created, row.type, row.bitpos, row.active, row.description, delete_button]);
+                            tableData.body.push([row.name, row.created, row.type, parseInt(row.bitpos, 2), row.description, delete_button]);
                             console.log(tableData)
                         }
                     });
@@ -69,7 +67,21 @@ export default function Groups() {
     }
 
     function addGroup() {
-
+        console.log(newGroupProperties)
+        axios.post(apiRoutes.groups, newGroupProperties).then((r) => {
+            if (r.status === 200) {
+                setShowAddGroup(false);
+                get_groups();
+            }
+        }).catch((err) => {
+            console.log(err);
+            notifications.show({
+                title: 'Failed to create group',
+                message: err.response.data.error,
+                icon: <IconX />,
+                color: 'red',
+            });
+        })
     }
 
     useEffect(() => {
@@ -80,14 +92,7 @@ export default function Groups() {
         <>
             <Button onClick={() => setShowAddGroup(true)}>Add Group</Button>
             <Modal opened={showAddGroup} onClose={() => setShowAddGroup(false)} title="Add Group">
-                <TextInput required label="Name" onChange={e => { newGroupProperties.group_name = e.target.value; }} mb="md" />
-                <Select
-                    label="Direction"
-                    onChange={e => { newGroupProperties.direction = String(e); }}
-                    data={['IN', 'OUT']}
-                    mb="md"
-                    defaultValue="IN"
-                />
+                <TextInput required label="Name" onChange={e => { newGroupProperties.name = e.target.value; }} mb="md" />
                 <TextInput required label="Description" onChange={e => { newGroupProperties.description = e.target.value; }} mb="md" />
                 <Button
                     mb="md"

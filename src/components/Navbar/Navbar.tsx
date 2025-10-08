@@ -25,7 +25,8 @@ import {
     IconSettings,
     IconPlugConnected,
     IconPlug,
-    IconCircleMinus
+    IconCircleMinus,
+    IconUsersGroup
 } from '@tabler/icons-react';
 import {
     NavLink,
@@ -66,6 +67,7 @@ const navbarLinks = [
 
 const adminLinks = [
     { link: '/users', label: 'Users', icon: IconUsers },
+    { link: '/groups', label: 'Groups', icon: IconUsersGroup },
     { link: '/jobs', label: 'Scheduled Jobs', icon: IconCalendarDue },
     { link: '/plugin_updates', label: 'Plugin Updates', icon: IconPuzzle },
     { link: '/device_profiles', label: 'Device Profiles', icon: IconDeviceMobile },
