@@ -12,6 +12,8 @@ export const apiRoutes = {
   download_data_packages: '/api/data_packages/download',
   assign_eud_to_user: '/api/user/assign_eud',
   status: '/api/status',
+  health_cot: '/api/health/cot',
+  health_eud: '/api/health/eud',
   casevac: '/api/casevac',
   deleteDataPackage: '/api/data_packages',
   addVideoStream: '/api/mediamtx/stream/add',
