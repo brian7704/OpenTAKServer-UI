@@ -20,7 +20,10 @@ export default function Groups() {
     const [deleteGroupOpen, setDeleteGroupOpen] = useState(false);
     const [showAddGroup, setShowAddGroup] = useState(false);
     const [showAddUserToGroup, setShowAddUserToGroup] = useState(false);
-    const [users, setUsers] = useState<ComboboxItem[]>([]);
+    const [users, setUsers] = useState<string[]>([])
+    const [allUsers, setAllUsers] = useState<ComboboxItem[]>([]);
+    const [inUsers, setInUsers] = useState<ComboboxItem[]>([]);
+    const [outUsers, setOutUsers] = useState<ComboboxItem[]>([]);
     const [group, setGroup] = useState("");
     const [members, setMembers] = useState<TableData>({
         caption: '',
@@ -104,15 +107,36 @@ export default function Groups() {
         })
     }
 
+    useEffect(() => {
+            console.log(allUsers);
+    }, [allUsers]);
+
+    function addUsersToGroup(direction: string) {
+        axios.put(apiRoutes.groups, {users, group_name: group, direction}).then((r) => {
+            if (r.status === 200) {
+                getGroupMembers(group);
+                setUsers([]);
+            }
+        }).catch(err => {
+            console.log(err);
+            notifications.show({
+                title: 'Failed to add user to group',
+                message: err.response.data.error,
+                icon: <IconX />,
+                color: 'red',
+            })
+        });
+    }
+
     function getAllUsers() {
         axios.get(apiRoutes.allUsers).then((r) => {
             if (r.status === 200) {
                 console.log(r);
                 const all_users: ComboboxItem[] = [];
                 r.data.map((row: any) => {
-                    all_users.push({value: row.id+"", label: row.username});
+                    all_users.push(row.username);
                 });
-                setUsers(all_users);
+                setAllUsers(all_users);
             }
         }).catch(err => {
             console.log(err);
@@ -134,6 +158,9 @@ export default function Groups() {
                     body: [],
                 }
 
+                let inMembers = allUsers;
+                let outMembers = allUsers;
+
                 r.data.map((row: any) => {
                     if (tableData.body !== undefined) {
                         const active_switch = <Tooltip refProp="rootRef" label="This membership can be activated or deactivated from the user's EUD">
@@ -152,8 +179,20 @@ export default function Groups() {
 
                         tableData.body.push([row.username, row.direction, active_switch, delete_button]);
                     }
-                })
 
+                    if (row.direction === "IN") {
+                        inMembers.filter((member) => member === row.username);
+                        console.log(inMembers);
+                    }
+
+                    if (row.direction === "OUT") {
+                        outMembers.filter((member) => member === row.username);
+                        console.log(outMembers);
+                    }
+                });
+
+                setInUsers(inMembers);
+                setOutUsers(outMembers);
                 setMembers(tableData);
             }
         }).catch(err => {
@@ -193,13 +232,14 @@ export default function Groups() {
                             <MultiSelect
                                 placeholder="Search"
                                 searchable
+                                clearable
                                 nothingFoundMessage="Nothing found..."
                                 label="Select Users"
-                                onChange={(value) => {console.log(value)}}
-                                data={users} />
+                                onChange={(value) => {setUsers(value)}}
+                                data={allUsers} />
                         </Grid.Col>
                         <Grid.Col span={2}>
-                            <Button>Add</Button>
+                            <Button onClick={() => addUsersToGroup("IN")}>Add</Button>
                         </Grid.Col>
                     </Grid>
                 </Paper>
@@ -212,11 +252,11 @@ export default function Groups() {
                                 searchable
                                 nothingFoundMessage="Nothing found..."
                                 label="Select Users"
-                                onChange={(value) => {console.log(value)}}
-                                data={users} />
+                                onChange={(value) => {setUsers(value)}}
+                                data={allUsers} />
                         </Grid.Col>
                         <Grid.Col span={2}>
-                            <Button>Add</Button>
+                            <Button onClick={() => addUsersToGroup("OUT")}>Add</Button>
                         </Grid.Col>
                     </Grid>
                 </Paper>
