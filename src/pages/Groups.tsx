@@ -107,10 +107,6 @@ export default function Groups() {
         })
     }
 
-    useEffect(() => {
-            console.log(allUsers);
-    }, [allUsers]);
-
     function addUsersToGroup(direction: string) {
         axios.put(apiRoutes.groups, {users, group_name: group, direction}).then((r) => {
             if (r.status === 200) {

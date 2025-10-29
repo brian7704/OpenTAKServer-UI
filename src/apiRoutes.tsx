@@ -58,4 +58,5 @@ export const apiRoutes = {
   allGroups: '/api/groups/all',
   allUsers: '/api/users/all',
   groupMembers: '/api/groups/members',
+  userGroups: '/api/users/groups'
 };
