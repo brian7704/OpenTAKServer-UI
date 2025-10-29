@@ -37,6 +37,7 @@ export default function PluginUpdates() {
     const [plugin, setPlugin] = useState<any>(new File([''], ''));
     const [icon, setIcon] = useState<any>(new File([''], ''));
     const [description, setDescription] = useState('');
+    const [atakVersion, setAtakVersion] = useState("");
     const [platform, setPlatform] = useState('Android');
     const [pluginType, setPluginType] = useState('plugin');
     const [uploading, setUploading] = useState<boolean>(false);
@@ -136,8 +137,9 @@ export default function PluginUpdates() {
         body.append('apk', plugin);
         body.append('icon', icon);
         body.append('description', description);
-        body.append('platform', platform);
+        body.append('platform', "Android");
         body.append('plugin_type', pluginType);
+        body.append('atak_version', atakVersion);
 
         axios.post(apiRoutes.pluginPackage,
             body
@@ -188,13 +190,6 @@ export default function PluginUpdates() {
         });
     }
 
-    const platforms = <Select
-      value={platform}
-      label="Platform"
-      data={[{ value: 'Android', label: 'Android' }, { value: 'Windows', label: 'Windows' }]}
-      onChange={(value, option) => setPlatform(option.label)}
-    />;
-
     const plugin_type = <Select
         value={pluginType}
         label="Plugin Type"
@@ -210,11 +205,23 @@ export default function PluginUpdates() {
             </Table.ScrollContainer>
             <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
             <Modal opened={uploadPluginOpen} onClose={() => setUploadPluginOpen(false)} title="Upload Plugin">
-                {platforms}
                 {plugin_type}
                 <FileInput label="Plugin File" value={plugin} onChange={setPlugin} required accept="application/vnd.android.package-archive" />
                 <TextInput label="Description" onChange={(e) => setDescription(e.currentTarget.value)} />
                 <FileInput label="Icon" value={icon} onChange={setIcon} mb="md" />
+                <Select
+                    pb="md"
+                    value={atakVersion}
+                    label="ATAK Version"
+                    data={["Any", "5.4.0", "5.5.0", "5.5.1", "5.6.0", "5.7.0", "5.8.0"]}
+                    onChange={(value) => {
+                        if (value && value !== "Any")
+                            setAtakVersion(value);
+                        else
+                            setAtakVersion("");
+                    }
+                }
+                />
                 <Button loading={uploading} onClick={(e) => { upload_plugin(e); }}>Upload Plugin</Button>
             </Modal>
             <Modal opened={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} title={`Are you sure you want to delete ${deleteName}?`}>
