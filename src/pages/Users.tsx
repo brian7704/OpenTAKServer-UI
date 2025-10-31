@@ -148,6 +148,22 @@ export default function Users() {
         });
     }
 
+    function removeUserFromGroup(username: string, group_name: string, direction: string) {
+        axios.delete(apiRoutes.groupMembers, {params: {username, group_name, direction}}).then((r) => {
+            if (r.status === 200) {
+                getMemberships(username);
+            }
+        }).catch(err => {
+            console.log(err);
+            notifications.show({
+                title: 'Failed remove user from group',
+                message: err.response.data.error,
+                icon: <IconX />,
+                color: 'red',
+            })
+        });
+    }
+
     function getMemberships(user_name: string) {
         axios.get(apiRoutes.userGroups,{params: {username: user_name}}).then(r => {
             if (r.status === 200) {
@@ -166,7 +182,7 @@ export default function Users() {
 
                     const delete_button = <Button
                         color="red"
-                        onClick={() => {}}
+                        onClick={() => {removeUserFromGroup(user_name, row.group_name, row.direction);}}
                         key={`${row.group_name}_remove`}
                         rightSection={<IconUsersMinus size={14} />}
                     >Remove</Button>;

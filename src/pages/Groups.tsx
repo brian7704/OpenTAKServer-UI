@@ -145,6 +145,38 @@ export default function Groups() {
         });
     }
 
+    function deleteGroup(group_name: string) {
+        axios.delete(apiRoutes.groups, {params: {group_name}}).then((r) => {
+            if (r.status === 200) {
+                get_groups();
+            }
+        }).catch(err => {
+            console.log(err);
+            notifications.show({
+                title: `Failed delete ${group_name}`,
+                message: err.response.data.error,
+                icon: <IconX />,
+                color: 'red',
+            })
+        });
+    }
+
+    function removeUserFromGroup(username: string, group_name: string, direction: string) {
+        axios.delete(apiRoutes.groupMembers, {params: {username, group_name, direction}}).then((r) => {
+            if (r.status === 200) {
+                getGroupMembers(group_name);
+            }
+        }).catch(err => {
+            console.log(err);
+            notifications.show({
+                title: 'Failed remove user from group',
+                message: err.response.data.error,
+                icon: <IconX />,
+                color: 'red',
+            })
+        });
+    }
+
     function getGroupMembers(name: string) {
         axios.get(apiRoutes.groupMembers, {params: {name}}).then((r) => {
             if (r.status === 200) {
@@ -167,7 +199,9 @@ export default function Groups() {
 
                         const delete_button = <Button
                             color="red"
-                            onClick={() => {}}
+                            onClick={() => {
+                                removeUserFromGroup(row.username, name, row.direction);
+                            }}
                             key={`${row.username}_remove`}
                             rightSection={<IconUserMinus size={14} />}
                         >Remove
@@ -260,6 +294,19 @@ export default function Groups() {
                 <Table.ScrollContainer minWidth="100%">
                     <Table data={members} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mt="md" mb="md" />
                 </Table.ScrollContainer>
+            </Modal>
+            <Modal opened={deleteGroupOpen} onClose={() => setDeleteGroupOpen(false)} title={`Delete Group ${groupToDelete}?`}>
+                <Center>
+                    <Button
+                        mr="md"
+                        onClick={() => {
+                            deleteGroup(groupToDelete);
+                            setDeleteGroupOpen(false);
+                        }}
+                    >Yes
+                    </Button>
+                    <Button onClick={() => setDeleteGroupOpen(false)}>No</Button>
+                </Center>
             </Modal>
             <Table.ScrollContainer minWidth="100%">
                 <Table data={groups} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mt="md" mb="md" />
