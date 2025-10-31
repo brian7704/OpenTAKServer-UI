@@ -54,4 +54,9 @@ export const apiRoutes = {
   plugins: '/api/plugins',
   atakQrString: '/api/atak_qr_string',
   pluginRepo: '/api/plugins/repo',
+  ldapLogin: '/api/ldap_login',
+  allGroups: '/api/groups/all',
+  allUsers: '/api/users/all',
+  groupMembers: '/api/groups/members',
+  userGroups: '/api/users/groups'
 };

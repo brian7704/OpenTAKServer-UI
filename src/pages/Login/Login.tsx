@@ -37,6 +37,7 @@ export default function Login(props: PaperProps) {
     const [email, setEmail] = useState('');
     const [emailEnabled, setEmailEnabled] = useState(false);
     const [authCode, setAuthCode] = useState<string>();
+    const [ldapEnabled, setLdapEnabled] = useState(false);
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
 
     useEffect(() => {
@@ -48,6 +49,7 @@ export default function Login(props: PaperProps) {
                 },
             ).then(r => {
                 setEmailEnabled(r.data.response.identity_attributes.includes('email'));
+                setLdapEnabled(r.data.response.identity_attributes.includes('ldap'));
                 localStorage.setItem('emailEnabled', r.data.response.identity_attributes.includes('email'));
                 axios.interceptors.request.use((config) => {
                     if (['post', 'delete', 'patch', 'put'].includes(config.method!)) {
@@ -91,8 +93,12 @@ export default function Login(props: PaperProps) {
     function handleLogin(e:any) {
         e.preventDefault();
 
+        let loginUrl = apiRoutes.login;
+        if (ldapEnabled)
+            loginUrl = apiRoutes.ldapLogin;
+
         axios.post(
-            apiRoutes.login,
+            loginUrl,
             JSON.stringify({ username, password, submit: 'Login', csrf_token: csrfToken })
         ).then(r => {
             if (r.status === 200) {
