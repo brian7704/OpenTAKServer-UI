@@ -113,6 +113,7 @@ export default function Missions() {
                                 disabled={localStorage.getItem('administrator') !== 'true'}
                                 key={`${row.name}_delete`}
                                 rightSection={<IconCircleMinus size={14} />}
+                                color="red"
                             >Delete
                             </Button>;
 

@@ -174,6 +174,7 @@ export default function DataPackages() {
                         }}
                           key={`${row.hash}_delete`}
                           rightSection={<IconCircleMinus size={14} />}
+                          color='red'
                         >Delete
                                               </Button>;
 

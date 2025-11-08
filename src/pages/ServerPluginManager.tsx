@@ -285,7 +285,7 @@ export default function ServerPluginManager() {
                     plugins_list.push(installedPlugin.name.toLowerCase())
                     tableData.body?.push([installedPlugin.name.toLowerCase(), <Button onClick={(e) => {e.preventDefault(); setShowInfo(true); getInstalledPluginInfo(installedPlugin.distro)}}><IconInfoCircle /></Button>,
                         <Button disabled><IconDownload /></Button>,
-                        <Button onClick={(e) => {e.preventDefault(); setShowCommandOutput(true); setPlugin({...plugin, 'plugin_name': installedPlugin.name, 'action': 'delete', 'plugin_distro': installedPlugin.distro}); setCommandOutputTitle(`Deleting ${installedPlugin.name}`) }}><IconCircleMinus /></Button>])
+                        <Button color="red" onClick={(e) => {e.preventDefault(); setShowCommandOutput(true); setPlugin({...plugin, 'plugin_name': installedPlugin.name, 'action': 'delete', 'plugin_distro': installedPlugin.distro}); setCommandOutputTitle(`Deleting ${installedPlugin.name}`) }}><IconCircleMinus /></Button>])
                 });
                 setInstalledPlugins(plugins_list);
                 setPlugins(tableData);

@@ -69,6 +69,7 @@ export default function DeviceProfiles() {
                                 setDeleteProfile(row.preference_key);
                             }}
                           key={`${row.preference_key}_delete`}
+                          color="red"
                         ><IconCircleMinus />
                                               </Button>;
 

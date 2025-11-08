@@ -93,6 +93,7 @@ export default function VideoStreams() {
                             }}
                           key={`${row.path}_delete`}
                           rightSection={<IconCircleMinus size={14} />}
+                          color="red"
                         >Delete
                                               </Button>;
 

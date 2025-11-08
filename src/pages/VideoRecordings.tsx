@@ -64,6 +64,7 @@ export default function VideoRecordings() {
                                 setDeleteRecording(row.id);
                             }}
                           key={`${row.path}_delete`}
+                          color="red"
                         ><IconCircleMinus />
                                               </Button>;
 

@@ -89,6 +89,7 @@ export default function PluginUpdates() {
                                     setDeleteName(row.name);
                                 }}
                               key={`${row.package_name}_delete`}
+                              color="red"
                             ><IconCircleMinus />
                                                   </Button>;
                             const install_on_enrollment = <Switch
