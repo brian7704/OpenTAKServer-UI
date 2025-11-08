@@ -46,7 +46,7 @@ export default function PluginUpdates() {
     const [deleteName, setDeleteName] = useState<string | null>();
     const [packages, setPackages] = useState<TableData>({
         caption: '',
-        head: ['Icon', 'Name', 'Description', 'Version', 'Platform', 'OS Requirement', 'Revision Code', 'Install on Enrollment', 'Install on Connection', 'Delete'],
+        head: ['Icon', 'Name', 'Description', 'Version', 'ATAK Version', 'Platform', 'OS Requirement', 'Revision Code', 'Install on Enrollment', 'Install on Connection', 'Delete'],
         body: [],
     });
 
@@ -76,7 +76,7 @@ export default function PluginUpdates() {
                 if (r.status === 200) {
                     const tableData: TableData = {
                         caption: '',
-                        head: ['Icon', 'Name', 'Description', 'Version', 'Platform', 'OS Requirement', 'Revision Code', 'Install on Enrollment', 'Install on Connection', 'Delete'],
+                        head: ['Icon', 'Name', 'Description', 'Version', 'ATAK Version', 'Platform', 'OS Requirement', 'Revision Code', 'Install on Enrollment', 'Install on Connection', 'Delete'],
                         body: [],
                     };
 
@@ -107,7 +107,7 @@ export default function PluginUpdates() {
                             />;
 
                             tableData.body.push([<Image src={row.icon} h={50} fit="contain" w="auto" />, row.name, row.description,
-                                row.version, row.platform, row.os_requirement, row.revision_code, install_on_enrollment,
+                                row.version, row.atak_version, row.platform, row.os_requirement, row.revision_code, install_on_enrollment,
                                 install_on_connection, delete_button]);
                         }
                     });
