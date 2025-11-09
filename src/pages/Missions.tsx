@@ -1,6 +1,6 @@
 import {
     Button,
-    Center, ComboboxItem, Modal,
+    Center, ComboboxItem, Modal, MultiSelect,
     Pagination, Paper, PasswordInput, Select,
     Table,
     TableData, TextInput,
@@ -10,9 +10,19 @@ import { notifications } from '@mantine/notifications';
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
 import {apiRoutes} from "@/apiRoutes.tsx";
-import {IconCircleMinus, IconQrcode, IconMail, IconCheck, IconX, IconPlus} from "@tabler/icons-react";
+import {IconCircleMinus, IconQrcode, IconMail, IconCheck, IconX, IconPlus, IconEdit} from "@tabler/icons-react";
 import { QRCode } from 'react-qrcode-logo';
 import Logo from "@/images/ots-logo.png";
+
+interface MissionProperties {
+    name: string;
+    description: string;
+    creator_uid: string;
+    tool: string;
+    default_role: string;
+    password: string;
+    hash_tags: string;
+}
 
 export default function Missions() {
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
@@ -31,7 +41,11 @@ export default function Missions() {
     const [callsigns, setCallsigns] = useState<ComboboxItem[]>([]);
     const [inviting, setInviting] = useState(false);
     const [showAddMission, setShowAddMission] = useState(false);
-    const [missionProperties, setMissionProperties] = useState({
+    const [allGroups, setAllGroups] = useState<ComboboxItem[]>([]);
+    const [groups, setGroups] = useState<string[]>([]);
+    const [addEditTitle, setAddEditTitle] = useState("Add Mission");
+    const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
+    const [missionProperties, setMissionProperties] = useState<MissionProperties>({
         name: '',
         description: '',
         creator_uid: '',
@@ -73,6 +87,18 @@ export default function Missions() {
         }
     }
 
+    function edit_mission(mission_row: any) {
+        let mission_props: MissionProperties = {
+            name: mission_row.name,
+            description: mission_row.description,
+            creator_uid: mission_row.creator_uid,
+            tool: mission_row.tool,
+            default_role: mission_row.default_role,
+            password: mission_row.password,
+            hash_tags: mission_row.hashtags,
+        }
+    }
+
     function get_missions() {
         axios.get(apiRoutes.missions, { params: {page: activePage} })
             .then((r) => {
@@ -97,6 +123,28 @@ export default function Missions() {
                             >QR Code
                             </Button>;
 
+                            const edit_button = <Button
+                                rightSection={<IconEdit size={14} />}
+                                onClick={() => {
+                                    setMissionProperties({
+                                        name: row.name,
+                                        description: row.description,
+                                        creator_uid: row.creatorUid,
+                                        tool: row.tool,
+                                        default_role: row.defaultRole.type,
+                                        password: row.password,
+                                        hash_tags: row.hashtags
+                                    });
+                                    setShowAddMission(true);
+                                    setAddEditTitle("Edit Mission");
+                                    let selected_groups: string[] = [];
+                                    row.groups.map((group: any) => {
+                                        selected_groups.push("" + group.id);
+                                    })
+                                    setSelectedGroups(selected_groups);
+                                }}
+                            >Edit</Button>
+
                             const invitation_button = <Button
                                 rightSection={<IconMail size={14} /> }
                                 onClick={() => {
@@ -117,7 +165,7 @@ export default function Missions() {
                             >Delete
                             </Button>;
 
-                            tableData.body.push([row.name, row.description, row.owner.callsign, row.defaultRole.type, row.tool, row.createTime, password_protected, invitation_button, qrButton, delete_button]);
+                            tableData.body.push([row.name, row.description, row.owner.callsign, row.defaultRole.type, row.tool, row.createTime, password_protected, edit_button, invitation_button, qrButton, delete_button]);
                         }
                     });
                     setPage(r.data.current_page);
@@ -177,6 +225,7 @@ export default function Missions() {
 
     useEffect(() => {
         get_euds();
+        getAllGroups();
     }, [showAddMission]);
 
     function add_mission() {
@@ -188,6 +237,7 @@ export default function Missions() {
                 default_role: missionProperties.default_role,
                 password: missionProperties.password,
                 creator_uid: missionProperties.creator_uid,
+                groups,
             }).then(r => {
                 if (r.status === 200) {
                     setShowAddMission(false);
@@ -206,8 +256,9 @@ export default function Missions() {
                     default_role: 'MISSION_SUBSCRIBER',
                     password: '',
                     hash_tags: '',
-                    tool: 'public'
+                    tool: 'public',
                 })
+                setGroups([]);
         }).catch(err => {
             setShowAddMission(false);
             notifications.show({
@@ -223,9 +274,31 @@ export default function Missions() {
                 default_role: 'MISSION_SUBSCRIBER',
                 password: '',
                 hash_tags: '',
-                tool: 'public'
+                tool: 'public',
             })
         })
+    }
+
+    function getAllGroups() {
+        axios.get(apiRoutes.allGroups).then(r => {
+            console.log(r);
+            if (r.status === 200) {
+                "".toLowerCase()
+                const all_groups: ComboboxItem[] = [];
+                r.data.map((row: any) => {
+                    all_groups.push({value: '' + row.id, label: row.name});
+                });
+                setAllGroups(all_groups);
+            }
+        }).catch(err => {
+            console.log(err);
+            notifications.show({
+                title: 'Failed to get group list',
+                message: err.response.data.error,
+                icon: <IconX />,
+                color: 'red',
+            })
+        });
     }
 
     return (
@@ -259,16 +332,26 @@ export default function Missions() {
                     <Button onClick={() => setDeleteMissionOpen(false)}>No</Button>
                 </Center>
             </Modal>
-            <Modal opened={showAddMission} onClose={() => setShowAddMission(false)} title="Add Mission">
-                <TextInput required placeholder="Mission" label="Name" onChange={e => { missionProperties.name = e.target.value; }} mb="md" />
-                <TextInput placeholder="Description" label="Description" onChange={e => { missionProperties.description = e.target.value; }} mb="md" />
+            <Modal opened={showAddMission} onClose={() => {setShowAddMission(false);}} title={addEditTitle}>
+                <TextInput defaultValue={missionProperties.name} required placeholder="Mission" label="Name" onChange={e => { missionProperties.name = e.target.value; }} mb="md" />
+                <TextInput defaultValue={missionProperties.description} placeholder="Description" label="Description" onChange={e => { missionProperties.description = e.target.value; }} mb="md" />
+                <MultiSelect
+                    pb="md"
+                    placeholder="Search"
+                    searchable
+                    clearable
+                    nothingFoundMessage="Nothing found..."
+                    label="Groups"
+                    defaultValue={selectedGroups}
+                    onChange={(value) => {setGroups(value)}}
+                    data={allGroups} />
                 <Select
                     required
                     label="Default Role"
                     onChange={e => { missionProperties.default_role = String(e); }}
                     data={[{value: 'MISSION_SUBSCRIBER', label: 'Subscriber'}, {value: 'MISSION_OWNER', label: 'Owner'}, {value: 'MISSION_READ_ONLY', label: 'Read Only'}]}
                     mb="md"
-                    defaultValue="MISSION_SUBSCRIBER"
+                    defaultValue={missionProperties.default_role || "MISSION_SUBSCRIBER"}
                     allowDeselect={false}
                 />
                 <Select
@@ -280,12 +363,13 @@ export default function Missions() {
                     description="The callsign of the EUD that owns this mission"
                     onChange={(value, option) => {missionProperties.creator_uid = option.value;}}
                     data={callsigns}
+                    defaultValue={missionProperties.creator_uid}
                     allowDeselect={false}
                     mb="md" />
-                <PasswordInput label="Password" onChange={e => { missionProperties.password = e.target.value; }} mb="md" />
+                <PasswordInput defaultValue={missionProperties.password} label="Password" onChange={e => { missionProperties.password = e.target.value; }} mb="md" />
                 <Button onClick={() => {add_mission()}}>Add Mission</Button>
             </Modal>
-            <Button leftSection={<IconPlus size={14} />} onClick={() => setShowAddMission(true)} mr="md">New Mission</Button>
+            <Button leftSection={<IconPlus size={14} />} onClick={() => setShowAddMission(true)} mr="md">{addEditTitle}</Button>
             <Table.ScrollContainer minWidth="100%">
                 <Table data={missions} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mt="md" mb="md" />
             </Table.ScrollContainer>

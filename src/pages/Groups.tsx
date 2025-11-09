@@ -127,7 +127,6 @@ export default function Groups() {
     function getAllUsers() {
         axios.get(apiRoutes.allUsers).then((r) => {
             if (r.status === 200) {
-                console.log(r);
                 const all_users: ComboboxItem[] = [];
                 r.data.map((row: any) => {
                     all_users.push(row.username);
