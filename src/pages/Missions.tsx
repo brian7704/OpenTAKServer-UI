@@ -367,9 +367,21 @@ export default function Missions() {
                     allowDeselect={false}
                     mb="md" />
                 <PasswordInput defaultValue={missionProperties.password} label="Password" onChange={e => { missionProperties.password = e.target.value; }} mb="md" />
-                <Button onClick={() => {add_mission()}}>Add Mission</Button>
+                <Button onClick={() => {add_mission()}}>{addEditTitle}</Button>
             </Modal>
-            <Button leftSection={<IconPlus size={14} />} onClick={() => setShowAddMission(true)} mr="md">{addEditTitle}</Button>
+            <Button leftSection={<IconPlus size={14} />} onClick={() => {
+                setShowAddMission(true);
+                setMissionProperties({
+                    name: "",
+                    description: "",
+                    creator_uid: "",
+                    tool: "",
+                    default_role: "MISSION_SUBSCRIBER",
+                    password: "",
+                    hash_tags: ""
+                })
+                setSelectedGroups([]);
+            }} mr="md">New Mission</Button>
             <Table.ScrollContainer minWidth="100%">
                 <Table data={missions} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mt="md" mb="md" />
             </Table.ScrollContainer>
