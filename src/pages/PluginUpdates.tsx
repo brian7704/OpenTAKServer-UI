@@ -214,7 +214,8 @@ export default function PluginUpdates() {
                     pb="md"
                     value={atakVersion}
                     label="ATAK Version"
-                    data={["Any", "5.5.0", "5.5.1", "5.6.0", "5.7.0", "5.8.0"]}
+                    clearable
+                    data={[{value: "", label: "5.4 or lower"}, "5.5.0", "5.5.1", "5.6.0", "5.7.0", "5.8.0"]}
                     onChange={(value) => {
                         if (value && value !== "Any")
                             setAtakVersion(value);
