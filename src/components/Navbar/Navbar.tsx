@@ -26,6 +26,7 @@ import {
     IconPlugConnected,
     IconPlug,
     IconCircleMinus,
+    IconShare,
     IconUsersGroup
 } from '@tabler/icons-react';
 import {
@@ -72,6 +73,7 @@ const adminLinks = [
     { link: '/plugin_updates', label: 'Plugin Updates', icon: IconPuzzle },
     { link: '/device_profiles', label: 'Device Profiles', icon: IconDeviceMobile },
     { link: '/server_plugin_manager', label: 'Server Plugin Manager', icon: IconPlugConnected },
+    { link: '/federation', label: 'Federation', icon: IconShare },
 ];
 
 interface ATAKQrCode {
