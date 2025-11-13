@@ -86,7 +86,15 @@ export default function Groups() {
                     setTotalPages(r.data.total_pages);
                     setGroups(tableData);
                 }
-            })
+            }).catch((err) => {
+            console.log(err);
+            notifications.show({
+                title: 'Failed to get groups',
+                message: err.response.data.error,
+                icon: <IconX />,
+                color: 'red',
+            });
+        })
     }
 
     function addGroup() {

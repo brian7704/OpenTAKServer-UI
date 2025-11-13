@@ -121,7 +121,15 @@ export default function Users() {
                     setTotalPages(r.data.total_pages);
                     setUsers(tableData);
                 }
+            }).catch((err) => {
+            console.log(err);
+            notifications.show({
+                title: 'Failed to get users',
+                message: err.response.data.error,
+                icon: <IconX />,
+                color: 'red',
             });
+        });
         }
 
     useEffect(() => {
