@@ -63,6 +63,7 @@ export default function Groups() {
                                     setDeleteGroupOpen(true);
                                 }}
                                 key={`${row.name}_delete`}
+                                disabled={row.name === "__ANON__"}
                                 rightSection={<IconCircleMinus size={14} />}
                             >Delete
                             </Button>;
