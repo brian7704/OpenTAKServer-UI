@@ -22,6 +22,7 @@ const Groups = React.lazy(() => import('./pages/Groups'))
 const EUDStats = React.lazy(() => import('./pages/EUDStats'));
 const Plugin = React.lazy(() => import('./pages/Plugin'));
 const ServerPluginManager = React.lazy(() => import('./pages/ServerPluginManager.tsx'));
+const Federation = React.lazy(() => import('./pages/Federation'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home', element: Dashboard },
@@ -47,6 +48,7 @@ const routes = [
   { path: '/eud_stats', name: 'EUDStats', element: EUDStats },
   { path: '/plugin', name: 'Plugins', element: Plugin },
   { path: '/server_plugin_manager', name:'Server Plugin Manager', element: ServerPluginManager },
+  { path: '/federation', name: 'Federation', element: Federation },
 ];
 
 export default routes;
