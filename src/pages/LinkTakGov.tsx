@@ -9,7 +9,7 @@ import {
     LoadingOverlay,
     Center,
     Select,
-    Flex, Modal, Group
+    Flex, Modal, Group, Divider
 } from "@mantine/core";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
@@ -228,7 +228,7 @@ export default function LinkTakGov() {
     return (
         <>
             <Modal opened={showUnlink} onClose={() => setShowUnlink(false)} title="Are you sure you want to unlink your account?">
-                <Button onClick={() => unlink_account()} mr="md">Yes</Button>
+                <Button onClick={() => {unlink_account(); setShowUnlink(false)}} mr="md">Yes</Button>
                 <Button onClick={() => setShowUnlink(false)}>No</Button>
             </Modal>
             <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
@@ -268,13 +268,16 @@ export default function LinkTakGov() {
                 <Text ta="center">Linking your TAK.gov account allows you to download plugins directly from your TAK.gov account
                 to this server and make them available to EUDs. Please log into your TAK.gov account before starting.</Text>
 
+                <Divider label="Step 1" labelPosition="center" pt="md" />
                 <Center><Button onClick={() => {get_codes()}} mt="md">Get Link Code</Button></Center>
             </Container>
 
             <Container display={!linked && userCode !== null ? "block" : "none"} mt="md">
+                <Divider label="Step 2" labelPosition="center" mt="md" />
                 <Text ta="center">Enter the following code at <a href="https://tak.gov/register-device" target="_blank">https://tak.gov/register-device</a></Text>
                 <Title ta="center" order={2}>{userCode}</Title>
 
+                <Divider label="Step 3" labelPosition="center" pt="md" />
                 <Text ta="center" mt="md">Click the Link Account button after you have entered the above code on TAK.gov</Text>
                 <Center mt="md"><Button onClick={() => get_token()}>Link Account</Button></Center>
             </Container>
