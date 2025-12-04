@@ -17,9 +17,11 @@ import {apiRoutes} from "@/apiRoutes.tsx";
 import {notifications} from "@mantine/notifications";
 import {IconCheck, IconCircleMinus, IconX, IconDownload} from "@tabler/icons-react";
 import TakGovLogo from '../images/takgov_logo.tsx'
+import bytes_formatter from "@/bytes_formatter.tsx";
 
 interface Plugin {
     apk_hash: string;
+    apk_size_bytes: number;
     apk_type: string;
     apk_url: string;
     description: string;
@@ -46,7 +48,7 @@ export default function LinkTakGov() {
     const [showUnlink, setShowUnlink] = useState(false);
     const [plugins, setPlugins] = useState<TableData>({
         caption: '',
-        head: ['Name', 'Description', 'Version', 'TAK Prerequisite'],
+        head: ['Name', 'Description', 'Version', 'TAK Prerequisite', 'Size'],
         body: [],
     });
 
@@ -77,7 +79,7 @@ export default function LinkTakGov() {
 
                 const tableData: TableData = {
                     caption: '',
-                    head: ['Name', 'Description', 'Version', 'TAK Prerequisite'],
+                    head: ['Name', 'Description', 'Version', 'TAK Prerequisite', 'Size'],
                     body: [],
                 };
 
@@ -92,7 +94,7 @@ export default function LinkTakGov() {
                         >
                             Download Plugin
                         </Button>
-                        tableData.body.push([plugin.display_name, plugin.description, plugin.version, plugin.tak_prerequisite, download_button]);
+                        tableData.body.push([plugin.display_name, plugin.description, plugin.version, plugin.tak_prerequisite, bytes_formatter(plugin.apk_size_bytes), download_button]);
                     }
                 })
 
@@ -274,7 +276,8 @@ export default function LinkTakGov() {
 
             <Container display={!linked && userCode !== null ? "block" : "none"} mt="md">
                 <Divider label="Step 2" labelPosition="center" mt="md" />
-                <Text ta="center">Enter the following code at <a href="https://tak.gov/register-device" target="_blank">https://tak.gov/register-device</a></Text>
+                <Text ta="center">Enter the following code at <a href="https://tak.gov/register-device" target="_blank">https://tak.gov/register-device</a>.
+                This code will expire in 3 minutes.</Text>
                 <Title ta="center" order={2}>{userCode}</Title>
 
                 <Divider label="Step 3" labelPosition="center" pt="md" />
