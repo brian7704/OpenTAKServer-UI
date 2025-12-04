@@ -1,0 +1,26 @@
+{
+  "5": {
+    "4 or lower": "5.4 or lower"
+  },
+  "App": "App",
+  "ATAK Version": "ATAK Version",
+  "Delete": "Delete",
+  "Description": "Description",
+  "Failed to delete plugin": "Failed to delete plugin",
+  "Failed to get data": "Failed to get data",
+  "Failed to update package": "Failed to update package",
+  "Failed to upload plugin": "Failed to upload plugin",
+  "Icon": "Icon",
+  "Install on Connection": "Install on Connection",
+  "Install on Enrollment": "Install on Enrollment",
+  "Name": "Name",
+  "OS Requirement": "OS Requirement",
+  "Platform": "Platform",
+  "Plugin": "Plugin",
+  "Plugin File": "Plugin File",
+  "Revision Code": "Revision Code",
+  "Successfully deleted plugin": "Successfully deleted plugin",
+  "Successfully uploaded plugin": "Successfully uploaded plugin",
+  "Upload Plugin": "Upload Plugin",
+  "Version": "Version"
+}
