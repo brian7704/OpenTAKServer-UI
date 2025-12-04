@@ -58,5 +58,11 @@ export const apiRoutes = {
   allGroups: '/api/groups/all',
   allUsers: '/api/users/all',
   groupMembers: '/api/groups/members',
-  userGroups: '/api/users/groups'
+  userGroups: '/api/users/groups',
+  takgov: '/api/takgov',
+  takgovLink: '/api/takgov/link',
+  takgovToken: '/api/takgov/token',
+  takgovPlugins: '/api/takgov/plugins',
+  takgovIcon: '/api/takgov/icon',
+  takgovPlugin: '/api/takgov/plugin',
 };
