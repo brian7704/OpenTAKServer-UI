@@ -9,6 +9,7 @@ import '@mantine/charts/styles.css';
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import '@mantine/dates/styles.css';
+import './i18n';
 
 const Login = React.lazy(() => import('./pages/Login/Login'));
 const Error404 = React.lazy(() => import('./pages/Errors/Error404'));
