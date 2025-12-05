@@ -1,4 +1,28 @@
 {
+    "5": {
+        "4 or lower": ""
+    },
+    "App": "",
+    "ATAK Version": "",
+    "Delete": "Excluir",
+    "Description": "Descrição",
+    "Failed to delete plugin": "Falha ao excluir o plugin",
+    "Failed to get data": "Falha ao obter dados",
+    "Failed to update package": "Falha ao atualizar o pacote",
+    "Failed to upload plugin": "Falha ao carregar o plugin",
+    "Icon": "Ícone",
+    "Install on Connection": "Instalar na conexão",
+    "Install on Enrollment": "Instalar no momento da inscrição",
+    "Name": "Nome",
+    "OS Requirement": "Requisitos do sistema operacional",
+    "Platform": "Plataforma",
+    "Plugin": "Plugin",
+    "Plugin File": "Arquivo de Plugin",
+    "Revision Code": "Código de revisão",
+    "Successfully deleted plugin": "Plugin excluído com sucesso",
+    "Successfully uploaded plugin": "Plugin carregado com sucesso",
+    "Upload Plugin": "Plugin de upload",
+    "Version": "Versão"
   "5": {
     "4 or lower": ""
   },
