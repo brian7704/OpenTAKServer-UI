@@ -41,7 +41,7 @@
     "leaflet-rotatedmarker": "^0.2.0",
     "leaflet.fullscreen": "^3.0.2",
     "leaflet.marker.slideto": "^0.3.0",
-    "lru-cache": "^11.0.1",
+    "lru-cache": "^11.2.4",
     "milsymbol": "^2.2.0",
     "minimatch": "^10.0.1",
     "react": "^18.3.1",
