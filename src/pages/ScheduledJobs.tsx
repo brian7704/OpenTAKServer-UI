@@ -5,12 +5,13 @@ import { notifications } from '@mantine/notifications';
 import { formatISO, parseISO } from 'date-fns';
 import { apiRoutes } from '../apiRoutes';
 import axios from '../axios_config';
+import {t} from "i18next";
 
 export default function ScheduledJobs() {
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
     const [jobs, setJobs] = useState<TableData>({
         caption: '',
-        head: ['Name', 'Start Date', 'Next Run', 'Trigger', 'Minutes', 'Seconds', 'Run Now', 'Active', 'Edit', 'Save'],
+        head: [t('Name'), t('Start Date'), t('Next Run'), t('Trigger'), t('Minutes'), t('Seconds'), t('Run Now'), t('Active'), t('Edit'), t('Save')],
         body: [],
     });
     const [editable, setEditable] = useState<string | null>(null);
@@ -37,7 +38,7 @@ export default function ScheduledJobs() {
         ).then(r => {
             if (r.status === 200) {
                 notifications.show({
-                    title: 'Success',
+                    title: t('Success'),
                     message: `${jobName} was started`,
                     color: 'green',
                     icon: <IconCheck />,
@@ -47,7 +48,7 @@ export default function ScheduledJobs() {
         }).catch(error => {
             console.log(error);
             notifications.show({
-                title: 'Error',
+                title: t('Error'),
                 message: error.response.data.errors,
                 color: 'red',
                 icon: <IconX />,
@@ -64,7 +65,7 @@ export default function ScheduledJobs() {
             if (r.status === 200) {
                 getJobs();
                 notifications.show({
-                    title: 'Success',
+                    title: t('Success'),
                     message: `${jobName} has been activated`,
                     color: 'green',
                     icon: <IconCheck />,
@@ -73,7 +74,7 @@ export default function ScheduledJobs() {
         }).catch(error => {
             console.log(error);
             notifications.show({
-                title: 'Error',
+                title: t('Error'),
                 message: error.response.data.errors,
                 color: 'red',
                 icon: <IconX />,
@@ -89,7 +90,7 @@ export default function ScheduledJobs() {
             if (r.status === 200) {
                 getJobs();
                 notifications.show({
-                    title: 'Success',
+                    title: t('Success'),
                     message: `${jobName} has been deactivated`,
                     color: 'green',
                     icon: <IconCheck />,
@@ -98,7 +99,7 @@ export default function ScheduledJobs() {
         }).catch(error => {
             console.log(error);
             notifications.show({
-                title: 'Error',
+                title: t('Error'),
                 message: error.response.data.errors,
                 color: 'red',
                 icon: <IconX />,
@@ -113,8 +114,8 @@ export default function ScheduledJobs() {
         ).then(r => {
             if (r.status === 200) {
                 notifications.show({
-                    title: 'Success',
-                    message: 'Successfully changed job',
+                    title: t('Success'),
+                    message: t('Successfully changed job'),
                     color: 'green',
                     icon: <IconCheck />,
                 });
@@ -124,7 +125,7 @@ export default function ScheduledJobs() {
         }).catch(err => {
             console.log(err);
             notifications.show({
-                title: 'Error',
+                title: t('Error'),
                 message: err.message,
                 color: 'red',
                 icon: <IconX />,
@@ -135,7 +136,7 @@ export default function ScheduledJobs() {
     function parseJobs() {
         const tableData: TableData = {
             caption: '',
-            head: ['Name', 'Start Date', 'Next Run', 'Trigger', 'Minutes', 'Seconds', 'Run Now', 'Active', 'Edit', 'Save'],
+            head: [t('Name'), t('Start Date'), t('Next Run'), t('Trigger'), t('Minutes'), t('Seconds'), t('Run Now'), t('Active'), t('Edit'), t('Save')],
             body: [],
         };
 

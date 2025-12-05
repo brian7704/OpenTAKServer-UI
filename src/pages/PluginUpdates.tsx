@@ -14,8 +14,7 @@ import { IconCheck, IconCircleMinus, IconUpload, IconX } from '@tabler/icons-rea
 import axios from 'axios';
 import { notifications } from '@mantine/notifications';
 import { apiRoutes } from '@/apiRoutes.tsx';
-import i18n, {t} from "i18next";
-import { useTranslation, initReactI18next } from "react-i18next";
+import {t} from "i18next";
 
 interface PluginInterface {
     plugin: File,
@@ -50,11 +49,6 @@ export default function PluginUpdates() {
         caption: '',
         head: [t('Icon'), t('Name'), t('Description'), t('Version'), t('ATAK Version'), t('Platform'), t('OS Requirement'), t('Revision Code'), t('Install on Enrollment'), t('Install on Connection'), t('Delete')],
         body: [],
-    });
-
-    i18n.use(initReactI18next).init({
-        resources: {}, // Where we're gonna put translations' files
-        lng: "en",     // Set the initial language of the App
     });
 
     function update_plugin(package_name: string, install_on_enrollment: boolean, install_on_connection: boolean): void {

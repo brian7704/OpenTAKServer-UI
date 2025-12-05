@@ -14,6 +14,7 @@ import axios from 'axios';
 import { notifications } from '@mantine/notifications';
 import { formatISO, parseISO } from 'date-fns';
 import { apiRoutes } from '../apiRoutes';
+import {t} from "i18next";
 
 interface ProfileInterface {
     key: string;
@@ -47,7 +48,7 @@ export default function DeviceProfiles() {
     const [deleteProfile, setDeleteProfile] = useState<any>();
     const [profiles, setProfiles] = useState<TableData>({
         caption: '',
-        head: ['Key', 'Value', 'Value Type', 'Install on Enrollment', 'Install on Connection', 'Active', 'Publish Time', 'Delete'],
+        head: [t('Key'), t('Value'), t('Value Type'), t('Install on Enrollment'), t('Install on Connection'), t('Active'), t('Publish Time'), t('Delete')],
         body: [],
     });
 
@@ -57,7 +58,7 @@ export default function DeviceProfiles() {
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
-                    head: ['Key', 'Value', 'Value Type', 'Install on Enrollment', 'Install on Connection', 'Active', 'Publish Time', 'Delete'],
+                    head: [t('Key'), t('Value'), t('Value Type'), t('Install on Enrollment'), t('Install on Connection'), t('Active'), t('Publish Time'), t('Delete')],
                     body: [],
                 };
 
@@ -120,7 +121,7 @@ export default function DeviceProfiles() {
             notifications.show({
                 icon: <IconX />,
                 message: err.response.data.message,
-                title: 'Failed to get device profiles',
+                title: t('Failed to get device profiles'),
                 color: 'red',
             });
         });
@@ -155,7 +156,7 @@ export default function DeviceProfiles() {
                 notifications.show({
                     icon: <IconX />,
                     color: 'red',
-                    title: 'Failed to add device profile',
+                    title: t('Failed to add device profile'),
                     message: e.response.data.error,
                 });
         });
@@ -172,7 +173,7 @@ export default function DeviceProfiles() {
                 console.log(err);
                 notifications.show({
                     icon: <IconX />,
-                    title: 'Failed to delete device profile',
+                    title: t('Failed to delete device profile'),
                     message: err.response.data.error,
                     color: 'red',
                 });
@@ -197,12 +198,12 @@ export default function DeviceProfiles() {
                 <Table stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" data={profiles} highlightOnHover withTableBorder mb="md" />
             </Table.ScrollContainer>
             <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
-            <Modal opened={addProfile} onClose={() => setAddProfile(false)} title="Add Device Profile">
-                <TextInput required label="Key" onChange={e => { setNewProfile({ ...newProfile, key: e.currentTarget.value }); }} />
-                <TextInput required label="Value" onChange={e => { setNewProfile({ ...newProfile, value: e.currentTarget.value }); }} />
+            <Modal opened={addProfile} onClose={() => setAddProfile(false)} title={t("Add Device Profile")}>
+                <TextInput required label={t("Key")} onChange={e => { setNewProfile({ ...newProfile, key: e.currentTarget.value }); }} />
+                <TextInput required label={t("Value")} onChange={e => { setNewProfile({ ...newProfile, value: e.currentTarget.value }); }} />
                 {value_class}
-                <Switch label="Install on Enrollment" onChange={(e) => setNewProfile({ ...newProfile, enrollment: e.target.checked })} mb="md" />
-                <Switch label="Install on Connection" onChange={(e) => setNewProfile({ ...newProfile, connection: e.target.checked })} mb="md" />
+                <Switch label={t("Install on Enrollment")} onChange={(e) => setNewProfile({ ...newProfile, enrollment: e.target.checked })} mb="md" />
+                <Switch label={t("Install on Connection")} onChange={(e) => setNewProfile({ ...newProfile, connection: e.target.checked })} mb="md" />
                 <Switch label="Active" onChange={(e) => setNewProfile({ ...newProfile, active: e.target.checked })} mb="md" />
                 <Button onClick={(e) => { add_profile(e, newProfile); }}>Add Device Profile</Button>
             </Modal>

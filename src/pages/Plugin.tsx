@@ -17,6 +17,7 @@ import { parse, stringify } from 'yaml'
 import axios from "axios";
 import {notifications} from "@mantine/notifications";
 import {apiRoutes} from "@/apiRoutes.tsx";
+import {t} from "i18next";
 
 interface About {
     author: string;
@@ -91,8 +92,8 @@ export default function Plugin() {
         }).catch((err) => {
             console.log(err);
             notifications.show({
-                title: "Failed to get plugin config",
-                message: "Please restart OpenTAKServer",
+                title: t("Failed to get plugin config"),
+                message: t("Please restart OpenTAKServer"),
                 icon: <IconX />,
                 color: 'red'
             })
@@ -108,7 +109,7 @@ export default function Plugin() {
         }).catch((err) => {
             console.log(err);
             notifications.show({
-                title: "Error getting plugin data",
+                title: t("Error getting plugin data"),
                 message: err.response.data.error,
                 icon: <IconX />,
                 color: 'red'
@@ -132,15 +133,15 @@ export default function Plugin() {
             axios.post(`/api/plugins/${params.get('name')}/config`, config).then((r) => {
                 if (r.status === 200) {
                     notifications.show({
-                        title: 'Success',
-                        message: 'Successfully Updated Plugin Config',
+                        title: t('Success'),
+                        message: t('Successfully Updated Plugin Config'),
                         icon: <IconCheck />,
                         color: 'green'
                     })
                 }
                 else {
                     notifications.show({
-                        title: 'Failed to update plugin config',
+                        title: t('Failed to update plugin config'),
                         message: r.data.error,
                         icon: <IconX />,
                         color: 'red'
@@ -149,7 +150,7 @@ export default function Plugin() {
             }).catch((err) => {
                 console.log(err);
                 notifications.show({
-                    title: 'Failed to update plugin config',
+                    title: t('Failed to update plugin config'),
                     message: err.response.data.error,
                     icon: <IconX />,
                     color: 'red'
@@ -166,7 +167,7 @@ export default function Plugin() {
 
             console.error(error);
             notifications.show({
-                title: 'Error',
+                title: t('Error'),
                 message,
                 icon: <IconX />,
                 color: 'red',
@@ -180,7 +181,7 @@ export default function Plugin() {
                 if (r.status === 200) {
                     setEnabled(!enabled);
                     notifications.show({
-                        title: 'Success',
+                        title: t('Success'),
                         message: '',
                         icon: <IconCheck />,
                         color: 'green'
@@ -189,7 +190,7 @@ export default function Plugin() {
         }).catch((err) => {
             console.log(err);
             notifications.show({
-                title: 'Failed',
+                title: t('Failed'),
                 message: '',
                 icon: <IconX />,
                 color: 'red'
@@ -202,26 +203,26 @@ export default function Plugin() {
             <Tabs defaultValue="about">
                 <Tabs.List>
                     <Tabs.Tab value="about" leftSection={<IconInfoCircle size={16} /> }>
-                        About
+                        {t("About")}
                     </Tabs.Tab>
                     <Tabs.Tab value="ui" leftSection={<IconAlignLeft size={16} />} display={showUITab ? 'inherit' : 'none'}>
-                        UI
+                        {t("UI")}
                     </Tabs.Tab>
                     <Tabs.Tab value="settings" leftSection={<IconSettings size={16} />}>
-                        Settings
+                        {t("Settings")}
                     </Tabs.Tab>
                 </Tabs.List>
 
                 <Tabs.Panel value="about">
                     <ScrollArea style={{width:'100%'}}>
-                        <Text size="md"><Text span inherit fw={700}>Name:</Text> {about?.name}</Text>
-                        <Text size="md"><Text span inherit fw={700}>Author:</Text> {about?.author}</Text>
-                        <Text size="md"><Text span inherit fw={700}>Author Email:</Text> {about?.author_email}</Text>
-                        <Text size="md"><Text span inherit fw={700}>License:</Text> {about?.license}</Text>
-                        <Text size="md"><Text span inherit fw={700}>Version:</Text> {about?.version}</Text>
-                        <Text size="md"><Text span inherit fw={700}>Documentation:</Text> <Link to={docUrl}>{docUrl}</Link></Text>
-                        <Text size="md"><Text span inherit fw={700}>Repository:</Text> <Link to={repoUrl}>{repoUrl}</Link></Text>
-                        <Switch styles={{ label: {fontWeight: 700}}} label="Enabled:" labelPosition="left" size="md" checked={enabled} onChange={() => togglePlugin()} />
+                        <Text size="md"><Text span inherit fw={700}>{t("Name:")}</Text> {about?.name}</Text>
+                        <Text size="md"><Text span inherit fw={700}>{t("Author:")}</Text> {about?.author}</Text>
+                        <Text size="md"><Text span inherit fw={700}>{t("Author Email:")}</Text> {about?.author_email}</Text>
+                        <Text size="md"><Text span inherit fw={700}>{t("License:")}</Text> {about?.license}</Text>
+                        <Text size="md"><Text span inherit fw={700}>{t("Version:")}</Text> {about?.version}</Text>
+                        <Text size="md"><Text span inherit fw={700}>{t("Documentation:")}</Text> <Link to={docUrl}>{docUrl}</Link></Text>
+                        <Text size="md"><Text span inherit fw={700}>{t("Repository:")}</Text> <Link to={repoUrl}>{repoUrl}</Link></Text>
+                        <Switch styles={{ label: {fontWeight: 700}}} label={t("Enabled:")} labelPosition="left" size="md" checked={enabled} onChange={() => togglePlugin()} />
                         <Divider mt="md" />
                         <Markdown>{about?.description}</Markdown>
                     </ScrollArea>
@@ -237,8 +238,8 @@ export default function Plugin() {
                 <Tabs.Panel value="settings">
                     <CodeMirror value={editedConfig} height="100%" extensions={[yaml()]} theme={computedColorScheme} onChange={(e) => setEditedConfig(e)} />
 
-                    <Button mt="md" mr="md" leftSection={<IconDeviceFloppy size={14} />} onClick={() => submit()}>Save</Button>
-                    <Button mt="md" leftSection={<IconRestore size={14} />} onClick={() => undoChanges()}>Undo Changes</Button>
+                    <Button mt="md" mr="md" leftSection={<IconDeviceFloppy size={14} />} onClick={() => submit()}>{t("Save")}</Button>
+                    <Button mt="md" leftSection={<IconRestore size={14} />} onClick={() => undoChanges()}>{t("Undo Changes")}</Button>
 
                 </Tabs.Panel>
 

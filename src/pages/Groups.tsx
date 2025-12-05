@@ -11,6 +11,7 @@ import React, { useEffect, useState } from 'react';
 import axios from "axios";
 import {apiRoutes} from "@/apiRoutes.tsx";
 import {IconCircleMinus, IconPlus, IconUserCog, IconUserMinus, IconX} from "@tabler/icons-react";
+import {t} from "i18next";
 
 export default function Groups() {
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
@@ -27,12 +28,12 @@ export default function Groups() {
     const [group, setGroup] = useState("");
     const [members, setMembers] = useState<TableData>({
         caption: '',
-        head: ['Username', 'Direction', 'Active'],
+        head: [t('Username'), t('Direction'), t('Active')],
         body: [],
     });
     const [groups, setGroups] = useState<TableData>({
         caption: '',
-        head: ['Name', 'Created', 'Type', 'Bit Position', 'Description'],
+        head: [t('Name'), t('Created'), t('Type'), t('Bit Position'), t('Description')],
         body: [],
     });
     const [newGroupProperties, setNewGroupProperties] = useState(
@@ -50,7 +51,7 @@ export default function Groups() {
                 if (r.status === 200) {
                     const tableData: TableData = {
                         caption: '',
-                        head: ['Name', 'Created', 'Type', 'Bit Position', 'Description'],
+                        head: [t('Name'), t('Created'), t('Type'), t('Bit Position'), t('Description')],
                         body: [],
                     }
 
@@ -90,7 +91,7 @@ export default function Groups() {
             }).catch((err) => {
             console.log(err);
             notifications.show({
-                title: 'Failed to get groups',
+                title: t('Failed to get groups'),
                 message: err.response.data.error,
                 icon: <IconX />,
                 color: 'red',
@@ -108,7 +109,7 @@ export default function Groups() {
         }).catch((err) => {
             console.log(err);
             notifications.show({
-                title: 'Failed to create group',
+                title: t('Failed to create group'),
                 message: err.response.data.error,
                 icon: <IconX />,
                 color: 'red',
@@ -125,7 +126,7 @@ export default function Groups() {
         }).catch(err => {
             console.log(err);
             notifications.show({
-                title: 'Failed to add user to group',
+                title: t('Failed to add user to group'),
                 message: err.response.data.error,
                 icon: <IconX />,
                 color: 'red',
@@ -145,7 +146,7 @@ export default function Groups() {
         }).catch(err => {
             console.log(err);
             notifications.show({
-                title: 'Failed to get user list',
+                title: t('Failed to get user list'),
                 message: err.response.data.error,
                 icon: <IconX />,
                 color: 'red',
@@ -177,7 +178,7 @@ export default function Groups() {
         }).catch(err => {
             console.log(err);
             notifications.show({
-                title: 'Failed remove user from group',
+                title: t('Failed remove user from group'),
                 message: err.response.data.error,
                 icon: <IconX />,
                 color: 'red',
@@ -190,7 +191,7 @@ export default function Groups() {
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
-                    head: ['Username', 'Direction', 'Active'],
+                    head: [t('Username'), t('Direction'), t('Active')],
                     body: [],
                 }
 
@@ -199,7 +200,7 @@ export default function Groups() {
 
                 r.data.map((row: any) => {
                     if (tableData.body !== undefined) {
-                        const active_switch = <Tooltip refProp="rootRef" label="This membership can be activated or deactivated from the user's EUD">
+                        const active_switch = <Tooltip refProp="rootRef" label={t("This membership can be activated or deactivated from the user's EUD")}>
                             <Switch
                                 checked={row.active}
                             />
@@ -236,7 +237,7 @@ export default function Groups() {
         }).catch(err => {
             console.log(err);
             notifications.show({
-                title: 'Failed to get group members',
+                title: t('Failed to get group members'),
                 message: err.response.data.error,
                 icon: <IconX />,
                 color: 'red',
@@ -251,9 +252,9 @@ export default function Groups() {
     return (
         <>
             <Button onClick={() => setShowAddGroup(true)}>Add Group</Button>
-            <Modal opened={showAddGroup} onClose={() => setShowAddGroup(false)} title="Add Group">
-                <TextInput required label="Name" onChange={e => { newGroupProperties.name = e.target.value; }} mb="md" />
-                <TextInput required label="Description" onChange={e => { newGroupProperties.description = e.target.value; }} mb="md" />
+            <Modal opened={showAddGroup} onClose={() => setShowAddGroup(false)} title={t("Add Group")}>
+                <TextInput required label={t("Name")} onChange={e => { newGroupProperties.name = e.target.value; }} mb="md" />
+                <TextInput required label={t("Description")} onChange={e => { newGroupProperties.description = e.target.value; }} mb="md" />
                 <Button
                     mb="md"
                     onClick={e => {
@@ -271,34 +272,34 @@ export default function Groups() {
                                 placeholder="Search"
                                 searchable
                                 clearable
-                                nothingFoundMessage="Nothing found..."
-                                label="Select Users"
+                                nothingFoundMessage={t("Nothing found...")}
+                                label={t("Select Users")}
                                 onChange={(value) => {setUsers(value)}}
                                 data={allUsers} />
                         </Grid.Col>
                         <Grid.Col span={2}>
-                            <Button onClick={() => addUsersToGroup("IN")}>Add</Button>
+                            <Button onClick={() => addUsersToGroup("IN")}>{t("Add")}</Button>
                         </Grid.Col>
                     </Grid>
                 </Paper>
-                <Paper withBorder title="Direction: OUT" mb="md" p="md">
+                <Paper withBorder title={t("Direction: OUT")} mb="md" p="md">
                     <Grid align="flex-end" justify="space-between">
                         <Grid.Col span={10}>
                             <Title order={6} mb="md">Direction: OUT</Title>
                             <MultiSelect
                                 placeholder="Search"
                                 searchable
-                                nothingFoundMessage="Nothing found..."
-                                label="Select Users"
+                                nothingFoundMessage={t("Nothing found...")}
+                                label={t("Select Users")}
                                 onChange={(value) => {setUsers(value)}}
                                 data={allUsers} />
                         </Grid.Col>
                         <Grid.Col span={2}>
-                            <Button onClick={() => addUsersToGroup("OUT")}>Add</Button>
+                            <Button onClick={() => addUsersToGroup("OUT")}>{t("Add")}</Button>
                         </Grid.Col>
                     </Grid>
                 </Paper>
-                <Title order={4} mb="md">Members</Title>
+                <Title order={4} mb="md">{t("Members")}</Title>
                 <Table.ScrollContainer minWidth="100%">
                     <Table data={members} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mt="md" mb="md" />
                 </Table.ScrollContainer>
@@ -313,7 +314,7 @@ export default function Groups() {
                         }}
                     >Yes
                     </Button>
-                    <Button onClick={() => setDeleteGroupOpen(false)}>No</Button>
+                    <Button onClick={() => setDeleteGroupOpen(false)}>{t("No")}</Button>
                 </Center>
             </Modal>
             <Table.ScrollContainer minWidth="100%">
