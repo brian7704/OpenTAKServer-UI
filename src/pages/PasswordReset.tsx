@@ -16,6 +16,7 @@ import { IconCheck, IconX } from '@tabler/icons-react';
 import Logo from '../images/ots-logo.png';
 import { Header } from '../components/Header';
 import { apiRoutes } from '@/apiRoutes';
+import {t} from "i18next";
 
 export default function PasswordReset() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -34,7 +35,7 @@ export default function PasswordReset() {
         ).then(r => {
             if (r.status === 200) {
                 notifications.show({
-                    message: 'Your password has been changed',
+                    message: t('Your password has been changed'),
                     color: 'green',
                     icon: <IconCheck />,
                 });
@@ -42,7 +43,7 @@ export default function PasswordReset() {
             }
         }).catch(err => {
             notifications.show({
-                message: 'Failed to reset your password',
+                message: t('Failed to reset your password'),
                 color: 'red',
                 icon: <IconX />,
             });
@@ -58,7 +59,7 @@ export default function PasswordReset() {
                 </Center>
 
                     <Stack align="center">
-                        <Title order={2}>Password Reset</Title>
+                        <Title order={2}>{t("Password Reset")}</Title>
                     </Stack>
 
                 <Paper radius="md" p="xl" withBorder bg={computedColorScheme === 'light' ? 'white' : 'dark.8'}>
@@ -66,8 +67,8 @@ export default function PasswordReset() {
                         <div>
                             <PasswordInput
                               required
-                              label="Password"
-                              placeholder="Your password"
+                              label={t("Password")}
+                              placeholder={t("Your password")}
                               value={password}
                               onChange={(event) => setPassword(event.currentTarget.value)}
                               radius="md"
@@ -75,8 +76,8 @@ export default function PasswordReset() {
                             />
                             <PasswordInput
                               required
-                              label="Confirm Password"
-                              placeholder="Confirm password"
+                              label={t("Confirm Password")}
+                              placeholder={t("Confirm password")}
                               value={password_confirm}
                               onChange={(event) => setPassword_confirm(event.currentTarget.value)}
                               radius="md"
@@ -89,7 +90,7 @@ export default function PasswordReset() {
                                 }}
                               display="block"
                             >
-                                Reset Password
+                                {t("Reset Password")}
                             </Button>
                         </div>
                     </Stack>

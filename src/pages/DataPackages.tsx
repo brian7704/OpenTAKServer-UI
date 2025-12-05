@@ -15,6 +15,7 @@ import axios from '@/axios_config';
 import { apiRoutes } from '@/apiRoutes';
 import bytes_formatter from '@/bytes_formatter';
 import Logo from "@/images/ots-logo.png";
+import {t} from "i18next";
 
 interface data_package {
     filename: string;
@@ -35,7 +36,7 @@ interface data_package {
 export default function DataPackages() {
     const [dataPackages, setDataPackages] = useState<TableData>({
         caption: '',
-        head: ['File Name', 'Size', 'Uploader Username', 'Uploader Callsign', 'Upload Time'],
+        head: [t('File Name'), t('Size'), t('Uploader Username'), t('Uploader Callsign'), t('Upload Time')],
         body: [],
     });
     const [activePage, setPage] = useState(1);
@@ -58,14 +59,14 @@ export default function DataPackages() {
                 if (r.status === 200) {
                     getDatapackages();
                     notifications.show({
-                        title: 'Success',
-                        message: 'Data package successfully uploaded',
+                        title: t('Success'),
+                        message: t('Data package successfully uploaded'),
                         icon: <IconCheck />,
                         color: 'green',
                     });
                 } else {
                     notifications.show({
-                        title: 'Failed to upload data package',
+                        title: t('Failed to upload data package'),
                         message: r.data.error,
                         icon: <IconX />,
                         color: 'red',
@@ -73,7 +74,7 @@ export default function DataPackages() {
                 }
             }).catch(err => {
                 notifications.show({
-                    title: 'Failed to upload data package',
+                    title: t('Failed to upload data package'),
                     message: err.response.data.error,
                     icon: <IconX />,
                     color: 'red',
@@ -94,14 +95,14 @@ export default function DataPackages() {
                     if (r.status === 200) {
                         getDatapackages();
                         notifications.show({
-                            title: 'Success',
-                            message: 'Successfully deleted data package',
+                            title: t('Success'),
+                            message: t('Successfully deleted data package'),
                             icon: <IconCheck />,
                             color: 'green',
                         });
                     } else {
                         notifications.show({
-                            title: 'Delete Failed',
+                            title: t('Delete Failed'),
                             message: r.data.error,
                             icon: <IconX />,
                             autoClose: false,
@@ -111,7 +112,7 @@ export default function DataPackages() {
         }).catch(err => {
             console.log(err);
             notifications.show({
-                title: 'Delete Failed',
+                title: t('Delete Failed'),
                 message: err.response.data.error,
                 icon: <IconX />,
                 autoClose: false,
@@ -130,7 +131,7 @@ export default function DataPackages() {
             }).catch(err => {
                 notifications.show({
                     icon: <IconX />,
-                    title: 'Failed to update data package',
+                    title: t('Failed to update data package'),
                     message: err.response.data.error,
                     color: 'red',
                 });
@@ -147,7 +148,7 @@ export default function DataPackages() {
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
-                    head: ['File Name', 'Size', 'Uploader Username', 'Uploader Callsign', 'Upload Time', 'Install on Enrollment', 'Install on Connection'],
+                    head: [t('File Name'), t('Size'), t('Uploader Username'), t('Uploader Callsign'), t('Upload Time'), t('Install on Enrollment'), t('Install on Connection')],
                     body: [],
                 };
 
@@ -215,7 +216,7 @@ export default function DataPackages() {
         ).then(r => {
             if (r.status === 200) {
                 notifications.show({
-                    message: 'Successfully created data package',
+                    message: t('Successfully created data package'),
                     icon: <IconCheck />,
                     color: 'green',
                 });
@@ -240,7 +241,7 @@ export default function DataPackages() {
                 {(props) => <Button mr="md" {...props}>Upload Data Package</Button>}
             </FileButton>
             <Button onClick={() => generateDataPackage()} loading={generatingDataPackage}>Generate Configuration Data Package</Button>
-            <Modal opened={deleteDataPackageOpen} onClose={() => setDeleteDataPackageOpen(false)} title="Are you sure you want to delete this data package?">
+            <Modal opened={deleteDataPackageOpen} onClose={() => setDeleteDataPackageOpen(false)} title={t("Are you sure you want to delete this data package?")}>
                 <Center>
                     <Button
                       mr="md"

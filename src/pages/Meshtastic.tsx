@@ -13,6 +13,7 @@ import { QRCode } from 'react-qrcode-logo';
 import axios from '@/axios_config';
 import { apiRoutes } from '@/apiRoutes';
 import Logo from "@/images/ots-logo.png";
+import {t} from "i18next";
 
 export default function Meshtastic() {
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
@@ -42,7 +43,7 @@ export default function Meshtastic() {
     });
     const [channels, setChannels] = useState<TableData>({
         caption: '',
-        head: ['Name', 'PSK', 'Uplink Enabled', 'Downlink Enabled', 'Position Precision', 'LoRa Region', 'Hop Limit', 'TX Enabled', 'TX Power', 'RX Gain Boost', 'Modem Preset'],
+        head: [t('Name'), t('PSK'), t('Uplink Enabled'), t('Downlink Enabled'), t('Position Precision'), t('LoRa Region'), t('Hop Limit'), t('TX Enabled'), t('TX Power'), t('RX Gain Boost'), t('Modem Preset')],
         body: [],
     });
 
@@ -59,7 +60,7 @@ export default function Meshtastic() {
 
     function addChannel() {
         if (!channelProperties.name) {
-            setChannelNameError('Name cannot be blank');
+            setChannelNameError(t('Name cannot be blank'));
         } else {
             channelProperties.psk = psk;
             axios.post(
@@ -69,7 +70,7 @@ export default function Meshtastic() {
                 if (r.status === 200) {
                     getChannels();
                     notifications.show({
-                        message: 'Successfully added channel',
+                        message: t('Successfully added channel'),
                         icon: <IconCheck />,
                         color: 'green',
                     });
@@ -92,7 +93,7 @@ export default function Meshtastic() {
             }).catch(err => {
                 console.log(err);
                 notifications.show({
-                    title: 'Failed to add channel',
+                    title: t('Failed to add channel'),
                     message: err.response.data.error,
                     icon: <IconX />,
                     color: 'red',
@@ -113,7 +114,7 @@ export default function Meshtastic() {
         ).then(r => {
             if (r.status === 200) {
                 notifications.show({
-                    message: 'Successfully added channel',
+                    message: t('Successfully added channel'),
                     icon: <IconCheck />,
                     color: 'green',
                 });
@@ -123,7 +124,7 @@ export default function Meshtastic() {
         }).catch(err => {
             console.log(err);
             notifications.show({
-                title: 'Failed to add channel',
+                title: t('Failed to add channel'),
                 message: err.response.data.error,
                 color: 'red',
                 icon: <IconX />,
@@ -141,7 +142,7 @@ export default function Meshtastic() {
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
-                    head: ['Name', 'PSK', 'Uplink Enabled', 'Downlink Enabled', 'Position Precision', 'LoRa Region', 'Hop Limit', 'TX Enabled', 'TX Power', 'RX Gain Boost', 'Modem Preset'],
+                    head: [t('Name'), t('PSK'), t('Uplink Enabled'), t('Downlink Enabled'), t('Position Precision'), t('LoRa Region'), t('Hop Limit'), t('TX Enabled'), t('TX Power'), t('RX Gain Boost'), t('Modem Preset')],
                     body: [],
                 };
 
@@ -154,7 +155,7 @@ export default function Meshtastic() {
                                 setChannelUrl(row.url);
                                 setQrTitle(row.name);
                             }}
-                        >QR Code
+                        >{t("QR Code")}
                                          </Button>;
 
                         const delete_button = <Button
@@ -165,7 +166,7 @@ export default function Meshtastic() {
                           key={`${row.hash}_delete`}
                           rightSection={<IconCircleMinus size={14} />}
                           color="red"
-                        >Delete
+                        >{t("Delete")}
                                               </Button>;
 
                         const uplink_enabled = row.uplink_enabled ? <IconCheck color="green" /> : <IconX color="red" />;
@@ -175,7 +176,7 @@ export default function Meshtastic() {
                         const url = <CopyButton value={row.url}>{({ copied, copy }) => (
                                                 <Tooltip label={row.url}>
                                                     <Button color={copied ? 'teal' : 'blue'} onClick={copy}>
-                                                        {copied ? 'Copied URL' : 'Copy URL'}
+                                                        {copied ? t('Copied URL') : t('Copy URL')}
                                                     </Button>
                                                 </Tooltip>
                                                 )}
@@ -186,7 +187,7 @@ export default function Meshtastic() {
                             psk_button = <CopyButton value={row.psk}>{({ copied, copy }) => (
                                     <Tooltip label={row.psk}>
                                         <Button color={copied ? 'teal' : 'blue'} onClick={copy}>
-                                            {copied ? 'Copied PSK' : 'Copy PSK'}
+                                            {copied ? t('Copied PSK') : t('Copy PSK')}
                                         </Button>
                                     </Tooltip>
                                     )}
@@ -209,7 +210,7 @@ export default function Meshtastic() {
             }
         }).catch(err => {
             notifications.show({
-                title: 'Error getting channel list',
+                title: t('Error getting channel list'),
                 message: err.response.data.error,
                 color: 'red',
                 icon: <IconX />,
@@ -223,7 +224,7 @@ export default function Meshtastic() {
             { params: { url: channelToDelete } }
         ).then(r => {
             notifications.show({
-                message: 'Channel successfully deleted',
+                message: t('Channel successfully deleted'),
                 icon: <IconCheck />,
                 color: 'green',
             });
@@ -232,7 +233,7 @@ export default function Meshtastic() {
         }).catch(err => {
             console.log(err);
             notifications.show({
-                title: 'Failed to delete channel',
+                title: t('Failed to delete channel'),
                 message: err.response.data.error,
                 icon: <IconX />,
                 color: 'red',
@@ -249,7 +250,7 @@ export default function Meshtastic() {
                     </Paper>
                 </Center>
             </Modal>
-            <Modal opened={deleteChannelOpen} onClose={() => setDeleteChanelOpen(false)} title="Are you sure you want to delete this channel?">
+            <Modal opened={deleteChannelOpen} onClose={() => setDeleteChanelOpen(false)} title={t("Are you sure you want to delete this channel?")}>
                 <Center>
                     <Button
                       mr="md"
@@ -261,29 +262,29 @@ export default function Meshtastic() {
                     <Button onClick={() => setDeleteChanelOpen(false)}>No</Button>
                 </Center>
             </Modal>
-            <Modal opened={showAddChannel} onClose={() => setShowAddChannel(false)} title="Add Existing Channel">
-                <TextInput required placeholder="https://meshtastic.org/e/#CgMSAQESDAgBOAFAA0gBUB5oAQ==" label="URL" onChange={e => { setChannelUrl(e.target.value); }} mb="md" />
-                <Button onClick={e => addChannelByUrl(e)}>Add Channel</Button>
+            <Modal opened={showAddChannel} onClose={() => setShowAddChannel(false)} title={t("Add Existing Channel")}>
+                <TextInput required placeholder="https://meshtastic.org/e/#CgMSAQESDAgBOAFAA0gBUB5oAQ==" label={t("URL")} onChange={e => { setChannelUrl(e.target.value); }} mb="md" />
+                <Button onClick={e => addChannelByUrl(e)}>{t("Add Channel")}</Button>
             </Modal>
-            <Modal opened={showNewChannel} onClose={() => setShowNewChannel(false)} title="Add New Channel">
-                <TextInput required label="Name" onChange={e => { channelProperties.name = e.target.value; setChannelNameError(''); }} mb="md" error={channelNameError} />
-                <TextInput label="PSK" value={psk} rightSection={<IconReload onClick={() => generatePsk()} />} mb="md" onChange={(e) => setPsk(e.target.value)} />
-                <Switch label="Uplink Enabled" onChange={e => { channelProperties.uplink_enabled = e.target.checked; }} mb="md" />
-                <Switch label="Downlink Enabled" onChange={e => { channelProperties.downlink_enabled = e.target.checked; }} mb="md" />
-                <NumberInput label="Position Precision" min={0} max={32} defaultValue={channelProperties.position_precision} onChange={e => { channelProperties.position_precision = Number(e); }} mb="md" />
+            <Modal opened={showNewChannel} onClose={() => setShowNewChannel(false)} title={t("Add New Channel")}>
+                <TextInput required label={t("Name")} onChange={e => { channelProperties.name = e.target.value; setChannelNameError(''); }} mb="md" error={channelNameError} />
+                <TextInput label={t("PSK")} value={psk} rightSection={<IconReload onClick={() => generatePsk()} />} mb="md" onChange={(e) => setPsk(e.target.value)} />
+                <Switch label={t("Uplink Enabled")} onChange={e => { channelProperties.uplink_enabled = e.target.checked; }} mb="md" />
+                <Switch label={t("Downlink Enabled")} onChange={e => { channelProperties.downlink_enabled = e.target.checked; }} mb="md" />
+                <NumberInput label={t("Position Precision")} min={0} max={32} defaultValue={channelProperties.position_precision} onChange={e => { channelProperties.position_precision = Number(e); }} mb="md" />
                 <Select
-                  label="Region"
+                  label={t("Region")}
                   onChange={e => { channelProperties.lora_region = String(e); }}
                   data={['UNSET', 'US', 'EU_433', 'EU_868', 'CN', 'JP', 'ANZ', 'KR', 'TW', 'RU', 'IN', 'NZ_865', 'TH', 'LORA_24', 'UA_433', 'UA_868', 'MY_433', 'SG_923']}
                   mb="md"
                   defaultValue="UNSET"
                 />
-                <NumberInput label="Hop Limit" min={0} max={10} defaultValue={channelProperties.lora_hop_limit} onChange={e => { channelProperties.lora_hop_limit = Number(e); }} mb="md" />
-                <Switch label="TX Enabled" onChange={e => { channelProperties.lora_tx_enabled = e.target.checked; }} mb="md" />
-                <NumberInput label="TX Power" min={0} max={100} defaultValue={channelProperties.lora_tx_power} onChange={e => { channelProperties.lora_tx_power = Number(e); }} mb="md" />
-                <Switch label="RX Boost Gain" onChange={e => { channelProperties.lora_sx126x_rx_boosted_gain = e.target.checked; }} mb="md" />
+                <NumberInput label={t("Hop Limit")} min={0} max={10} defaultValue={channelProperties.lora_hop_limit} onChange={e => { channelProperties.lora_hop_limit = Number(e); }} mb="md" />
+                <Switch label={t("TX Enabled")} onChange={e => { channelProperties.lora_tx_enabled = e.target.checked; }} mb="md" />
+                <NumberInput label={t("TX Power")} min={0} max={100} defaultValue={channelProperties.lora_tx_power} onChange={e => { channelProperties.lora_tx_power = Number(e); }} mb="md" />
+                <Switch label={t("RX Boost Gain")} onChange={e => { channelProperties.lora_sx126x_rx_boosted_gain = e.target.checked; }} mb="md" />
                 <Select
-                  label="Modem Preset"
+                  label={t("Modem Preset")}
                   onChange={e => { channelProperties.modem_preset = String(e); }}
                   data={['LONG_FAST', 'LONG_SLOW', 'VERY_LONG_SLOW', 'MEDIUM_SLOW', 'MEDIUM_FAST', 'SHORT_SLOW', 'SHORT_FAST', 'LONG_MODERATE', 'SHORT_TURBO']}
                   mb="md"
@@ -294,11 +295,11 @@ export default function Meshtastic() {
                   onClick={e => {
                     addChannel();
                 }}
-                >Add Channel
+                >{t("Add Channel")}
                 </Button>
             </Modal>
-            <Button leftSection={<IconPlus size={14} />} onClick={() => setShowAddChannel(true)} mr="md">Add Existing Channel</Button>
-            <Button leftSection={<IconPlus size={14} />} onClick={() => setShowNewChannel(true)}>Add New Channel</Button>
+            <Button leftSection={<IconPlus size={14} />} onClick={() => setShowAddChannel(true)} mr="md">{t("Add Existing Channel")}</Button>
+            <Button leftSection={<IconPlus size={14} />} onClick={() => setShowNewChannel(true)}>{t("Add New Channel")}</Button>
             <Table.ScrollContainer minWidth="100%">
                 <Table data={channels} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mt="md" mb="md" />
             </Table.ScrollContainer>

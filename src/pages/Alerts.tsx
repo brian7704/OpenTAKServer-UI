@@ -2,11 +2,12 @@ import { Center, Pagination, Table, TableData, useComputedColorScheme } from '@m
 import React, { useEffect, useState } from 'react';
 import axios from '../axios_config';
 import { apiRoutes } from '../apiRoutes';
+import {t} from "i18next";
 
 export default function Alerts() {
     const [alerts, setAlerts] = useState<TableData>({
         caption: '',
-        head: ['Callsign', 'Type', 'Start Time', 'Cancel Time'],
+        head: [t('Callsign'), t('Type'), t('Start Time'), t('Cancel Time')],
         body: [],
     });
     const [activePage, setPage] = useState(1);
@@ -23,7 +24,7 @@ export default function Alerts() {
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
-                    head: ['Callsign', 'Type', 'Start Time', 'Cancel Time'],
+                    head: [t('Callsign'), t('Type'), t('Start Time'), t('Cancel Time')],
                     body: [],
                 };
 
