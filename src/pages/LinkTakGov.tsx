@@ -18,6 +18,7 @@ import {notifications} from "@mantine/notifications";
 import {IconCheck, IconCircleMinus, IconX, IconDownload} from "@tabler/icons-react";
 import TakGovLogo from '../images/takgov_logo.tsx'
 import bytes_formatter from "@/bytes_formatter.tsx";
+import {t} from "i18next";
 
 interface Plugin {
     apk_hash: string;
@@ -48,7 +49,7 @@ export default function LinkTakGov() {
     const [showUnlink, setShowUnlink] = useState(false);
     const [plugins, setPlugins] = useState<TableData>({
         caption: '',
-        head: ['Name', 'Description', 'Version', 'TAK Prerequisite', 'Size'],
+        head: [t('Name'), t('Description'), t('Version'), t('TAK Prerequisite'), t('Size')],
         body: [],
     });
 
@@ -62,7 +63,7 @@ export default function LinkTakGov() {
         }).catch((err) => {
             console.error(err);
             notifications.show({
-                title: 'Failed check link status',
+                title: t('Failed check link status'),
                 message: err.response.data.error,
                 icon: <IconX />,
                 color: 'red',
@@ -79,7 +80,7 @@ export default function LinkTakGov() {
 
                 const tableData: TableData = {
                     caption: '',
-                    head: ['Name', 'Description', 'Version', 'TAK Prerequisite', 'Size'],
+                    head: [t('Name'), t('Description'), t('Version'), t('TAK Prerequisite'), t('Size')],
                     body: [],
                 };
 
@@ -92,7 +93,7 @@ export default function LinkTakGov() {
                                 download_plugin(plugin);
                             }}
                         >
-                            Download Plugin
+                            {t("Download Plugin")}
                         </Button>
                         tableData.body.push([plugin.display_name, plugin.description, plugin.version, plugin.tak_prerequisite, bytes_formatter(plugin.apk_size_bytes), download_button]);
                     }
@@ -104,7 +105,7 @@ export default function LinkTakGov() {
             console.error(err);
             setLoading(false);
             notifications.show({
-                title: 'Failed to get plugin list',
+                title: t('Failed to get plugin list'),
                 message: err.response.data.error,
                 icon: <IconX />,
                 color: 'red',
@@ -118,8 +119,8 @@ export default function LinkTakGov() {
             setLoading(false);
             if (r.status === 200) {
                 notifications.show({
-                    title: 'Success',
-                    message: "Plugin downloaded Successfully",
+                    title: t('Success'),
+                    message: t("Plugin downloaded Successfully"),
                     icon: <IconCheck />,
                     color: 'green',
                 })
@@ -128,7 +129,7 @@ export default function LinkTakGov() {
             console.error(err);
             setLoading(false);
             notifications.show({
-                title: 'Failed to download plugin',
+                title: t('Failed to download plugin'),
                 message: err.response.data.error,
                 icon: <IconX />,
                 color: 'red',
@@ -151,7 +152,7 @@ export default function LinkTakGov() {
             setLoading(false);
             console.error(err);
             notifications.show({
-                title: 'Failed to link account',
+                title: t('Failed to link account'),
                 message: err.response.data.error,
                 icon: <IconX />,
                 color: 'red',
@@ -166,8 +167,8 @@ export default function LinkTakGov() {
             if (r.status === 200) {
                 setLinked(true);
                 notifications.show({
-                    title: "Success",
-                    message: 'Successfully Linked Account',
+                    title: t("Success"),
+                    message: t('Successfully Linked Account'),
                     icon: <IconCheck />,
                     color: 'green',
                 })
@@ -176,7 +177,7 @@ export default function LinkTakGov() {
             setLoading(false);
             console.error(err);
             notifications.show({
-                title: 'Failed to get auth token',
+                title: t('Failed to get auth token'),
                 message: err.response.data.error,
                 icon: <IconX />,
                 color: 'red',
@@ -192,8 +193,8 @@ export default function LinkTakGov() {
                 setUserCode(null);
                 setLoading(false);
                 notifications.show({
-                    title: "Success",
-                    message: 'Successfully Unlinked Account',
+                    title: t("Success"),
+                    message: t('Successfully Unlinked Account'),
                     icon: <IconCheck />,
                     color: 'green',
                 })
@@ -201,7 +202,7 @@ export default function LinkTakGov() {
         })).catch((err) => {
             console.error(err);
             notifications.show({
-                title: 'Failed to unlink account',
+                title: t('Failed to unlink account'),
                 message: err.response.data.error,
                 icon: <IconX />,
                 color: 'red',
@@ -229,9 +230,9 @@ export default function LinkTakGov() {
 
     return (
         <>
-            <Modal opened={showUnlink} onClose={() => setShowUnlink(false)} title="Are you sure you want to unlink your account?">
-                <Button onClick={() => {unlink_account(); setShowUnlink(false)}} mr="md">Yes</Button>
-                <Button onClick={() => setShowUnlink(false)}>No</Button>
+            <Modal opened={showUnlink} onClose={() => setShowUnlink(false)} title={t("Are you sure you want to unlink your account?")}>
+                <Button onClick={() => {unlink_account(); setShowUnlink(false)}} mr="md">{t("Yes")}</Button>
+                <Button onClick={() => setShowUnlink(false)}>{t("No")}</Button>
             </Modal>
             <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
 
@@ -267,22 +268,22 @@ export default function LinkTakGov() {
 
             <Container display={linked ? "none" : "block"} mt="md">
                 <Title ta="center" order={2}>Link your TAK.gov account</Title>
-                <Text ta="center">Linking your TAK.gov account allows you to download plugins directly from your TAK.gov account
-                to this server and make them available to EUDs. Please log into your TAK.gov account before starting.</Text>
+                <Text ta="center">{t("Linking your TAK.gov account allows you to download plugins directly from your TAK.gov account \
+                to this server and make them available to EUDs. Please log into your TAK.gov account before starting.")}"</Text>
 
-                <Divider label="Step 1" labelPosition="center" pt="md" />
-                <Center><Button onClick={() => {get_codes()}} mt="md">Get Link Code</Button></Center>
+                <Divider label={t("Step 1")} labelPosition="center" pt="md" />
+                <Center><Button onClick={() => {get_codes()}} mt="md">{t("Get Link Code")}</Button></Center>
             </Container>
 
             <Container display={!linked && userCode !== null ? "block" : "none"} mt="md">
-                <Divider label="Step 2" labelPosition="center" mt="md" />
-                <Text ta="center">Enter the following code at <a href="https://tak.gov/register-device" target="_blank">https://tak.gov/register-device</a>.
-                This code will expire in 3 minutes.</Text>
+                <Divider label={t("Step 2")} labelPosition="center" mt="md" />
+                <Text ta="center">{t("Enter the following code at")} <a href="https://tak.gov/register-device" target="_blank">https://tak.gov/register-device</a>.
+                    {t("This code will expire in 3 minutes.")}</Text>
                 <Title ta="center" order={2}>{userCode}</Title>
 
-                <Divider label="Step 3" labelPosition="center" pt="md" />
-                <Text ta="center" mt="md">Click the Link Account button after you have entered the above code on TAK.gov</Text>
-                <Center mt="md"><Button onClick={() => get_token()}>Link Account</Button></Center>
+                <Divider label={t("Step 3")} labelPosition="center" pt="md" />
+                <Text ta="center" mt="md">{t("Click the Link Account button after you have entered the above code on TAK.gov")}</Text>
+                <Center mt="md"><Button onClick={() => get_token()}>{t("Link Account")}</Button></Center>
             </Container>
         </>
     )

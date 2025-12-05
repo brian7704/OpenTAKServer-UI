@@ -2,6 +2,7 @@ import {Center, Pagination, Table, TableData, useComputedColorScheme} from '@man
 import React, { useEffect, useState } from 'react';
 import axios from '@/axios_config';
 import { apiRoutes } from '@/apiRoutes';
+import {t} from "i18next";
 
 interface alert {
     callsign: string;
@@ -43,11 +44,11 @@ interface alert {
 export default function Casevac() {
     const [casevacs, setCasevacs] = useState<TableData>({
         caption: '',
-        head: ['Callsign', 'Casevac', 'Urgent', 'Priority', 'Routine', 'Hoist', 'Extraction Equipment', 'Ventilator',
-        'Equipment Detail', 'Litter', 'Ambulatory', 'Security', 'HLZ Marking', 'HLZ Remarks', 'Coalition Military',
-        'Coalition Civilian', 'Non-Coalition Military', 'Non-Coalition Civilian', 'Opposing Force or Detainee',
-        'Children', 'Terrain Slope Direction', 'Rough Terrain', 'Loose Terrain', 'Terrain Remarks', 'Remarks',
-        'Injuries Sustained', 'Mechanism of Injury', 'Symptoms and Signs', 'Treatment Given'],
+        head: [t('Callsign'), t('Casevac'), t('Urgent'), t('Priority'), t('Routine'), t('Hoist'), t('Extraction Equipment'), t('Ventilator'),
+        t('Equipment Detail'), t('Litter'), t('Ambulatory'), t('Security'), t('HLZ Marking'), t('HLZ Remarks'), t('Coalition Military'),
+        t('Coalition Civilian'), t('Non-Coalition Military'), t('Non-Coalition Civilian'), t('Opposing Force or Detainee'),
+        t('Children'), t('Terrain Slope Direction'), t('Rough Terrain'), t('Loose Terrain'), t('Terrain Remarks'), t('Remarks'),
+        t('Injuries Sustained'), t('Mechanism of Injury'), t('Symptoms and Signs'), t('Treatment Given')],
         body: [],
     });
     const [activePage, setPage] = useState(1);
@@ -64,11 +65,11 @@ export default function Casevac() {
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
-                    head: ['Title', 'Timestamp', 'Callsign', 'Casevac', 'Urgent', 'Priority', 'Routine', 'Hoist', 'Extraction Equipment', 'Ventilator',
-                        'Equipment Detail', 'Litter', 'Ambulatory', 'Security', 'HLZ Marking', 'HLZ Remarks', 'Coalition Military',
-                        'Coalition Civilian', 'Non-Coalition Military', 'Non-Coalition Civilian', 'Opposing Force or Detainee',
-                        'Children', 'Terrain Slope Direction', 'Rough Terrain', 'Loose Terrain', 'Terrain Remarks', 'Remarks',
-                        'Injuries Sustained', 'Mechanism of Injury', 'Symptoms and Signs', 'Treatment Given', 'Title', 'Zap Number'],
+                    head: [t('Title'), t('Timestamp'), t('Callsign'), t('Casevac'), t('Urgent'), t('Priority'), t('Routine'), t('Hoist'), t('Extraction Equipment'), t('Ventilator'),
+                        t('Equipment Detail'), t('Litter'), t('Ambulatory'), t('Security'), t('HLZ Marking'), t('HLZ Remarks'), t('Coalition Military'),
+                        t('Coalition Civilian'), t('Non-Coalition Military'), t('Non-Coalition Civilian'), t('Opposing Force or Detainee'),
+                        t('Children'), t('Terrain Slope Direction'), t('Rough Terrain'), t('Loose Terrain'), t('Terrain Remarks'), t('Remarks'),
+                        t('Injuries Sustained'), t('Mechanism of Injury'), t('Symptoms and Signs'), t('Treatment Given'), t('Title'), t('Zap Number')],
                     body: [],
                 };
 

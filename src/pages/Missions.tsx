@@ -13,6 +13,7 @@ import {apiRoutes} from "@/apiRoutes.tsx";
 import {IconCircleMinus, IconQrcode, IconMail, IconCheck, IconX, IconPlus, IconEdit} from "@tabler/icons-react";
 import { QRCode } from 'react-qrcode-logo';
 import Logo from "@/images/ots-logo.png";
+import {t} from "i18next";
 
 interface MissionProperties {
     name: string;
@@ -43,7 +44,7 @@ export default function Missions() {
     const [showAddMission, setShowAddMission] = useState(false);
     const [allGroups, setAllGroups] = useState<ComboboxItem[]>([]);
     const [groups, setGroups] = useState<string[]>([]);
-    const [addEditTitle, setAddEditTitle] = useState("Add Mission");
+    const [addEditTitle, setAddEditTitle] = useState(t("Add Mission"));
     const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
     const [missionProperties, setMissionProperties] = useState<MissionProperties>({
         name: '',
@@ -56,7 +57,7 @@ export default function Missions() {
     })
     const [missions, setMissions] = useState<TableData>({
         caption: '',
-        head: ['Name', 'Description', 'Owner', 'Default Role', 'Tool', 'Creation Time', 'Expiration', 'Password Protected'],
+        head: [t('Name'), t('Description'), t('Owner'), t('Default Role'), t('Tool'), t('Creation Time'), t('Expiration'), t('Password Protected')],
         body: [],
     });
 
@@ -68,7 +69,7 @@ export default function Missions() {
                 if (r.status === 200) {
                     setInviting(false);
                     notifications.show({
-                        title: 'Success',
+                        title: t('Success'),
                         message: `Successfully invited ${inviteEud.label}`,
                         icon: <IconCheck/>,
                         color: 'green',
@@ -78,7 +79,7 @@ export default function Missions() {
                 console.log(err);
                 setInviting(false);
                 notifications.show({
-                    title: 'Failed to send mission invitation',
+                    title: t('Failed to send mission invitation'),
                     message: err.response.data.error,
                     icon: <IconX/>,
                     color: 'red',
@@ -105,7 +106,7 @@ export default function Missions() {
                 if (r.status === 200) {
                     const tableData: TableData = {
                         caption: '',
-                        head: ['Name', 'Description', 'Owner', 'Default Role', 'Tool', 'Creation Time', 'Password Protected'],
+                        head: [t('Name'), t('Description'), t('Owner'), t('Default Role'), t('Tool'), t('Creation Time'), t('Expiration'), t('Password Protected')],
                         body: [],
                     }
 
@@ -120,7 +121,7 @@ export default function Missions() {
                                     setQrContent(row.qr_code);
                                     setQrTitle(row.name);
                                 }}
-                            >QR Code
+                            >{t("QR Code")}
                             </Button>;
 
                             const edit_button = <Button
@@ -136,7 +137,7 @@ export default function Missions() {
                                         hash_tags: row.hashtags
                                     });
                                     setShowAddMission(true);
-                                    setAddEditTitle("Edit Mission");
+                                    setAddEditTitle(t("Edit Mission"));
                                     let selected_groups: string[] = [];
                                     row.groups.map((group: any) => {
                                         selected_groups.push("" + group.id);
@@ -151,7 +152,7 @@ export default function Missions() {
                                     setShowInvite(true);
                                     setInviteMission(row.name);
                                     setInviteMissionPasswordProtected(row.passwordProtected)
-                                }}>Invite</Button>
+                                }}>{t("Invite")}</Button>
 
                             const delete_button = <Button
                                 onClick={() => {
@@ -181,7 +182,7 @@ export default function Missions() {
                 if (r.status === 200) {
                     setDeleteMissionOpen(false);
                     notifications.show({
-                        title: 'Success',
+                        title: t('Success'),
                         message: `Successfully deleted ${missionToDelete}`,
                         icon: <IconCheck/>,
                         color: 'green',
@@ -190,7 +191,7 @@ export default function Missions() {
                 }
             }).catch(err => {
                 notifications.show({
-                    title: 'Failed to delete mission',
+                    title: t('Failed to delete mission'),
                     message: err.response.data.error,
                     icon: <IconX/>,
                     color: 'red',
@@ -243,7 +244,7 @@ export default function Missions() {
                     setShowAddMission(false);
                     get_missions();
                     notifications.show({
-                        title: 'Success',
+                        title: t('Success'),
                         message: `Successfully added mission ${missionProperties.name}`,
                         icon: <IconCheck/>,
                         color: 'green',
@@ -262,7 +263,7 @@ export default function Missions() {
         }).catch(err => {
             setShowAddMission(false);
             notifications.show({
-                title: 'Failed to add mission',
+                title: t('Failed to add mission'),
                 message: err.response.data.error,
                 icon: <IconX/>,
                 color: 'red',
@@ -293,7 +294,7 @@ export default function Missions() {
         }).catch(err => {
             console.log(err);
             notifications.show({
-                title: 'Failed to get group list',
+                title: t('Failed to get group list'),
                 message: err.response.data.error,
                 icon: <IconX />,
                 color: 'red',
@@ -312,16 +313,16 @@ export default function Missions() {
             </Modal>
             <Modal opened={showInvite} onClose={() => setShowInvite(false)} title={`Invite EUD to ${inviteMission}`}>
                 <Select
-                    placeholder="Search"
+                    placeholder={t("Search")}
                     searchable
-                    nothingFoundMessage="Nothing found..."
-                    label="Callsign"
+                    nothingFoundMessage={t("Nothing found...")}
+                    label={t("Callsign")}
                     onChange={(value, option) => {setInviteEud(option);}}
                     data={callsigns}
                     allowDeselect={false}
                     mb="md" />
                 {(localStorage.getItem('administrator') !== 'true') ?
-                    <PasswordInput disabled={!inviteMissionPasswordProtected} label="Password" onChange={e => { setInviteMissionPassword(e.target.value); }} mb="md" />
+                    <PasswordInput disabled={!inviteMissionPasswordProtected} label={t("Password")} onChange={e => { setInviteMissionPassword(e.target.value); }} mb="md" />
                     : ''
                 }
                 <Button onClick={() => {setInviting(true); send_invitation();}} loading={inviting}>Invite</Button>
@@ -333,40 +334,40 @@ export default function Missions() {
                 </Center>
             </Modal>
             <Modal opened={showAddMission} onClose={() => {setShowAddMission(false);}} title={addEditTitle}>
-                <TextInput defaultValue={missionProperties.name} required placeholder="Mission" label="Name" onChange={e => { missionProperties.name = e.target.value; }} mb="md" />
-                <TextInput defaultValue={missionProperties.description} placeholder="Description" label="Description" onChange={e => { missionProperties.description = e.target.value; }} mb="md" />
+                <TextInput defaultValue={missionProperties.name} required placeholder={t("Mission")} label={t("Name")} onChange={e => { missionProperties.name = e.target.value; }} mb="md" />
+                <TextInput defaultValue={missionProperties.description} placeholder={t("Description")} label={t("Description")} onChange={e => { missionProperties.description = e.target.value; }} mb="md" />
                 <MultiSelect
                     pb="md"
-                    placeholder="Search"
+                    placeholder={t("Search")}
                     searchable
                     clearable
-                    nothingFoundMessage="Nothing found..."
-                    label="Groups"
+                    nothingFoundMessage={t("Nothing found...")}
+                    label={t("Groups")}
                     defaultValue={selectedGroups}
                     onChange={(value) => {setGroups(value)}}
                     data={allGroups} />
                 <Select
                     required
-                    label="Default Role"
+                    label={t("Default Role")}
                     onChange={e => { missionProperties.default_role = String(e); }}
-                    data={[{value: 'MISSION_SUBSCRIBER', label: 'Subscriber'}, {value: 'MISSION_OWNER', label: 'Owner'}, {value: 'MISSION_READ_ONLY', label: 'Read Only'}]}
+                    data={[{value: 'MISSION_SUBSCRIBER', label: t('Subscriber')}, {value: 'MISSION_OWNER', label: t('Owner')}, {value: 'MISSION_READ_ONLY', label: t('Read Only')}]}
                     mb="md"
                     defaultValue={missionProperties.default_role || "MISSION_SUBSCRIBER"}
                     allowDeselect={false}
                 />
                 <Select
-                    placeholder="Search"
+                    placeholder={t("Search")}
                     searchable
                     required
-                    nothingFoundMessage="Nothing found..."
-                    label="Creator"
-                    description="The callsign of the EUD that owns this mission"
+                    nothingFoundMessage={t("Nothing found...")}
+                    label={t("Creator")}
+                    description={t("The callsign of the EUD that owns this mission")}
                     onChange={(value, option) => {missionProperties.creator_uid = option.value;}}
                     data={callsigns}
                     defaultValue={missionProperties.creator_uid}
                     allowDeselect={false}
                     mb="md" />
-                <PasswordInput defaultValue={missionProperties.password} label="Password" onChange={e => { missionProperties.password = e.target.value; }} mb="md" />
+                <PasswordInput defaultValue={missionProperties.password} label={t("Password")} onChange={e => { missionProperties.password = e.target.value; }} mb="md" />
                 <Button onClick={() => {add_mission()}}>{addEditTitle}</Button>
             </Modal>
             <Button leftSection={<IconPlus size={14} />} onClick={() => {
@@ -381,7 +382,7 @@ export default function Missions() {
                     hash_tags: ""
                 })
                 setSelectedGroups([]);
-            }} mr="md">New Mission</Button>
+            }} mr="md">{t("New Mission")}</Button>
             <Table.ScrollContainer minWidth="100%">
                 <Table data={missions} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mt="md" mb="md" />
             </Table.ScrollContainer>

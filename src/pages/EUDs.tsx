@@ -11,6 +11,7 @@ import {IconCheck, IconDownload, IconPlus, IconX} from '@tabler/icons-react';
 import axios from '../axios_config';
 import { apiRoutes } from '../apiRoutes';
 import {Link} from "react-router";
+import {t} from "i18next";
 
 interface eud {
     callsign: string;
@@ -28,7 +29,7 @@ interface eud {
 export default function EUDs() {
     const [euds, setEuds] = useState<TableData>({
         caption: '',
-        head: ['Callsign', 'Device', 'Platform', 'OS', 'Phone Number', 'Username', 'UID', 'Version', 'Last Event Time', 'Last Event', 'Data Package'],
+        head: [t('Callsign'), t('Device'), t('Platform'), t('OS'), t('Phone Number'), t('Username'), t('UID'), t('Version'), t('Last Event Time'), t('Last Event')],
         body: [],
     });
     const [activePage, setPage] = useState(1);
@@ -46,7 +47,7 @@ export default function EUDs() {
             if (r.status === 200) {
                 getEuds();
                 notifications.show({
-                    title: 'Success',
+                    title: t('Success'),
                     message: `Successfully created data package for ${callsign}`,
                     icon: <IconCheck />,
                     color: 'green',
@@ -56,7 +57,7 @@ export default function EUDs() {
             console.log(err);
             setGeneratingDataPackage(false);
             notifications.show({
-                title: 'Error',
+                title: t('Error'),
                 message: err.response.data.error,
                 icon: <IconX />,
                 color: 'red',
@@ -74,7 +75,7 @@ export default function EUDs() {
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
-                    head: ['Callsign', 'Device', 'Platform', 'OS', 'Phone Number', 'Username', 'UID', 'Version', 'Last Event Time', 'Last Event'],
+                    head: [t('Callsign'), t('Device'), t('Platform'), t('OS'), t('Phone Number'), t('Username'), t('UID'), t('Version'), t('Last Event Time'), t('Last Event')],
                     body: [],
                 };
 

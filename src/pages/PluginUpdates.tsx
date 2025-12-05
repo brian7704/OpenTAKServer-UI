@@ -14,6 +14,7 @@ import { IconCheck, IconCircleMinus, IconUpload, IconX } from '@tabler/icons-rea
 import axios from 'axios';
 import { notifications } from '@mantine/notifications';
 import { apiRoutes } from '@/apiRoutes.tsx';
+import {t} from "i18next";
 
 interface PluginInterface {
     plugin: File,
@@ -46,7 +47,7 @@ export default function PluginUpdates() {
     const [deleteName, setDeleteName] = useState<string | null>();
     const [packages, setPackages] = useState<TableData>({
         caption: '',
-        head: ['Icon', 'Name', 'Description', 'Version', 'ATAK Version', 'Platform', 'OS Requirement', 'Revision Code', 'Install on Enrollment', 'Install on Connection', 'Delete'],
+        head: [t('Icon'), t('Name'), t('Description'), t('Version'), t('ATAK Version'), t('Platform'), t('OS Requirement'), t('Revision Code'), t('Install on Enrollment'), t('Install on Connection'), t('Delete')],
         body: [],
     });
 
@@ -60,7 +61,7 @@ export default function PluginUpdates() {
         }).catch(err => {
             notifications.show({
                 icon: <IconX />,
-                title: 'Failed to update package',
+                title: t('Failed to update package'),
                 message: err.response.data.error,
                 color: 'red',
             });
@@ -76,7 +77,7 @@ export default function PluginUpdates() {
                 if (r.status === 200) {
                     const tableData: TableData = {
                         caption: '',
-                        head: ['Icon', 'Name', 'Description', 'Version', 'ATAK Version', 'Platform', 'OS Requirement', 'Revision Code', 'Install on Enrollment', 'Install on Connection', 'Delete'],
+                        head: [t('Icon'), t('Name'), t('Description'), t('Version'), t('ATAK Version'), t('Platform'), t('OS Requirement'), t('Revision Code'), t('Install on Enrollment'), t('Install on Connection'), t('Delete')],
                         body: [],
                     };
 
@@ -120,7 +121,7 @@ export default function PluginUpdates() {
             console.log(err);
             notifications.show({
                 icon: <IconX />,
-                title: 'Failed to get data',
+                title: t('Failed to get data'),
                 message: err.response.data.error,
                 color: 'red',
             });
@@ -149,7 +150,7 @@ export default function PluginUpdates() {
                     notifications.show({
                         icon: <IconCheck />,
                         color: 'green',
-                        message: 'Successfully uploaded plugin',
+                        message: t('Successfully uploaded plugin'),
                     });
                     get_plugins();
                     setUploading(false);
@@ -160,7 +161,7 @@ export default function PluginUpdates() {
             notifications.show({
                 icon: <IconX />,
                 color: 'red',
-                title: 'Failed to upload plugin',
+                title: t('Failed to upload plugin'),
                 message: err.response.data.errors[0],
             });
             setUploading(false);
@@ -173,7 +174,7 @@ export default function PluginUpdates() {
             if (r.status === 200) {
                 notifications.show({
                     icon: <IconCheck />,
-                    message: 'Successfully deleted plugin',
+                    message: t('Successfully deleted plugin'),
                     color: 'green',
                 });
                 get_plugins();
@@ -183,7 +184,7 @@ export default function PluginUpdates() {
             console.log(err);
             notifications.show({
                 icon: <IconX />,
-                title: 'Failed to delete plugin',
+                title: t('Failed to delete plugin'),
                 message: err.response.data.error,
                 color: 'red',
             });
@@ -194,7 +195,7 @@ export default function PluginUpdates() {
     const plugin_type = <Select
         value={pluginType}
         label="Plugin Type"
-        data={[{ value: 'plugin', label: 'Plugin' }, { value: 'app', label: 'App' }]}
+        data={[{ value: 'plugin', label: t('Plugin') }, { value: 'app', label: t('App') }]}
         onChange={(value, option) => setPluginType(option.value)}
     />;
 
@@ -205,17 +206,17 @@ export default function PluginUpdates() {
                 <Table stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" data={packages} highlightOnHover withTableBorder mb="md" />
             </Table.ScrollContainer>
             <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
-            <Modal opened={uploadPluginOpen} onClose={() => setUploadPluginOpen(false)} title="Upload Plugin">
+            <Modal opened={uploadPluginOpen} onClose={() => setUploadPluginOpen(false)} title={t("Upload Plugin")}>
                 {plugin_type}
-                <FileInput label="Plugin File" value={plugin} onChange={setPlugin} required accept="application/vnd.android.package-archive" />
-                <TextInput label="Description" onChange={(e) => setDescription(e.currentTarget.value)} />
-                <FileInput label="Icon" value={icon} onChange={setIcon} mb="md" />
+                <FileInput label={t("Plugin File")} value={plugin} onChange={setPlugin} required accept="application/vnd.android.package-archive" />
+                <TextInput label={t("Description")} onChange={(e) => setDescription(e.currentTarget.value)} />
+                <FileInput label={t("Icon")} value={icon} onChange={setIcon} mb="md" />
                 <Select
                     pb="md"
                     value={atakVersion}
                     label="ATAK Version"
                     clearable
-                    data={[{value: "", label: "5.4 or lower"}, "5.5.0", "5.5.1", "5.6.0", "5.7.0", "5.8.0"]}
+                    data={[{value: "", label: t("5.4 or lower")}, "5.5.0", "5.5.1", "5.6.0", "5.7.0", "5.8.0"]}
                     onChange={(value) => {
                         if (value && value !== "Any")
                             setAtakVersion(value);
@@ -226,7 +227,7 @@ export default function PluginUpdates() {
                 />
                 <Button loading={uploading} onClick={(e) => { upload_plugin(e); }}>Upload Plugin</Button>
             </Modal>
-            <Modal opened={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} title={`Are you sure you want to delete ${deleteName}?`}>
+            <Modal opened={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} title={t("Are you sure you want to delete ${deleteName}?")}>
                 <Button onClick={() => delete_plugin()} mr="md">Yes</Button>
                 <Button onClick={() => setDeleteModalOpen(false)}>No</Button>
             </Modal>
