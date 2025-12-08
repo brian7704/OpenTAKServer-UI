@@ -1,6 +1,6 @@
 {
     "5": {
-        "4 or lower": ""
+        "4 or lower": "5,4 oder niedriger"
     },
     "App": "App",
     "ATAK Version": "ATAK-Version",
@@ -23,8 +23,8 @@
     "Successfully uploaded plugin": "Plugin erfolgreich hochgeladen",
     "Upload Plugin": "Upload-Plugin",
     "Version": "",
-    "About": "",
-    "Active": "",
+    "About": "Um",
+    "Active": "Aktiv",
     "Add": "",
     "Add Channel": "",
     "Add Device Profile": "",
