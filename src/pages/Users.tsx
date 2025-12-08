@@ -24,11 +24,12 @@ import {
 import { notifications } from '@mantine/notifications';
 import axios from '../axios_config';
 import { apiRoutes } from '../apiRoutes';
+import {t} from "i18next";
 
 export default function Users() {
     const [users, setUsers] = useState<TableData>({
         caption: '',
-        head: ['Username', 'Role', 'Active', 'Last Login', 'Last Login IP', 'Current Login', 'Current Login IP', 'Login Count'],
+        head: [t('Username'), t('Role'), t('Active'), t('Last Login'), t('Last Login IP'), t('Current Login'), t('Current Login IP'), t('Login Count')],
         body: [],
     });
     const [activePage, setPage] = useState(1);
@@ -45,7 +46,7 @@ export default function Users() {
     const [groups, setGroups] = useState<string[]>([]);
     const [memberships, setMemberships] = useState<TableData>({
         caption: '',
-        head: ['Group Name', 'Direction', 'Active'],
+        head: [t('Group Name'), t('Direction'), t('Active')],
         body: [],
     });
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
@@ -60,7 +61,7 @@ export default function Users() {
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
-                    head: ['Username', 'Role', 'Active', 'Last Login', 'Last Login IP', 'Current Login', 'Current Login IP', 'Login Count'],
+                    head: [t('Username'), t('Role'), t('Active'), t('Last Login'), t('Last Login IP'), t('Current Login'), t('Current Login IP'), t('Login Count')],
                     body: [],
                 };
 
@@ -124,7 +125,7 @@ export default function Users() {
             }).catch((err) => {
             console.log(err);
             notifications.show({
-                title: 'Failed to get users',
+                title: t('Failed to get users'),
                 message: err.response.data.error,
                 icon: <IconX />,
                 color: 'red',
@@ -148,7 +149,7 @@ export default function Users() {
         }).catch(err => {
             console.log(err);
             notifications.show({
-                title: 'Failed to get group list',
+                title: t('Failed to get group list'),
                 message: err.response.data.error,
                 icon: <IconX />,
                 color: 'red',
@@ -164,7 +165,7 @@ export default function Users() {
         }).catch(err => {
             console.log(err);
             notifications.show({
-                title: 'Failed remove user from group',
+                title: t('Failed remove user from group'),
                 message: err.response.data.error,
                 icon: <IconX />,
                 color: 'red',
@@ -177,12 +178,12 @@ export default function Users() {
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
-                    head: ['Group Name', 'Direction', 'Active'],
+                    head: [t('Group Name'), t('Direction'), t('Active')],
                     body: [],
                 };
 
                 r.data.results.map((row: any) => {
-                    const active_switch = <Tooltip refProp="rootRef" label="This membership can be activated or deactivated from the user's EUD">
+                    const active_switch = <Tooltip refProp="rootRef" label={t("This membership can be activated or deactivated from the user's EUD")}>
                         <Switch
                             checked={row.active}
                         />
@@ -212,7 +213,7 @@ export default function Users() {
         }).catch(err => {
             console.log(err);
             notifications.show({
-                title: 'Failed to add user to group',
+                title: t('Failed to add user to group'),
                 message: err.response.data.error,
                 icon: <IconX />,
                 color: 'red',
@@ -225,7 +226,7 @@ export default function Users() {
             .then(r => {
                 if (r.status === 200) {
                     notifications.show({
-                        message: 'Successfully deleted user',
+                        message: t('Successfully deleted user'),
                         icon: <IconCheck />,
                         color: 'green',
                     });
@@ -234,7 +235,7 @@ export default function Users() {
             }).catch(err => {
             console.log(err);
             notifications.show({
-                title: 'Failed to delete user',
+                title: t('Failed to delete user'),
                 message: err.response.data.error,
                 icon: <IconX />,
                 color: 'red',
@@ -256,7 +257,7 @@ export default function Users() {
             }
         }).catch(err => {
             notifications.show({
-                title: 'Failed to add user',
+                title: t('Failed to add user'),
                 message: err.response.data.error,
                 color: 'red',
             });
@@ -372,19 +373,19 @@ export default function Users() {
                                 data={allGroups} />
                         </Grid.Col>
                         <Grid.Col span={2}>
-                            <Button onClick={() => addUserToGroups("IN")}>Add</Button>
+                            <Button onClick={() => addUserToGroups("IN")}>{t("Add")}</Button>
                         </Grid.Col>
                     </Grid>
                 </Paper>
                 <Paper withBorder p="md" mb="md">
                     <Grid align="flex-end" justify="space-between">
                         <Grid.Col span={10}>
-                            <Title order={6} mb="md">Direction: OUT</Title>
+                            <Title order={6} mb="md">{t("Direction")}: OUT</Title>
                             <MultiSelect
-                                placeholder="Search"
+                                placeholder={t("Search")}
                                 searchable
                                 clearable
-                                nothingFoundMessage="Nothing found..."
+                                nothingFoundMessage={t("Nothing found...")}
                                 label="Select Groups"
                                 onChange={(value) => {setGroups(value)}}
                                 data={allGroups} />
@@ -394,12 +395,12 @@ export default function Users() {
                         </Grid.Col>
                     </Grid>
                 </Paper>
-                <Title order={4} mb="md">Memberships</Title>
+                <Title order={4} mb="md">{t("Memberships")}</Title>
                 <Table.ScrollContainer minWidth="100%">
                     <Table data={memberships} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mt="md" mb="md" />
                 </Table.ScrollContainer>
             </Modal>
-            <Modal opened={addUserOpen} onClose={() => setAddUserOpen(false)} title="Add User">
+            <Modal opened={addUserOpen} onClose={() => setAddUserOpen(false)} title={t("Add User")}>
                 <TextInput required label="Username" placeholder="Username" onChange={e => { setUsername(e.target.value); }} />
                 <PasswordInput
                   label="Password"
