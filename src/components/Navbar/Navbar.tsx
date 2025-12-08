@@ -1,4 +1,4 @@
-import React, {ReactElement, useCallback, useEffect, useState} from 'react';
+import React, {ReactElement, useEffect, useState} from 'react';
 import {
     IconAlertTriangle,
     IconHeartbeat,
@@ -51,28 +51,29 @@ import axios from '../../axios_config';
 import { apiRoutes } from '../../apiRoutes';
 import MeshtasticLogo from './MeshtasticLogo';
 import {DateTimePicker} from "@mantine/dates";
+import {t} from "i18next";
 
 const navbarLinks = [
-    { link: '/dashboard', label: 'Dashboard', icon: IconDashboard },
-    { link: '/map', label: 'Map', icon: IconMap },
-    { link: '/euds', label: 'EUDs', icon: IconDeviceMobile },
-    { link: '/alerts', label: 'Alerts', icon: IconAlertTriangle },
-    { link: '/casevac', label: 'CasEvac', icon: IconHeartbeat },
-    { link: '/data_packages', label: 'Data Packages', icon: IconPackage },
-    { link: '/video_streams', label: 'Video Streams', icon: IconVideo },
-    { link: '/video_recordings', label: 'Video Recordings', icon: IconMovie },
-    { link: '/meshtastic', label: 'Meshtastic', icon: MeshtasticLogo },
-    { link: '/missions', label: 'Missions', icon: IconRefresh },
+    { link: '/dashboard', label: t('Dashboard'), icon: IconDashboard },
+    { link: '/map', label: t('Map'), icon: IconMap },
+    { link: '/euds', label: t('EUDs'), icon: IconDeviceMobile },
+    { link: '/alerts', label: t('Alerts'), icon: IconAlertTriangle },
+    { link: '/casevac', label: t('CasEvac'), icon: IconHeartbeat },
+    { link: '/data_packages', label: t('Data Packages'), icon: IconPackage },
+    { link: '/video_streams', label: t('Video Streams'), icon: IconVideo },
+    { link: '/video_recordings', label: t('Video Recordings'), icon: IconMovie },
+    { link: '/meshtastic', label: t('Meshtastic'), icon: MeshtasticLogo },
+    { link: '/missions', label: t('Missions'), icon: IconRefresh },
 ];
 
 const adminLinks = [
-    { link: '/users', label: 'Users', icon: IconUsers },
-    { link: '/groups', label: 'Groups', icon: IconUsersGroup },
-    { link: '/jobs', label: 'Scheduled Jobs', icon: IconCalendarDue },
-    { link: '/plugin_updates', label: 'Plugin Updates', icon: IconPuzzle },
-    { link: '/device_profiles', label: 'Device Profiles', icon: IconDeviceMobile },
-    { link: '/server_plugin_manager', label: 'Server Plugin Manager', icon: IconPlugConnected },
-    { link: '/link_account', 'label': 'Link TAK.gov Account', icon: IconLink}
+    { link: '/users', label: t('Users'), icon: IconUsers },
+    { link: '/groups', label: t('Groups'), icon: IconUsersGroup },
+    { link: '/jobs', label: t('Scheduled Jobs'), icon: IconCalendarDue },
+    { link: '/plugin_updates', label: t('Plugin Updates'), icon: IconPuzzle },
+    { link: '/device_profiles', label: t('Device Profiles'), icon: IconDeviceMobile },
+    { link: '/server_plugin_manager', label: t('Server Plugin Manager'), icon: IconPlugConnected },
+    { link: '/link_account', 'label': t('Link TAK.gov Account'), icon: IconLink}
 ];
 
 interface ATAKQrCode {
@@ -262,34 +263,34 @@ export default function Navbar() {
             </div>
             {administrator ?
                 <div className={classes.footer}>
-                    <NavLink className={classes.link} key="admin" leftSection={<IconSettings className={classes.linkIcon} stroke={1.5} />} label="Admin" >
+                    <NavLink className={classes.link} key="admin" leftSection={<IconSettings className={classes.linkIcon} stroke={1.5} />} label={t("Admin")} >
                         {admin_links}
                     </NavLink>
-                    <NavLink className={classes.link} key="plugins" leftSection={<IconPlug className={classes.linkIcon} stroke={1.5} />} label="Plugins" >
+                    <NavLink className={classes.link} key="plugins" leftSection={<IconPlug className={classes.linkIcon} stroke={1.5} />} label={t("Plugins")} >
                         {pluginNavLinks}
                     </NavLink>
                 </div> : ''}
             <div className={classes.footer}>
-                <NavLink className={classes.link} key="downloadTruststore" onClick={() => window.open(apiRoutes.truststore, "_blank")} leftSection={<IconCertificate className={classes.linkIcon} stroke={1.5} />} label="Download Truststore" />
-                <NavLink className={classes.link} key="atakQrCode" onClick={() => getAtakQr()} leftSection={<IconQrcode className={classes.linkIcon} stroke={1.5} />} label="ATAK QR Code" />
-                <NavLink className={classes.link} key="itakQrCode" onClick={() => itak_qr_string()} leftSection={<IconQrcode className={classes.linkIcon} stroke={1.5} />} label="iTAK QR Code" />
-                <NavLink className={classes.link} key="2faSettings" component={Link} to="/tfa_setup" leftSection={<Icon2fa className={classes.linkIcon} stroke={1.5} />} label="Setup 2FA" />
-                <NavLink className={classes.link} key="darkModeSwitch" leftSection={<IconMoonStars className={classes.linkIcon} stroke={1.5} />} rightSection={<DarkModeSwitch />} label="Dark Mode" />
-                <NavLink className={classes.link} key="support" leftSection={<IconHelp className={classes.linkIcon} stroke={1.5} />} label="Support" >
-                    <NavLink className={classes.link} key="docs" onClick={() => window.open("https://docs.opentakserver.io", "_blank")} leftSection={<IconBook className={classes.linkIcon} stroke={1.5} />} label="Documentation" />
-                    <NavLink className={classes.link} key="discord" onClick={() => window.open("https://discord.gg/6uaVHjtfXN", "_blank")} leftSection={<IconBrandDiscord className={classes.linkIcon} stroke={1.5} />} label="Discord" />
-                    <NavLink className={classes.link} key="github" onClick={() => window.open("https://github.com/brian7704/OpenTAKServer", "_blank")} leftSection={<IconBrandGithub className={classes.linkIcon} stroke={1.5} />} label="Github" />
+                <NavLink className={classes.link} key="downloadTruststore" onClick={() => window.open(apiRoutes.truststore, "_blank")} leftSection={<IconCertificate className={classes.linkIcon} stroke={1.5} />} label={t("Download Truststore")} />
+                <NavLink className={classes.link} key="atakQrCode" onClick={() => getAtakQr()} leftSection={<IconQrcode className={classes.linkIcon} stroke={1.5} />} label={t("ATAK QR Code")} />
+                <NavLink className={classes.link} key="itakQrCode" onClick={() => itak_qr_string()} leftSection={<IconQrcode className={classes.linkIcon} stroke={1.5} />} label={t("iTAK QR Code")} />
+                <NavLink className={classes.link} key="2faSettings" component={Link} to="/tfa_setup" leftSection={<Icon2fa className={classes.linkIcon} stroke={1.5} />} label={t("Setup 2FA")} />
+                <NavLink className={classes.link} key="darkModeSwitch" leftSection={<IconMoonStars className={classes.linkIcon} stroke={1.5} />} rightSection={<DarkModeSwitch />} label={t("Dark Mode")} />
+                <NavLink className={classes.link} key="support" leftSection={<IconHelp className={classes.linkIcon} stroke={1.5} />} label={t("Support")} >
+                    <NavLink className={classes.link} key="docs" onClick={() => window.open("https://docs.opentakserver.io", "_blank")} leftSection={<IconBook className={classes.linkIcon} stroke={1.5} />} label={t("Documentation")} />
+                    <NavLink className={classes.link} key="discord" onClick={() => window.open("https://discord.gg/6uaVHjtfXN", "_blank")} leftSection={<IconBrandDiscord className={classes.linkIcon} stroke={1.5} />} label={t("Discord")} />
+                    <NavLink className={classes.link} key="github" onClick={() => window.open("https://github.com/brian7704/OpenTAKServer", "_blank")} leftSection={<IconBrandGithub className={classes.linkIcon} stroke={1.5} />} label={t("Github")} />
                 </NavLink>
-                <NavLink className={classes.link} key="logout" leftSection={<IconLogout className={classes.linkIcon} stroke={1.5} />} label="Log Out" onClick={() => logout()} />
+                <NavLink className={classes.link} key="logout" leftSection={<IconLogout className={classes.linkIcon} stroke={1.5} />} label={t("Log Out")} onClick={() => logout()} />
             </div>
-            <Modal opened={showItakQr} onClose={() => setShowItakQr(false)} p="md" title="iTAK Connection Details">
+            <Modal opened={showItakQr} onClose={() => setShowItakQr(false)} p="md" title={t("iTAK Connection Details")}>
                 <Center>
                     <Paper p="md" shadow="xl" withBorder bg="white">
                         <QRCode size={350} value={itakQrString} quietZone={10} logoImage={Logo} qrStyle="dots" ecLevel="H" eyeRadius={50} logoWidth={100} logoHeight={100} />
                     </Paper>
                 </Center>
             </Modal>
-            <Modal opened={showAtakQr} onClose={() => setShowAtakQr(false)} title="ATAK QR Code">
+            <Modal opened={showAtakQr} onClose={() => setShowAtakQr(false)} title={t("ATAK QR Code")}>
                 <DateTimePicker onChange={(date) => {
                     if (date !== "Invalid Date" && date !== null) {
                         setAtakQR({...atakQR, exp: Math.floor(parseISO(date).getTime() / 1000)});
@@ -310,12 +311,12 @@ export default function Navbar() {
                         popoverProps: { withinPortal: false },
                         format: '24h',
                     }} />
-                <NumberInput hideControls min={1} value={atakQR.max} disabled={atakQR.qr_string !== ''} label="Max Uses" onChange={(value) => {
+                <NumberInput hideControls min={1} value={atakQR.max} disabled={atakQR.qr_string !== ''} label={t("Max Uses")} onChange={(value) => {
                     const max = `${value}`
                     setAtakQR({...atakQR, max: parseInt(max, 10)})
                 }} />
 
-                <NumberInput display={Number(atakQR.max) > 0 && atakQR.qr_string !== '' ? "block" : "none"} min={0} value={atakQR.total_uses} disabled label="Total Uses" onChange={(value) => {
+                <NumberInput display={Number(atakQR.max) > 0 && atakQR.qr_string !== '' ? "block" : "none"} min={0} value={atakQR.total_uses} disabled label={t("Total Uses")} onChange={(value) => {
                     const max = `${value}`
                     setAtakQR({...atakQR, max: parseInt(max, 10)})
                 }} />
@@ -328,10 +329,10 @@ export default function Navbar() {
                     <Paper p="md" shadow="xl" withBorder bg="white">
                         <QRCode size={350} value={atakQR.qr_string} quietZone={10} logoImage={Logo} eyeRadius={50} ecLevel="L" qrStyle="dots" logoWidth={100} logoHeight={100} />
                     </Paper>
-                    <Tooltip label="Tap here if you're reading this on the EUD you want to connect to OpenTAKServer">
-                        <Button component="a" href={atakQR.qr_string}>Open ATAK</Button>
+                    <Tooltip label={t("Tap here if you're reading this on the EUD you want to connect to OpenTAKServer")}>
+                        <Button component="a" href={atakQR.qr_string}>{t("Open ATAK")}</Button>
                     </Tooltip>
-                    <Text ta="center" fw={700}>Remember to treat this QR code like a password and don't share it with anyone.</Text>
+                    <Text ta="center" fw={700}>{t("Remember to treat this QR code like a password and don't share it with anyone.")}</Text>
                 </Flex>
             </Modal>
         </ScrollArea>
