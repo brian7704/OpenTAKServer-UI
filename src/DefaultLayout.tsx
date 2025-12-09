@@ -14,6 +14,7 @@ import {
     IconCheck,
     IconLogout,
     IconAlertTriangle,
+    IconUser,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 import { notifications } from '@mantine/notifications';
@@ -23,6 +24,7 @@ import axios from './axios_config';
 import { apiRoutes } from './apiRoutes';
 import Navbar from './components/Navbar/Navbar';
 import { socket } from './socketio';
+import {t} from "i18next";
 
 export function DefaultLayout() {
     const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
@@ -56,7 +58,7 @@ export function DefaultLayout() {
             }
 
             notifications.show({
-                title: 'Alert',
+                title: t('Alert'),
                 message,
                 color,
                 icon,
@@ -124,7 +126,11 @@ export function DefaultLayout() {
                                         logout();
                                     }}
                                 >
-                                    Log Out
+                                    {t("Log Out")}
+                                </Menu.Item>
+                                <Menu.Item
+                                leftSection={<IconUser size={14} />} onClick={() => {navigate('/profile')}}>
+                                    {t("Profile")}
                                 </Menu.Item>
                             </Menu.Dropdown>
                         </Menu>

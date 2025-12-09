@@ -10,6 +10,7 @@ import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import '@mantine/dates/styles.css';
 import './i18n';
+import {I18nextProvider, useTranslation} from "react-i18next";
 
 const Login = React.lazy(() => import('./pages/Login/Login'));
 const Error404 = React.lazy(() => import('./pages/Errors/Error404'));
@@ -17,19 +18,23 @@ const DefaultLayout = React.lazy(() => import('./DefaultLayout'));
 const PasswordReset = React.lazy(() => import('./pages/PasswordReset'));
 
 export default function App() {
+    const { t, i18n } = useTranslation();
+
   return (
-    <MantineProvider theme={theme}>
-        <Notifications />
-      <BrowserRouter>
-          <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/404" element={<Error404 />} />
-              <Route path="/reset" element={<PasswordReset />} />
-              {/*<Route path="/register" name="Register Page" element={<Register />} />
-              <Route path="/500" name="Page 500" element={<Page500 />} />*/}
-              <Route path="*" element={<DefaultLayout />} />
-          </Routes>
-      </BrowserRouter>
-    </MantineProvider>
+    <I18nextProvider i18n={i18n}>
+        <MantineProvider theme={theme}>
+          <Notifications />
+          <BrowserRouter>
+              <Routes>
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/404" element={<Error404 />} />
+                  <Route path="/reset" element={<PasswordReset />} />
+                  {/*<Route path="/register" name="Register Page" element={<Register />} />
+                  <Route path="/500" name="Page 500" element={<Page500 />} />*/}
+                  <Route path="*" element={<DefaultLayout />} />
+              </Routes>
+          </BrowserRouter>
+        </MantineProvider>
+    </I18nextProvider>
   );
 }

@@ -23,6 +23,7 @@ const EUDStats = React.lazy(() => import('./pages/EUDStats'));
 const Plugin = React.lazy(() => import('./pages/Plugin'));
 const ServerPluginManager = React.lazy(() => import('./pages/ServerPluginManager.tsx'));
 const LinkTAKGovAccount = React.lazy(() => import('./pages/LinkTakGov.tsx'));
+const UserProfile = React.lazy(() => import('./pages/UserProfile.tsx'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home', element: Dashboard },
@@ -49,6 +50,8 @@ const routes = [
   { path: '/plugin', name: 'Plugins', element: Plugin },
   { path: '/server_plugin_manager', name:'Server Plugin Manager', element: ServerPluginManager },
   { path: '/link_account', name: 'Link TAK.gov Account', element: LinkTAKGovAccount },
+  { path: '/profile/', name: 'User Profile', element: UserProfile },
+  { path: '/profile/:username', name: 'User Profile', element: UserProfile },
 ];
 
 export default routes;

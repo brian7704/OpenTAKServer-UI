@@ -65,4 +65,5 @@ export const apiRoutes = {
   takgovPlugins: '/api/takgov/plugins',
   takgovIcon: '/api/takgov/icon',
   takgovPlugin: '/api/takgov/plugin',
+  language: '/api/language',
 };

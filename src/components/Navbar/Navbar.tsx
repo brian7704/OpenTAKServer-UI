@@ -54,26 +54,26 @@ import {DateTimePicker} from "@mantine/dates";
 import {t} from "i18next";
 
 const navbarLinks = [
-    { link: '/dashboard', label: t('Dashboard'), icon: IconDashboard },
-    { link: '/map', label: t('Map'), icon: IconMap },
-    { link: '/euds', label: t('EUDs'), icon: IconDeviceMobile },
-    { link: '/alerts', label: t('Alerts'), icon: IconAlertTriangle },
-    { link: '/casevac', label: t('CasEvac'), icon: IconHeartbeat },
-    { link: '/data_packages', label: t('Data Packages'), icon: IconPackage },
-    { link: '/video_streams', label: t('Video Streams'), icon: IconVideo },
-    { link: '/video_recordings', label: t('Video Recordings'), icon: IconMovie },
-    { link: '/meshtastic', label: t('Meshtastic'), icon: MeshtasticLogo },
-    { link: '/missions', label: t('Missions'), icon: IconRefresh },
+    { link: '/dashboard', label: 'Dashboard', icon: IconDashboard },
+    { link: '/map', label: 'Map', icon: IconMap },
+    { link: '/euds', label: 'EUDs', icon: IconDeviceMobile },
+    { link: '/alerts', label: 'Alerts', icon: IconAlertTriangle },
+    { link: '/casevac', label: 'CasEvac', icon: IconHeartbeat },
+    { link: '/data_packages', label: 'Data Packages', icon: IconPackage },
+    { link: '/video_streams', label: 'Video Streams', icon: IconVideo },
+    { link: '/video_recordings', label: 'Video Recordings', icon: IconMovie },
+    { link: '/meshtastic', label: 'Meshtastic', icon: MeshtasticLogo },
+    { link: '/missions', label: 'Missions', icon: IconRefresh },
 ];
 
 const adminLinks = [
-    { link: '/users', label: t('Users'), icon: IconUsers },
-    { link: '/groups', label: t('Groups'), icon: IconUsersGroup },
-    { link: '/jobs', label: t('Scheduled Jobs'), icon: IconCalendarDue },
-    { link: '/plugin_updates', label: t('Plugin Updates'), icon: IconPuzzle },
-    { link: '/device_profiles', label: t('Device Profiles'), icon: IconDeviceMobile },
-    { link: '/server_plugin_manager', label: t('Server Plugin Manager'), icon: IconPlugConnected },
-    { link: '/link_account', 'label': t('Link TAK.gov Account'), icon: IconLink}
+    { link: '/users', label: 'Users', icon: IconUsers },
+    { link: '/groups', label: 'Groups', icon: IconUsersGroup },
+    { link: '/jobs', label: 'Scheduled Jobs', icon: IconCalendarDue },
+    { link: '/plugin_updates', label: 'Plugin Updates', icon: IconPuzzle },
+    { link: '/device_profiles', label: 'Device Profiles', icon: IconDeviceMobile },
+    { link: '/server_plugin_manager', label: 'Server Plugin Manager', icon: IconPlugConnected },
+    { link: '/link_account', 'label': 'Link TAK.gov Account', icon: IconLink}
 ];
 
 interface ATAKQrCode {
@@ -145,7 +145,7 @@ export default function Navbar() {
           key={item.label}
           active={location.pathname === item.link}
           to={item.link}
-          label={item.label}
+          label={t(item.label)}
           leftSection={<item.icon className={classes.linkIcon} stroke={1.5} />}
           mt="md"
         />
@@ -158,7 +158,7 @@ export default function Navbar() {
           key={item.label}
           active={location.pathname === item.link || undefined}
           to={item.link}
-          label={item.label}
+          label={t(item.label)}
           leftSection={<item.icon className={classes.linkIcon} stroke={1.5} />}
           mt="md"
         />
