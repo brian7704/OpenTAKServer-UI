@@ -9,7 +9,7 @@ import {
     LoadingOverlay,
     Center,
     Select,
-    Flex, Modal, Group, Divider
+    Flex, Modal, Group, Divider, Box
 } from "@mantine/core";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
@@ -229,12 +229,13 @@ export default function LinkTakGov() {
     }, [productVersion, product]);
 
     return (
-        <>
+        <Box>
+            <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2, fixed: true }} />
+
             <Modal opened={showUnlink} onClose={() => setShowUnlink(false)} title={t("Are you sure you want to unlink your account?")}>
                 <Button onClick={() => {unlink_account(); setShowUnlink(false)}} mr="md">{t("Yes")}</Button>
                 <Button onClick={() => setShowUnlink(false)}>{t("No")}</Button>
             </Modal>
-            <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
 
             <Center display={linked ? "none" : "flex"}><TakGovLogo width={253} height={256} /></Center>
 
@@ -285,6 +286,6 @@ export default function LinkTakGov() {
                 <Text ta="center" mt="md">{t("Click the Link Account button after you have entered the above code on TAK.gov")}</Text>
                 <Center mt="md"><Button onClick={() => get_token()}>{t("Link Account")}</Button></Center>
             </Container>
-        </>
+        </Box>
     )
 }
