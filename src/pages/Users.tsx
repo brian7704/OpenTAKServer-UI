@@ -9,7 +9,7 @@ import {
     Table,
     TableData,
     ComboboxItem,
-    TextInput, useComputedColorScheme, Title, Tooltip,
+    TextInput, useComputedColorScheme, Title, Tooltip, LoadingOverlay,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import {
@@ -25,6 +25,7 @@ import { notifications } from '@mantine/notifications';
 import axios from '../axios_config';
 import { apiRoutes } from '../apiRoutes';
 import {t} from "i18next";
+import {Link} from "react-router";
 
 export default function Users() {
     const [users, setUsers] = useState<TableData>({
@@ -44,6 +45,7 @@ export default function Users() {
     const [role, setRole] = useState('');
     const [allGroups, setAllGroups] = useState<ComboboxItem[]>([])
     const [groups, setGroups] = useState<string[]>([]);
+    const [loading, setLoading] = useState(false);
     const [memberships, setMemberships] = useState<TableData>({
         caption: '',
         head: [t('Group Name'), t('Direction'), t('Active')],
@@ -52,12 +54,9 @@ export default function Users() {
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
 
     function getUsers() {
-        axios.get(
-            apiRoutes.users,
-            { params: {
-                    page: activePage,
-                } }
-        ).then(r => {
+        setLoading(true);
+        axios.get(apiRoutes.users, { params: { page: activePage,} }).then(r => {
+            setLoading(false);
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
@@ -74,6 +73,8 @@ export default function Users() {
                         }}
                           rightSection={<IconPassword />}
                         >Reset Password</Button>;
+
+                        const user_profile_link = <Link to={`/profile/${row.username}`}>{row.username}</Link>
 
                         const manage_groups_button = <Button
                             rightSection={<IconUserCog />}
@@ -112,7 +113,7 @@ export default function Users() {
                           placeholder="Role"
                         />;
 
-                        tableData.body.push([row.username, (row.username === localStorage.getItem('username') ? row.roles[0].name : role_select),
+                        tableData.body.push([user_profile_link, (row.username === localStorage.getItem('username') ? row.roles[0].name : role_select),
                             active_switch, row.last_login_at, row.last_login_ip, row.current_login_at, row.current_login_ip, row.login_count,
                             reset_password_button, manage_groups_button, delete_user_button]);
                     }
@@ -123,14 +124,15 @@ export default function Users() {
                     setUsers(tableData);
                 }
             }).catch((err) => {
-            console.log(err);
-            notifications.show({
-                title: t('Failed to get users'),
-                message: err.response.data.error,
-                icon: <IconX />,
-                color: 'red',
+                setLoading(false)
+                console.log(err);
+                notifications.show({
+                    title: t('Failed to get users'),
+                    message: err.response.data.error,
+                    icon: <IconX />,
+                    color: 'red',
+                });
             });
-        });
         }
 
     useEffect(() => {
@@ -353,6 +355,8 @@ export default function Users() {
 
     return (
         <>
+            <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
+
             <Button onClick={() => { setAddUserOpen(true); }} mb="md" leftSection={<IconUserPlus size={14} />}>Add User</Button>
             <Table.ScrollContainer minWidth="100%">
                 <Table data={users} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mb="md" />
