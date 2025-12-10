@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {Link, useParams} from "react-router"
+import {Link, useLocation, useParams} from "react-router"
 import {t} from "i18next";
 import LanguageSelector from "../components/LanguageSelector.tsx";
 import {
@@ -12,7 +12,7 @@ import {
     useComputedColorScheme,
     Button,
     Tooltip,
-    Switch
+    Switch,
 } from "@mantine/core"
 import axios from "axios";
 import {apiRoutes} from "@/apiRoutes.tsx";
@@ -87,11 +87,26 @@ export default function UserProfile() {
     });
 
     let params = useParams();
+    let location = useLocation();
+
+    function get_my_info() {
+        axios.get(apiRoutes.me).then((r) => {
+            if (r.status === 200) {
+                setUser(r.data);
+            }
+        }).catch((err) => {
+            console.log(err);
+            notifications.show({
+                title: t('Failed to get user info'),
+                message: err.response.data.error,
+                color: 'red',
+                icon: <IconX />,
+            })
+        })
+    }
 
     function get_user_info() {
-        let username = localStorage.getItem("username");
-        if (params.username)
-            username = params.username;
+        let username = params.username;
 
         axios.get(apiRoutes.users, {params: {username}}).then(r => {
             if (r.status === 200) {
@@ -158,7 +173,10 @@ export default function UserProfile() {
     }
 
     useEffect(() => {
-        get_user_info();
+        if (location.pathname === "/profile")
+            get_my_info();
+        else
+            get_user_info();
     }, [])
 
     useEffect(() => {
@@ -176,8 +194,7 @@ export default function UserProfile() {
             <Center mb="md"><Title order={2}>{user?.username}</Title></Center>
             <Center mb="md"><Text>{t("Last Login: ") + user?.last_login_at}</Text></Center>
             <Center mb="md"><Text>{user?.email}</Text></Center>
-            <Center mb="md" display={localStorage.getItem("username") === user?.username ? "flex" : "none"}><Text>{t("Language")}</Text><LanguageSelector /></Center>
-            <Center mb="md" display={localStorage.getItem("username") === user?.username ? "flex" : "none"}><Text>{t("Time Zone")}</Text><LanguageSelector /></Center>
+            <Center mb="md" display={localStorage.getItem("username") === user?.username ? "flex" : "none"}><Text mr="md">{t("Language")}</Text><LanguageSelector /></Center>
 
             <Tabs defaultValue="euds">
                 <Tabs.List>
