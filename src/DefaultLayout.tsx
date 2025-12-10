@@ -117,8 +117,12 @@ export function DefaultLayout() {
                             </Menu.Target>
 
                             <Menu.Dropdown>
-                                <Menu.Label>Application</Menu.Label>
+                                <Menu.Label>OpenTAKServer</Menu.Label>
                                 <Menu.Divider />
+                                <Menu.Item
+                                    leftSection={<IconUser size={14} />} onClick={() => {navigate('/profile')}}>
+                                    {t("Profile")}
+                                </Menu.Item>
                                 <Menu.Item
                                   disabled={localStorage.getItem('loggedIn') !== 'true'}
                                   leftSection={<IconLogout style={{ width: rem(14), height: rem(14) }} />}
@@ -127,10 +131,6 @@ export function DefaultLayout() {
                                     }}
                                 >
                                     {t("Log Out")}
-                                </Menu.Item>
-                                <Menu.Item
-                                leftSection={<IconUser size={14} />} onClick={() => {navigate('/profile')}}>
-                                    {t("Profile")}
                                 </Menu.Item>
                             </Menu.Dropdown>
                         </Menu>
