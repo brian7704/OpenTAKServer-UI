@@ -3,7 +3,7 @@ import { notifications } from '@mantine/notifications';
 import {Text, Center, Title, Divider, Paper, Flex, Switch, Space, ScrollArea} from '@mantine/core';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { DonutChart } from '@mantine/charts';
-import { intervalToDuration, formatDuration } from 'date-fns';
+import { parseISO, intervalToDuration, formatDuration } from 'date-fns';
 import { versions } from '../../_versions';
 import axios from '../../axios_config';
 import { apiRoutes } from '../../apiRoutes';
@@ -87,7 +87,7 @@ export default function Dashboard() {
                     setOts({
                         version: r.data.ots_version,
                         uptime: r.data.ots_uptime,
-                        start_time: r.data.ots_start_time,
+                        start_time: parseISO(r.data.ots_start_time).toLocaleString(),
                         python_version: r.data.python_version,
                     });
                     setUptime({
@@ -152,7 +152,7 @@ export default function Dashboard() {
                     <Paper shadow="xl" withBorder radius="md" p="xl" mr="md" mb="md">
                         <Center mb="md"><Title order={4}>Uptime</Title></Center>
                         <Flex><Text fw={700}>Uptime:</Text><Space w="md" /><Text>{formatDuration(intervalToDuration({ start: 0, end: uptime.uptime * 1000 }))}</Text></Flex>
-                        <Flex><Text fw={700}>Boot Time:</Text><Space w="md" />{uptime.boot_time}</Flex>
+                        <Flex><Text fw={700}>Boot Time:</Text><Space w="md" />{parseISO(uptime.boot_time).toLocaleString()}</Flex>
                     </Paper>
                 </Flex>
             </Center>
@@ -182,7 +182,7 @@ export default function Dashboard() {
                         <Flex><Text fw={700}>Version:</Text><Space w="md" /><Text>{ots.version}</Text></Flex>
                         <Flex><Text fw={700}>UI Version:</Text><Space w="md" /><Text>{versions.gitTag}</Text></Flex>
                         <Flex><Text fw={700}>UI Commit Hash:</Text><Space w="md" /><Text>{versions.gitCommitHash}</Text></Flex>
-                        <Flex><Text fw={700}>UI Commit Date:</Text><Space w="md" /><Text>{versions.versionDate}</Text></Flex>
+                        <Flex><Text fw={700}>UI Commit Date:</Text><Space w="md" /><Text>{parseISO(versions.versionDate).toLocaleString()}</Text></Flex>
                         <Flex><Text fw={700}>Uptime:</Text><Space w="md" />
                             <Text>
                                 {formatDuration(intervalToDuration({ start: 0, end: ots.uptime * 1000 }))}
