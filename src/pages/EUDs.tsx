@@ -3,7 +3,7 @@ import {
     TableData,
     Pagination,
     Center,
-    useComputedColorScheme, Button,
+    useComputedColorScheme, LoadingOverlay,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import { notifications } from '@mantine/notifications';
@@ -36,6 +36,7 @@ export default function EUDs() {
     const [totalPages, setTotalPages] = useState(1);
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
     const [generatingDataPackage, setGeneratingDataPackage] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     function createDataPackage(callsign:string, uid:string) {
         setGeneratingDataPackage(true);
@@ -66,12 +67,10 @@ export default function EUDs() {
     }
 
     function getEuds() {
-        axios.get(
-            apiRoutes.eud,
-            { params: {
-                    page: activePage,
-                } }
-        ).then(r => {
+        setLoading(true);
+
+        axios.get(apiRoutes.eud, { params: { page: activePage, } }).then(r => {
+            setLoading(false);
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
@@ -92,6 +91,14 @@ export default function EUDs() {
                 setTotalPages(r.data.total_pages);
                 setEuds(tableData);
             }
+        }).catch(err => {
+            setLoading(false);
+            notifications.show({
+                title: t('Failed to get EUDs'),
+                message: err.response.data.error,
+                icon: <IconX />,
+                color: 'red',
+            })
         });
     }
 
@@ -101,6 +108,8 @@ export default function EUDs() {
 
     return (
         <>
+            <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
+
             <Table.ScrollContainer minWidth="100%">
                 <Table data={euds} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mb="md" />
             </Table.ScrollContainer>
