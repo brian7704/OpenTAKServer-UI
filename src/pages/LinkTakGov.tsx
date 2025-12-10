@@ -258,7 +258,7 @@ export default function LinkTakGov() {
                     inputContainer={(children) => (
                         <Group align="flex-start">
                             {children}
-                            <Button display={linked ? "flex" : "none"} onClick={() => setShowUnlink(true)} color="red" rightSection={<IconCircleMinus size={14} />}>Unlink Account</Button>
+                            <Button display={linked ? "flex" : "none"} onClick={() => setShowUnlink(true)} color="red" rightSection={<IconCircleMinus size={14} />}>{t("Unlink Account")}</Button>
                         </Group>
                     )}
                 />

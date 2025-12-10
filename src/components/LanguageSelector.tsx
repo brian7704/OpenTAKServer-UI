@@ -95,8 +95,7 @@ export default function LanguageSelector(): React.ReactElement {
                 onSelect={(country) => {setSelectedCountry(country)}}
                 customLabels={labels}
                 countries={countries}
-                fullWidth={false}
-                className="language-selector"
+                fullWidth={true}
                 placeholder={<IconLanguageHiragana />}
             />
         </>
