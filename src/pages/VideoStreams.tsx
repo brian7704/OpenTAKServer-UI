@@ -10,18 +10,19 @@ import {
     TextInput,
     Tooltip,
     useComputedColorScheme,
-    Image
+    Image, LoadingOverlay
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import { IconCheck, IconCircleMinus, IconPlus, IconVideo, IconX } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import axios from '../axios_config';
 import { apiRoutes } from '../apiRoutes';
+import {t} from "i18next";
 
 export default function VideoStreams() {
     const [videoStreams, setVideoStreams] = useState<TableData>({
         caption: '',
-        head: ['Thumbnail', 'Username', 'Protocol', 'Address', 'Port', 'Path', 'Link'],
+        head: [t('Thumbnail'), t('Username'), t('Path'), t('RTSP Link'), t('WebRTC Link'), t('HLS Link'), t('Source'), t('Ready'), t('Record')],
         body: [],
     });
     const [activePage, setPage] = useState(1);
@@ -36,30 +37,34 @@ export default function VideoStreams() {
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
     const [thumbnail, setThumbnail] = useState('');
     const [thumbnailOpened, setThumbnailOpened] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     function setRecord(path:string, record:boolean) {
+        setLoading(true)
         axios.patch(
             apiRoutes.updateVideoStream,
             { path, record, sourceOnDemand: !record }
         ).then(r => {
+            setLoading(false);
             if (r.status === 200) {
                 if (record) {
                     notifications.show({
-                        message: `${path} is now recording`,
+                        message: t(`${path} is now recording`),
                         color: 'green',
                     });
                 } else {
                     notifications.show({
-                        message: `${path} is no longer recording`,
+                        message: t(`${path} is no longer recording`),
                         color: 'red',
                     });
                 }
                 getVideoStreams();
             }
         }).catch(err => {
+            setLoading(false);
             console.log(err);
             notifications.show({
-                title: 'Recording Failed',
+                title: t('Recording Failed'),
                 message: err.response.data.error,
                 color: 'red',
             });
@@ -67,16 +72,18 @@ export default function VideoStreams() {
     }
 
     function getVideoStreams() {
+        setLoading(true)
         axios.get(
             apiRoutes.video_streams,
             { params: {
                     page: activePage,
                 } }
         ).then(r => {
+            setLoading(false);
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
-                    head: ['Thumbnail', 'Username', 'Path', 'RTSP Link', 'WebRTC Link', 'HLS Link', 'Source', 'Ready', 'Record'],
+                    head: [t('Thumbnail'), t('Username'), t('Path'), t('RTSP Link'), t('WebRTC Link'), t('HLS Link'), t('Source'), t('Ready'), t('Record')],
                     body: [],
                 };
 
@@ -124,7 +131,7 @@ export default function VideoStreams() {
                         const webrtc_button = <CopyButton value={row.webrtc_link}>{({ copied, copy }) => (
                             <Tooltip label={row.webrtc_link}>
                                 <Button color={copied ? 'teal' : 'blue'} onClick={copy}>
-                                    {copied ? 'Copied WebRTC Link' : 'Copy WebRTC Link'}
+                                    {copied ? t('Copied WebRTC Link') : t('Copy WebRTC Link')}
                                 </Button>
                             </Tooltip>
                         )}
@@ -133,7 +140,7 @@ export default function VideoStreams() {
                         const rtsp_button = <CopyButton value={row.rtsp_link}>{({ copied, copy }) => (
                             <Tooltip label={row.rtsp_link}>
                                 <Button color={copied ? 'teal' : 'blue'} onClick={copy}>
-                                    {copied ? 'Copied RTSP Link' : 'Copy RTSP Link'}
+                                    {copied ? t('Copied RTSP Link') : t('Copy RTSP Link')}
                                 </Button>
                             </Tooltip>
                         )}
@@ -142,7 +149,7 @@ export default function VideoStreams() {
                         const hls_button = <CopyButton value={`${row.hls_link}?jwt=${localStorage.getItem('token')}`}>{({ copied, copy }) => (
                             <Tooltip label={`${row.hls_link}?jwt=${localStorage.getItem('token')}`}>
                                 <Button color={copied ? 'teal' : 'blue'} onClick={copy}>
-                                    {copied ? 'Copied HLS Link' : 'Copy HLS Link'}
+                                    {copied ? t('Copied HLS Link') : t('Copy HLS Link')}
                                 </Button>
                             </Tooltip>
                         )}
@@ -157,6 +164,14 @@ export default function VideoStreams() {
                 setTotalPages(r.data.total_pages);
                 setVideoStreams(tableData);
             }
+        }).catch(err => {
+            setLoading(false);
+            console.log(err);
+            notifications.show({
+                title: t('Failed to get video streams'),
+                message: err.response.data.error,
+                color: 'red',
+            });
         });
     }
 
@@ -165,21 +180,25 @@ export default function VideoStreams() {
     }, [activePage]);
 
     function deleteVideoStream() {
+        setLoading(true);
         axios.delete(
             apiRoutes.deleteVideoStream,
             { params: {
                     path: deletePath,
                 } },
         ).then(r => {
+            setLoading(false);
             notifications.show({
                 title: '',
-                message: 'Successfully deleted video stream',
+                message: t('Successfully deleted video stream'),
                 color: 'green',
             });
             getVideoStreams();
         }).catch(err => {
+            setLoading(false);
+            console.log(err)
             notifications.show({
-                title: 'Failed to delete video stream',
+                title: t('Failed to delete video stream'),
                 message: err.response.data.error,
                 color: 'red',
             });
@@ -188,18 +207,22 @@ export default function VideoStreams() {
     }
 
     function addVideo(e:any) {
+        setLoading(true);
         e.preventDefault();
         axios.post(
             apiRoutes.addVideoStream,
             { path, source, sourceOnDemand: true }
         ).then(r => {
+            setLoading(false);
             if (r.status === 200) {
                 setAddVideoOpened(false);
                 getVideoStreams();
             }
         }).catch(err => {
+            setLoading(false);
+            console.log(err);
             notifications.show({
-                title: 'Failed to add video stream',
+                title: t('Failed to add video stream'),
                 message: err.response.data.error,
                 color: 'red',
             });
@@ -214,12 +237,14 @@ export default function VideoStreams() {
 
     return (
         <>
+            <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2, fixed: true }} />
+
             <Button onClick={() => { setAddVideoOpened(true); }} mb="md" mr="md" leftSection={<IconPlus size={14} />}>Add Video</Button>
             <Tooltip
               multiline
               w={220}
               withArrow
-              label="Start streaming in the browser using your device's camera"
+              label={t("Start streaming in the browser using your device's camera")}
             >
                 <Button onClick={() => { startStreaming(); }} mb="md" leftSection={<IconVideo size={14} />}>Start Streaming</Button>
             </Tooltip>
@@ -227,12 +252,12 @@ export default function VideoStreams() {
                 <Table stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" data={videoStreams} highlightOnHover withTableBorder mb="md" />
             </Table.ScrollContainer>
             <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
-            <Modal opened={addVideoOpened} onClose={() => setAddVideoOpened(false)} title="Add Video">
-                <TextInput required label="Path" onChange={e => { setPath(e.target.value); }} />
-                <TextInput label="Source" onChange={e => { setSource(e.target.value); }} mb="md" />
-                <Button onClick={(e) => { addVideo(e); }}>Add Video Stream</Button>
+            <Modal opened={addVideoOpened} onClose={() => setAddVideoOpened(false)} title={t("Add Video")}>
+                <TextInput required label={t("Path")} onChange={e => { setPath(e.target.value); }} />
+                <TextInput label={t("Source")} onChange={e => { setSource(e.target.value); }} mb="md" />
+                <Button onClick={(e) => { addVideo(e); }}>{t("Add Video Stream")}</Button>
             </Modal>
-            <Modal opened={deleteVideoOpened} onClose={() => setDeleteVideoOpened(false)} title={`Are you sure you want to delete ${deletePath}?`}>
+            <Modal opened={deleteVideoOpened} onClose={() => setDeleteVideoOpened(false)} title={t(`Are you sure you want to delete ${deletePath}?`)}>
                 <Center>
                     <Button
                       mr="md"
@@ -245,7 +270,7 @@ export default function VideoStreams() {
                     <Button onClick={() => setDeleteVideoOpened(false)}>No</Button>
                 </Center>
             </Modal>
-            <Modal opened={thumbnailOpened} onClose={() => setThumbnailOpened(false)} title="Thumbnail" size="xl">
+            <Modal opened={thumbnailOpened} onClose={() => setThumbnailOpened(false)} title={t("Thumbnail")} size="xl">
                 <Image src={thumbnail} />
             </Modal>
 
@@ -264,7 +289,7 @@ export default function VideoStreams() {
                                 setVideoUrl('');
                             }}
 
-                        >Close Stream</Button>
+                        >{t("Close Stream")}</Button>
                     </AspectRatio>
         </>
 );

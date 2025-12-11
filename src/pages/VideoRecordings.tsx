@@ -2,8 +2,7 @@ import {
     AspectRatio,
     Button,
     Center,
-    CloseButton,
-    Flex, Image,
+    Image, LoadingOverlay,
     Modal,
     Pagination,
     Table,
@@ -19,11 +18,12 @@ import { notifications } from '@mantine/notifications';
 import axios from '../axios_config';
 import { apiRoutes } from '../apiRoutes';
 import bytes_formatter from '@/bytes_formatter';
+import {t} from "i18next";
 
 export default function VideoRecordings() {
     const [videoStreams, setVideoStreams] = useState<TableData>({
         caption: '',
-        head: ['Thumbnail', 'Start Time', 'End Time', 'Duration', 'Resolution', 'In Progress', 'Path', 'File Size', 'Video Codec', 'Video Bitrate', 'Audio Codec', 'Audio Bitrate', 'Watch', 'Delete', 'Download'],
+        head: [t('Thumbnail'), t('Start Time'), t('End Time'), t('Duration'), t('Resolution'), t('In Progress'), t('Path'), t('File Size'), t('Video Codec'), t('Video Bitrate'), t('Audio Codec'), t('Audio Bitrate'), t('Watch'), t('Delete'), t('Download')],
         body: [],
     });
     const [activePage, setPage] = useState(1);
@@ -32,22 +32,24 @@ export default function VideoRecordings() {
     const [deleteRecording, setDeleteRecording] = useState('');
     const [showVideo, setShowVideo] = useState(false);
     const [videoUrl, setVideoUrl] = useState('');
-    //const [player, setPlayer] = useState<PlayerReference | null>();
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
     const [thumbnail, setThumbnail] = useState('');
     const [thumbnailOpened, setThumbnailOpened] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     function getVideoRecordings() {
+        setLoading(true);
         axios.get(
             apiRoutes.getRecordings,
             { params: {
                     page: activePage,
                 } }
         ).then(r => {
+            setLoading(false);
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
-                    head: ['Thumbnail', 'Start Time', 'End Time', 'Duration', 'Resolution', 'In Progress', 'Path', 'File Size', 'Video Codec', 'Video Bitrate', 'Audio Codec', 'Audio Bitrate', 'Watch', 'Delete', 'Download'],
+                    head: [t('Thumbnail'), t('Start Time'), t('End Time'), t('Duration'), t('Resolution'), t('In Progress'), t('Path'), t('File Size'), t('Video Codec'), t('Video Bitrate'), t('Audio Codec'), t('Audio Bitrate'), t('Watch'), t('Delete'), t('Download')],
                     body: [],
                 };
 
@@ -105,6 +107,15 @@ export default function VideoRecordings() {
                 setTotalPages(r.data.total_pages);
                 setVideoStreams(tableData);
             }
+        }).catch(err => {
+            setLoading(false);
+            console.log(err);
+            notifications.show({
+                title: t('Failed to get recordings'),
+                message: err.response.data.error,
+                color: 'red',
+                icon: <IconX />
+            })
         });
     }
 
@@ -113,21 +124,25 @@ export default function VideoRecordings() {
     }, [activePage]);
 
     function deleteVideoRecording() {
+        setLoading(true);
         axios.delete(
             apiRoutes.deleteRecording,
             { params: {
                     id: deleteRecording,
                 } },
         ).then(r => {
+            setLoading(false);
             notifications.show({
                 title: '',
-                message: 'Successfully deleted recording',
+                message: t('Successfully deleted recording'),
                 color: 'green',
             });
             getVideoRecordings();
         }).catch(err => {
+            setLoading(false);
+            console.log(err);
             notifications.show({
-                title: 'Failed to delete recording',
+                title: t('Failed to delete recording'),
                 message: err.response.data.error,
                 color: 'red',
             });
@@ -137,11 +152,13 @@ export default function VideoRecordings() {
 
     return (
         <>
+            <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2, fixed: true }} />
+
             <Table.ScrollContainer minWidth="100%">
                 <Table stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" data={videoStreams} highlightOnHover withTableBorder mb="md" />
             </Table.ScrollContainer>
             <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
-            <Modal opened={deleteRecordingOpen} onClose={() => setDeleteRecordingOpen(false)} title="Are you sure you want to delete this recording?">
+            <Modal opened={deleteRecordingOpen} onClose={() => setDeleteRecordingOpen(false)} title={t("Are you sure you want to delete this recording?")}>
                 <Center>
                     <Button
                       mr="md"

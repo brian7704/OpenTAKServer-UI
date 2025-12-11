@@ -247,17 +247,17 @@ export default function LinkTakGov() {
                     value={product}
                     data={["ATAK-CIV", "ATAK-GOV", "ATAK-MIL"]}
                     onChange={(value) => {setProduct(value);}}
-                />
-                <Select
-                    w="max-content"
-                    display={linked ? "block" : "none"}
-                    pb="md"
-                    value={productVersion}
-                    data={["5.0.0", "5.1.0", "5.2.0", "5.3.0", "5.4.0", "5.5.0", "5.5.1", "5.6.0", "5.7.0", "5.8.0"]}
-                    onChange={(value) => {setProductVersion(value);}}
                     inputContainer={(children) => (
                         <Group align="flex-start">
                             {children}
+                            <Select
+                                w="max-content"
+                                display={linked ? "block" : "none"}
+                                pb="md"
+                                value={productVersion}
+                                data={["5.0.0", "5.1.0", "5.2.0", "5.3.0", "5.4.0", "5.5.0", "5.5.1", "5.6.0", "5.7.0", "5.8.0"]}
+                                onChange={(value) => {setProductVersion(value);}}
+                            />
                             <Button display={linked ? "flex" : "none"} onClick={() => setShowUnlink(true)} color="red" rightSection={<IconCircleMinus size={14} />}>{t("Unlink Account")}</Button>
                         </Group>
                     )}
@@ -268,7 +268,7 @@ export default function LinkTakGov() {
             </Table.ScrollContainer>
 
             <Container display={linked ? "none" : "block"} mt="md">
-                <Title ta="center" order={2}>Link your TAK.gov account</Title>
+                <Title ta="center" order={2}>{t("Link your TAK.gov account")}</Title>
                 <Text ta="center">{t("Linking your TAK.gov account allows you to download plugins directly from your TAK.gov account \
                 to this server and make them available to EUDs. Please log into your TAK.gov account before starting.")}"</Text>
 

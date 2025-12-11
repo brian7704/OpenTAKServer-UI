@@ -300,7 +300,7 @@ export default function Navbar() {
                     valueFormat="YYYY-MM-DD HH:mm:ss ZZ"
                     value={atakQR.exp !== null ? formatISO(new Date(atakQR.exp * 1000)) : null}
                     disabled={atakQR?.qr_string !== ""}
-                    label="Expiration Date"
+                    label={t("Expiration Date")}
                     clearable
                     firstDayOfWeek={0}
                     clearButtonProps={{
@@ -323,8 +323,8 @@ export default function Navbar() {
                 }} />
 
                 <Center>
-                    <Button mt="md" mr="md" mb="md" onClick={() => generateAtakQr()} disabled={atakQR.qr_string !== ''} leftSection={<IconRefresh size={14} />}>Generate</Button>
-                    <Button mt="md" mr="md" mb="md" onClick={() => deleteAtakQr()} disabled={atakQR.qr_string === ''} leftSection={<IconCircleMinus size={14} />}>Delete</Button>
+                    <Button mt="md" mr="md" mb="md" onClick={() => generateAtakQr()} disabled={atakQR.qr_string !== ''} leftSection={<IconRefresh size={14} />}>{t("Generate")}</Button>
+                    <Button mt="md" mr="md" mb="md" onClick={() => deleteAtakQr()} disabled={atakQR.qr_string === ''} leftSection={<IconCircleMinus size={14} />}>{t("Delete")}</Button>
                 </Center>
                 <Flex direction="column" gap="md" align="center" display={atakQR.qr_string === '' ? "none" : "flex"}>
                     <Paper p="md" shadow="xl" withBorder bg="white">
