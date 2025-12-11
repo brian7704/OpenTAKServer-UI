@@ -7,7 +7,10 @@ export default defineConfig({
     "fr",
     "es",
     "pt",
-    "uk"
+    "uk",
+    "da",
+    "ko",
+    "pl"
   ],
   extract: {
     input: "src/**/*.{js,jsx,ts,tsx}",

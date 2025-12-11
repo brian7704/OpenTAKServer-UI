@@ -6,6 +6,7 @@ import { QRCode } from 'react-qrcode-logo';
 import axios from '../axios_config';
 import { apiRoutes } from '../apiRoutes';
 import Logo from "@/images/ots-logo.png";
+import {t} from "i18next";
 
 export default function TFASetup() {
     const [tfPrimaryMethod, setTfPrimaryMethod] = useState<string | undefined>(undefined);
@@ -22,7 +23,7 @@ export default function TFASetup() {
             setTfPrimaryMethod(r.data.response.tf_primary_method);
         }).catch(err => {
             let message = '';
-            if (err.status === 401) {message = 'Not logged in';}
+            if (err.status === 401) {message = t('Not logged in');}
 
             notifications.show({
                 title: 'Failed to get 2FA methods',

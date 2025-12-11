@@ -39,7 +39,7 @@ export default function ScheduledJobs() {
             if (r.status === 200) {
                 notifications.show({
                     title: t('Success'),
-                    message: `${jobName} was started`,
+                    message: t(`${jobName} was started`),
                     color: 'green',
                     icon: <IconCheck />,
                 });
@@ -66,7 +66,7 @@ export default function ScheduledJobs() {
                 getJobs();
                 notifications.show({
                     title: t('Success'),
-                    message: `${jobName} has been activated`,
+                    message: t(`${jobName} has been activated`),
                     color: 'green',
                     icon: <IconCheck />,
                 });
@@ -91,7 +91,7 @@ export default function ScheduledJobs() {
                 getJobs();
                 notifications.show({
                     title: t('Success'),
-                    message: `${jobName} has been deactivated`,
+                    message: t(`${jobName} has been deactivated`),
                     color: 'green',
                     icon: <IconCheck />,
                 });
