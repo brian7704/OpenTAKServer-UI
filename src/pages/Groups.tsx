@@ -247,7 +247,7 @@ export default function Groups() {
 
     useEffect(() => {
         get_groups();
-    }, []);
+    }, [activePage]);
 
     return (
         <>
