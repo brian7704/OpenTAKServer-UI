@@ -1,6 +1,6 @@
 import {
     Button,
-    Center, ComboboxItem, Modal, MultiSelect,
+    Center, ComboboxItem, LoadingOverlay, Modal, MultiSelect,
     Pagination, Paper, PasswordInput, Select,
     Table,
     TableData, TextInput,
@@ -46,6 +46,7 @@ export default function Missions() {
     const [groups, setGroups] = useState<string[]>([]);
     const [addEditTitle, setAddEditTitle] = useState(t("Add Mission"));
     const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
+    const [loading, setLoading] = useState(false);
     const [missionProperties, setMissionProperties] = useState<MissionProperties>({
         name: '',
         description: '',
@@ -101,8 +102,11 @@ export default function Missions() {
     }
 
     function get_missions() {
+        setLoading(true);
+
         axios.get(apiRoutes.missions, { params: {page: activePage} })
             .then((r) => {
+                setLoading(false);
                 if (r.status === 200) {
                     const tableData: TableData = {
                         caption: '',
@@ -173,6 +177,15 @@ export default function Missions() {
                     setTotalPages(r.data.total_pages);
                     setMissions(tableData);
                 }
+            }).catch(err => {
+                setLoading(false);
+                console.log(err);
+                notifications.show({
+                    title: t('Failed to get missions'),
+                    message: err.response.data.error,
+                    icon: <IconX/>,
+                    color: 'red',
+                })
             })
     }
 
@@ -302,6 +315,7 @@ export default function Missions() {
 
     return (
         <>
+            <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
             <Modal opened={showQrCode} onClose={() => setShowQrCode(false)} title={qrTitle}>
                 <Center>
                     <Paper p="md" shadow="xl" withBorder bg="white">
