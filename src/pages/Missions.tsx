@@ -57,7 +57,7 @@ export default function Missions() {
     })
     const [missions, setMissions] = useState<TableData>({
         caption: '',
-        head: [t('Name'), t('Description'), t('Owner'), t('Default Role'), t('Tool'), t('Creation Time'), t('Expiration'), t('Password Protected')],
+        head: [t('Name'), t('Description'), t('Owner'), t('Default Role'), t('Tool'), t('Creation Time'), t('Password Protected')],
         body: [],
     });
 
@@ -106,7 +106,7 @@ export default function Missions() {
                 if (r.status === 200) {
                     const tableData: TableData = {
                         caption: '',
-                        head: [t('Name'), t('Description'), t('Owner'), t('Default Role'), t('Tool'), t('Creation Time'), t('Expiration'), t('Password Protected')],
+                        head: [t('Name'), t('Description'), t('Owner'), t('Default Role'), t('Tool'), t('Creation Time'), t('Password Protected')],
                         body: [],
                     }
 
@@ -200,14 +200,12 @@ export default function Missions() {
     }
 
     function get_euds() {
-        axios.get(apiRoutes.eud, {params: {'per_page': 200}})
+        axios.get(apiRoutes.eud, {params: {'all': true}})
             .then(r => {
                 if (r.status === 200) {
                     const all_callsigns: ComboboxItem[] = []
-                    r.data.results.map((row:any) => {
-                        if (row.callsign) {
-                            all_callsigns.push({value: row.uid, label: row.callsign});
-                        }
+                    r.data.map((row:any) => {
+                        all_callsigns.push({value: row.uid, label: row.callsign});
                     });
                     setCallsigns(all_callsigns);
                 }
