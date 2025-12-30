@@ -51,9 +51,9 @@ export default function PluginUpdates() {
         body: [],
     });
 
-    function update_plugin(package_name: string, install_on_enrollment: boolean, install_on_connection: boolean): void {
+    function update_plugin(package_name: string, install_on_enrollment: boolean, install_on_connection: boolean, atak_version: string): void {
         axios.patch(apiRoutes.pluginPackage,
-            { package_name, install_on_enrollment, install_on_connection },
+            { package_name, install_on_enrollment, install_on_connection, atak_version },
             ).then(r => {
                 if (r.status === 200) {
                     get_plugins();
@@ -96,14 +96,14 @@ export default function PluginUpdates() {
                             const install_on_enrollment = <Switch
                               checked={row.install_on_enrollment}
                               onChange={(e) => {
-                                    update_plugin(row.package_name, e.target.checked, row.install_on_connection);
+                                    update_plugin(row.package_name, e.target.checked, row.install_on_connection, row.atak_version);
                                 }}
                             />;
 
                             const install_on_connection = <Switch
                               checked={row.install_on_connection}
                               onChange={(e) => {
-                                    update_plugin(row.package_name, row.install_on_enrollment, e.target.checked);
+                                    update_plugin(row.package_name, row.install_on_enrollment, e.target.checked, row.atak_version);
                                 }}
                             />;
 
