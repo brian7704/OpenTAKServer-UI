@@ -9,6 +9,7 @@ import '@mantine/charts/styles.css';
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 import '@mantine/dates/styles.css';
+import 'mantine-datatable/styles.css';
 import './i18n';
 import {I18nextProvider, useTranslation} from "react-i18next";
 
