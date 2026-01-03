@@ -12,6 +12,10 @@ export default defineConfig({
     "ko",
     "pl",
     "pt_BR",
+    "jp",
+    "el",
+    "it",
+    "ar"
   ],
   extract: {
     input: "src/**/*.{js,jsx,ts,tsx}",

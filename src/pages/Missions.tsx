@@ -1,6 +1,6 @@
 import {
     Button,
-    Center, ComboboxItem, Modal, MultiSelect,
+    Center, ComboboxItem, LoadingOverlay, Modal, MultiSelect,
     Pagination, Paper, PasswordInput, Select,
     Table,
     TableData, TextInput,
@@ -14,6 +14,8 @@ import {IconCircleMinus, IconQrcode, IconMail, IconCheck, IconX, IconPlus, IconE
 import { QRCode } from 'react-qrcode-logo';
 import Logo from "@/images/ots-logo.png";
 import {t} from "i18next";
+import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
+import sortBy from "lodash.sortby";
 
 interface MissionProperties {
     name: string;
@@ -23,12 +25,21 @@ interface MissionProperties {
     default_role: string;
     password: string;
     hash_tags: string;
+    callsign: string;
+    creation_time: string | null;
+    password_protected: React.ReactNode | null;
+    edit_button: React.ReactNode | null;
+    invitation_button: React.ReactNode | null;
+    qr_button: React.ReactNode | null;
+    delete_button: React.ReactNode | null;
 }
 
 export default function Missions() {
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
     const [activePage, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [missionCount, setMissionCount] = useState(0);
     const [showQrCode, setShowQrCode] = useState(false);
     const [qrTitle, setQrTitle] = useState('');
     const [qrContent, setQrContent] = useState('');
@@ -46,6 +57,11 @@ export default function Missions() {
     const [groups, setGroups] = useState<string[]>([]);
     const [addEditTitle, setAddEditTitle] = useState(t("Add Mission"));
     const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [sortStatus, setSortStatus] = useState<DataTableSortStatus<MissionProperties>>({
+        columnAccessor: 'name',
+        direction: 'asc',
+    });
     const [missionProperties, setMissionProperties] = useState<MissionProperties>({
         name: '',
         description: '',
@@ -54,12 +70,16 @@ export default function Missions() {
         default_role: 'MISSION_SUBSCRIBER',
         password: '',
         hash_tags: '',
+        callsign: '',
+        creation_time: '',
+        password_protected: <></>,
+        edit_button: <Button></Button>,
+        invitation_button: <Button></Button>,
+        qr_button: <Button></Button>,
+        delete_button: <Button></Button>
     })
-    const [missions, setMissions] = useState<TableData>({
-        caption: '',
-        head: [t('Name'), t('Description'), t('Owner'), t('Default Role'), t('Tool'), t('Creation Time'), t('Expiration'), t('Password Protected')],
-        body: [],
-    });
+
+    const [missions, setMissions] = useState<MissionProperties[]>([]);
 
     function send_invitation() {
         if (inviteEud) {
@@ -88,91 +108,112 @@ export default function Missions() {
         }
     }
 
-    function edit_mission(mission_row: any) {
-        let mission_props: MissionProperties = {
-            name: mission_row.name,
-            description: mission_row.description,
-            creator_uid: mission_row.creator_uid,
-            tool: mission_row.tool,
-            default_role: mission_row.default_role,
-            password: mission_row.password,
-            hash_tags: mission_row.hashtags,
-        }
-    }
-
     function get_missions() {
-        axios.get(apiRoutes.missions, { params: {page: activePage} })
+        if (loading) {
+            return;
+        }
+        setLoading(true);
+
+        axios.get(apiRoutes.missions, { params: {page: activePage, per_page: pageSize, sort_by: sortStatus.columnAccessor, sort_direction: sortStatus.direction} })
             .then((r) => {
+                setLoading(false);
                 if (r.status === 200) {
-                    const tableData: TableData = {
-                        caption: '',
-                        head: [t('Name'), t('Description'), t('Owner'), t('Default Role'), t('Tool'), t('Creation Time'), t('Expiration'), t('Password Protected')],
-                        body: [],
-                    }
+                    setMissionCount(r.data.total);
+
+                    let rows: MissionProperties[] = [];
 
                     r.data.results.map((row: any) => {
-                        if (tableData.body !== undefined) {
-                            const password_protected = row.passwordProtected ? <IconCheck color="green" /> : <IconX color="red" />;
+                        const password_protected = row.passwordProtected ? <IconCheck color="green" /> : <IconX color="red" />;
 
-                            const qrButton = <Button
-                                rightSection={<IconQrcode size={14} />}
-                                onClick={() => {
-                                    setShowQrCode(true);
-                                    setQrContent(row.qr_code);
-                                    setQrTitle(row.name);
-                                }}
-                            >{t("QR Code")}
-                            </Button>;
+                        const qrButton = <Button
+                            rightSection={<IconQrcode size={14} />}
+                            onClick={() => {
+                                setShowQrCode(true);
+                                setQrContent(row.qr_code);
+                                setQrTitle(row.name);
+                            }}
+                        >{t("QR Code")}
+                        </Button>;
 
-                            const edit_button = <Button
-                                rightSection={<IconEdit size={14} />}
-                                onClick={() => {
-                                    setMissionProperties({
-                                        name: row.name,
-                                        description: row.description,
-                                        creator_uid: row.creatorUid,
-                                        tool: row.tool,
-                                        default_role: row.defaultRole.type,
-                                        password: row.password,
-                                        hash_tags: row.hashtags
-                                    });
-                                    setShowAddMission(true);
-                                    setAddEditTitle(t("Edit Mission"));
-                                    let selected_groups: string[] = [];
-                                    row.groups.map((group: any) => {
-                                        selected_groups.push("" + group.id);
-                                    })
-                                    setSelectedGroups(selected_groups);
-                                }}
-                            >Edit</Button>
+                        const edit_button = <Button
+                            rightSection={<IconEdit size={14} />}
+                            onClick={() => {
+                                setMissionProperties({
+                                    name: row.name,
+                                    description: row.description,
+                                    creator_uid: row.creatorUid,
+                                    tool: row.tool,
+                                    default_role: row.defaultRole.type,
+                                    password: row.password,
+                                    hash_tags: row.hashtags,
+                                    callsign: row.owner.callsign,
+                                    creation_time: '',
+                                    password_protected: <></>,
+                                    edit_button: <Button></Button>,
+                                    invitation_button: <Button></Button>,
+                                    qr_button: <Button></Button>,
+                                    delete_button: <Button></Button>
+                                });
+                                setShowAddMission(true);
+                                setAddEditTitle(t("Edit Mission"));
+                                let selected_groups: string[] = [];
+                                row.groups.map((group: any) => {
+                                    selected_groups.push("" + group.id);
+                                })
+                                setSelectedGroups(selected_groups);
+                            }}
+                        >Edit</Button>
 
-                            const invitation_button = <Button
-                                rightSection={<IconMail size={14} /> }
-                                onClick={() => {
-                                    setShowInvite(true);
-                                    setInviteMission(row.name);
-                                    setInviteMissionPasswordProtected(row.passwordProtected)
-                                }}>{t("Invite")}</Button>
+                        const invitation_button = <Button
+                            rightSection={<IconMail size={14} /> }
+                            onClick={() => {
+                                setShowInvite(true);
+                                setInviteMission(row.name);
+                                setInviteMissionPasswordProtected(row.passwordProtected)
+                            }}>{t("Invite")}</Button>
 
-                            const delete_button = <Button
-                                onClick={() => {
-                                    setMissionToDelete(row.name);
-                                    setDeleteMissionOpen(true);
-                                }}
-                                disabled={localStorage.getItem('administrator') !== 'true'}
-                                key={`${row.name}_delete`}
-                                rightSection={<IconCircleMinus size={14} />}
-                                color="red"
-                            >Delete
-                            </Button>;
+                        const delete_button = <Button
+                            onClick={() => {
+                                setMissionToDelete(row.name);
+                                setDeleteMissionOpen(true);
+                            }}
+                            disabled={localStorage.getItem('administrator') !== 'true'}
+                            key={`${row.name}_delete`}
+                            rightSection={<IconCircleMinus size={14} />}
+                            color="red"
+                        >Delete
+                        </Button>;
 
-                            tableData.body.push([row.name, row.description, row.owner.callsign, row.defaultRole.type, row.tool, row.createTime, password_protected, edit_button, invitation_button, qrButton, delete_button]);
-                        }
+                        let missionProps: MissionProperties = {
+                            name: row.name,
+                            description: row.description,
+                            creator_uid: "",
+                            hash_tags: "",
+                            callsign: row.owner.callsign,
+                            password: "",
+                            default_role: row.defaultRole.type,
+                            tool: row.tool,
+                            creation_time: row.createTime,
+                            password_protected: password_protected,
+                            qr_button: qrButton,
+                            edit_button, invitation_button, delete_button};
+
+                        rows.push(missionProps);
+
                     });
                     setPage(r.data.current_page);
                     setTotalPages(r.data.total_pages);
-                    setMissions(tableData);
+                    setMissions(rows);
                 }
+            }).catch(err => {
+                setLoading(false);
+                console.log(err);
+                notifications.show({
+                    title: t('Failed to get missions'),
+                    message: err.response.data.error,
+                    icon: <IconX/>,
+                    color: 'red',
+                })
             })
     }
 
@@ -200,14 +241,12 @@ export default function Missions() {
     }
 
     function get_euds() {
-        axios.get(apiRoutes.eud, {params: {'per_page': 200}})
+        axios.get(apiRoutes.eud, {params: {'all': true}})
             .then(r => {
                 if (r.status === 200) {
                     const all_callsigns: ComboboxItem[] = []
-                    r.data.results.map((row:any) => {
-                        if (row.callsign) {
-                            all_callsigns.push({value: row.uid, label: row.callsign});
-                        }
+                    r.data.map((row:any) => {
+                        all_callsigns.push({value: row.uid, label: row.callsign});
                     });
                     setCallsigns(all_callsigns);
                 }
@@ -215,8 +254,13 @@ export default function Missions() {
     }
 
     useEffect(() => {
+        setPage(1);
+        get_missions()
+    }, [pageSize]);
+
+    useEffect(() => {
         get_missions();
-    }, [activePage]);
+    }, [activePage, sortStatus]);
 
     useEffect(() => {
         if (showInvite) {
@@ -228,6 +272,12 @@ export default function Missions() {
         get_euds();
         getAllGroups();
     }, [showAddMission]);
+
+    useEffect(() => {
+        const data = sortBy(missions, sortStatus.columnAccessor) as MissionProperties[];
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setMissions(sortStatus.direction === 'desc' ? data.reverse() : data);
+    }, [sortStatus]);
 
     function add_mission() {
         axios.post(apiRoutes.missions,
@@ -258,6 +308,13 @@ export default function Missions() {
                     password: '',
                     hash_tags: '',
                     tool: 'public',
+                    callsign: '',
+                    creation_time: '',
+                    password_protected: <></>,
+                    edit_button: <Button></Button>,
+                    invitation_button: <Button></Button>,
+                    qr_button: <Button></Button>,
+                    delete_button: <Button></Button>
                 })
                 setGroups([]);
         }).catch(err => {
@@ -276,6 +333,13 @@ export default function Missions() {
                 password: '',
                 hash_tags: '',
                 tool: 'public',
+                callsign: '',
+                creation_time: '',
+                password_protected: <></>,
+                edit_button: <Button></Button>,
+                invitation_button: <Button></Button>,
+                qr_button: <Button></Button>,
+                delete_button: <Button></Button>
             })
         })
     }
@@ -370,7 +434,7 @@ export default function Missions() {
                 <PasswordInput defaultValue={missionProperties.password} label={t("Password")} onChange={e => { missionProperties.password = e.target.value; }} mb="md" />
                 <Button onClick={() => {add_mission()}}>{addEditTitle}</Button>
             </Modal>
-            <Button leftSection={<IconPlus size={14} />} onClick={() => {
+            <Button leftSection={<IconPlus size={14} />} mb="md" onClick={() => {
                 setShowAddMission(true);
                 setMissionProperties({
                     name: "",
@@ -379,14 +443,42 @@ export default function Missions() {
                     tool: "",
                     default_role: "MISSION_SUBSCRIBER",
                     password: "",
-                    hash_tags: ""
+                    hash_tags: "",
+                    callsign: '',
+                    creation_time: '',
+                    password_protected: <></>,
+                    edit_button: <Button></Button>,
+                    invitation_button: <Button></Button>,
+                    qr_button: <Button></Button>,
+                    delete_button: <Button></Button>
                 })
                 setSelectedGroups([]);
             }} mr="md">{t("New Mission")}</Button>
             <Table.ScrollContainer minWidth="100%">
-                <Table data={missions} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mt="md" mb="md" />
+                <DataTable
+                    withTableBorder
+                    borderRadius="md"
+                    shadow="sm"
+                    striped
+                    highlightOnHover
+                    records={missions}
+                    columns={[{accessor: "name", title: t("Name"), sortable: true}, {accessor: "description", title: t("Description"), sortable: true},
+                        {accessor: "tool", title: t("Tool"), sortable: true}, {accessor: "default_role", title: t("Default Role"), sortable: true},
+                        {accessor: "password_protected", title: t("Password Protected"), sortable: true}, {accessor: "edit_button", title: "Edit"},
+                        {accessor: "invitation_button", title: t("Invite")}, {accessor: "qr_button", title: t("QR Code")},
+                        {accessor: "delete_button", title: t("Delete")}]}
+                    page={activePage}
+                    onPageChange={(p) => setPage(p)}
+                    onRecordsPerPageChange={setPageSize}
+                    totalRecords={missionCount}
+                    recordsPerPage={pageSize}
+                    recordsPerPageOptions={[10, 15, 20, 25, 30, 35, 40, 45, 50]}
+                    sortStatus={sortStatus}
+                    onSortStatusChange={setSortStatus}
+                    fetching={loading}
+                    minHeight={180}
+                />
             </Table.ScrollContainer>
-            <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
         </>
     )
 }

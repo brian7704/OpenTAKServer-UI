@@ -12,9 +12,11 @@ import axios from '../axios_config';
 import { apiRoutes } from '../apiRoutes';
 import {Link} from "react-router";
 import {t} from "i18next";
+import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
+import sortBy from "lodash.sortby";
 
-interface eud {
-    callsign: string;
+interface EUD {
+    callsign: React.ReactNode;
     device: string;
     platform: string;
     os: string;
@@ -27,69 +29,49 @@ interface eud {
 }
 
 export default function EUDs() {
-    const [euds, setEuds] = useState<TableData>({
-        caption: '',
-        head: [t('Callsign'), t('Device'), t('Platform'), t('OS'), t('Phone Number'), t('Username'), t('UID'), t('Version'), t('Last Event Time'), t('Last Event')],
-        body: [],
-    });
+    const [euds, setEuds] = useState<EUD[]>([]);
+    const [eudCount, setEUDCount] = useState<number>(0);
     const [activePage, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
-    const [generatingDataPackage, setGeneratingDataPackage] = useState(false);
     const [loading, setLoading] = useState(false);
-
-    function createDataPackage(callsign:string, uid:string) {
-        setGeneratingDataPackage(true);
-        axios.post(
-            apiRoutes.generate_certificate,
-            { callsign, uid }
-        ).then(r => {
-            setGeneratingDataPackage(false);
-            if (r.status === 200) {
-                getEuds();
-                notifications.show({
-                    title: t('Success'),
-                    message: `Successfully created data package for ${callsign}`,
-                    icon: <IconCheck />,
-                    color: 'green',
-                });
-            }
-        }).catch(err => {
-            console.log(err);
-            setGeneratingDataPackage(false);
-            notifications.show({
-                title: t('Error'),
-                message: err.response.data.error,
-                icon: <IconX />,
-                color: 'red',
-            });
-        });
-    }
+    const [pageSize, setPageSize] = useState(10);
+    const [sortStatus, setSortStatus] = useState<DataTableSortStatus<EUD>>({
+        columnAccessor: 'last_event_time',
+        direction: 'desc',
+    });
 
     function getEuds() {
+        if (loading) {
+            return;
+        }
         setLoading(true);
 
-        axios.get(apiRoutes.eud, { params: { page: activePage, } }).then(r => {
+        axios.get(apiRoutes.eud, { params: { page: activePage, per_page: pageSize, sort_by: sortStatus.columnAccessor, sort_direction: sortStatus.direction} }).then(r => {
             setLoading(false);
             if (r.status === 200) {
-                const tableData: TableData = {
-                    caption: '',
-                    head: [t('Callsign'), t('Device'), t('Platform'), t('OS'), t('Phone Number'), t('Username'), t('UID'), t('Version'), t('Last Event Time'), t('Last Event')],
-                    body: [],
-                };
+                setEUDCount(r.data.total)
+                let rows: EUD[] = []
 
                 r.data.results.map((row:any) => {
-                    if (tableData.body !== undefined) {
-
-                        const callsign_link = <Link to={`/eud_stats?uid=${row.uid}&callsign=${row.callsign}`}>{row.callsign}</Link>
-                        tableData.body.push([callsign_link, row.device, row.platform, row.os, row.phone_number,
-                            row.username, row.uid, row.version, row.last_event_time, row.last_status]);
+                    const callsign_link = <Link to={`/eud_stats?uid=${row.uid}&callsign=${row.callsign}`}>{row.callsign}</Link>
+                    let eud: EUD = {
+                        callsign: callsign_link,
+                        device: row.device,
+                        platform: row.platform,
+                        os: row.os,
+                        phone_number: row.phone_number,
+                        username: row.username,
+                        uid: row.uid,
+                        version: row.version,
+                        last_event_time: row.last_event_time,
+                        last_status: row.last_status
                     }
+                    rows.push(eud);
                 });
 
                 setPage(r.data.current_page);
                 setTotalPages(r.data.total_pages);
-                setEuds(tableData);
+                setEuds(rows);
             }
         }).catch(err => {
             setLoading(false);
@@ -103,17 +85,41 @@ export default function EUDs() {
     }
 
     useEffect(() => {
+        setPage(1);
         getEuds();
-    }, [activePage]);
+    }, [pageSize]);
+
+    useEffect(() => {
+        getEuds();
+    }, [activePage, sortStatus]);
 
     return (
         <>
-            <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
-
             <Table.ScrollContainer minWidth="100%">
-                <Table data={euds} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mb="md" />
+                <DataTable
+                    withTableBorder
+                    borderRadius="md"
+                    shadow="sm"
+                    striped
+                    highlightOnHover
+                    records={euds}
+                    columns={[{accessor: "callsign", title: t("Callsign"), sortable: true}, {accessor: "device", title: t("Device"), sortable: true},
+                        {accessor: "platform", title: t("Platform"), sortable: true}, {accessor: "os", title: t("OS"), sortable: true},
+                        {accessor: "phone_number", title: t("Phone Number"), sortable: true}, {accessor: "username", title: "username"},
+                        {accessor: "uid", title: t("UID")}, {accessor: "version", title: t("Version"), sortable: true},
+                        {accessor: "last_event_time", title: t("Last Event Time"), sortable: true}, {accessor: "last_status", title: t("Last Event"), sortable: true}]}
+                    page={activePage}
+                    onPageChange={(p) => setPage(p)}
+                    onRecordsPerPageChange={setPageSize}
+                    totalRecords={eudCount}
+                    recordsPerPage={pageSize}
+                    recordsPerPageOptions={[10, 15, 20, 25, 30, 35, 40, 45, 50]}
+                    sortStatus={sortStatus}
+                    onSortStatusChange={setSortStatus}
+                    fetching={loading}
+                    minHeight={180}
+                />
             </Table.ScrollContainer>
-            <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
         </>
     );
 }

@@ -4,10 +4,7 @@ import {
     Center,
     Image, LoadingOverlay,
     Modal,
-    Pagination,
     Table,
-    TableData,
-    useComputedColorScheme,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import { IconCheck, IconCircleMinus, IconDownload, IconPlayerPlay, IconX } from '@tabler/icons-react';
@@ -19,93 +16,126 @@ import axios from '../axios_config';
 import { apiRoutes } from '../apiRoutes';
 import bytes_formatter from '@/bytes_formatter';
 import {t} from "i18next";
+import {DataTable, DataTableSortStatus} from "mantine-datatable";
+
+interface VideoRecording {
+    id: number;
+    thumbnail: string;
+    thumbnail_image: React.ReactNode;
+    start_time: string;
+    stop_time: string;
+    path: string;
+    in_progress: boolean;
+    in_progress_icon: React.ReactNode;
+    duration: number;
+    formatted_duration: string;
+    filename: string;
+    width: number;
+    height: number;
+    video_codec: string;
+    video_bitrate: number;
+    formatted_video_bitrate: string;
+    audio_codec: string;
+    audio_bitrate: number;
+    formatted_audio_bitrate: string;
+    audio_samplerate: number;
+    audio_channels: number;
+    file_size: number;
+    formatted_file_size: string;
+    delete_button: React.ReactNode;
+    watch_button: React.ReactNode;
+    download_button: React.ReactNode;
+    resolution: string;
+}
 
 export default function VideoRecordings() {
-    const [videoStreams, setVideoStreams] = useState<TableData>({
-        caption: '',
-        head: [t('Thumbnail'), t('Start Time'), t('End Time'), t('Duration'), t('Resolution'), t('In Progress'), t('Path'), t('File Size'), t('Video Codec'), t('Video Bitrate'), t('Audio Codec'), t('Audio Bitrate'), t('Watch'), t('Delete'), t('Download')],
-        body: [],
-    });
+    const [videoRecordings, setVideoRecordings] = useState<VideoRecording[]>([]);
     const [activePage, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [deleteRecordingOpen, setDeleteRecordingOpen] = useState(false);
-    const [deleteRecording, setDeleteRecording] = useState('');
+    const [deleteRecording, setDeleteRecording] = useState<number>();
     const [showVideo, setShowVideo] = useState(false);
     const [videoUrl, setVideoUrl] = useState('');
-    const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
     const [thumbnail, setThumbnail] = useState('');
     const [thumbnailOpened, setThumbnailOpened] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [pageSize, setPageSize] = useState(10);
+    const [recordingCount, setRecordingCount] = useState(0);
+    const [sortStatus, setSortStatus] = useState<DataTableSortStatus<VideoRecording>>({
+        columnAccessor: 'path',
+        direction: 'asc',
+    });
 
     function getVideoRecordings() {
+        if (loading) return;
+
         setLoading(true);
         axios.get(
             apiRoutes.getRecordings,
             { params: {
                     page: activePage,
+                    per_page: pageSize,
+                    sort_by: sortStatus.columnAccessor,
+                    sort_direction: sortStatus.direction
+
                 } }
         ).then(r => {
             setLoading(false);
             if (r.status === 200) {
-                const tableData: TableData = {
-                    caption: '',
-                    head: [t('Thumbnail'), t('Start Time'), t('End Time'), t('Duration'), t('Resolution'), t('In Progress'), t('Path'), t('File Size'), t('Video Codec'), t('Video Bitrate'), t('Audio Codec'), t('Audio Bitrate'), t('Watch'), t('Delete'), t('Download')],
-                    body: [],
-                };
+                setRecordingCount(r.data.total);
+                let recordings: VideoRecording[] = [];
 
-                r.data.results.map((row:any) => {
-                    if (tableData.body !== undefined) {
-                        const thumbnail = <Image src={row.thumbnail} onClick={() => {
-                            setThumbnail(row.thumbnail);
-                            setThumbnailOpened(true);
-                        }} />
+                r.data.results.map((row: VideoRecording) => {
 
-                        const delete_button = <Button
-                          onClick={() => {
-                                setDeleteRecordingOpen(true);
-                                setDeleteRecording(row.id);
-                            }}
-                          key={`${row.path}_delete`}
-                          color="red"
-                        ><IconCircleMinus />
-                                              </Button>;
+                    row.thumbnail_image = <Image src={row.thumbnail} onClick={() => {
+                        setThumbnail(row.thumbnail);
+                        setThumbnailOpened(true);
+                    }} />
 
-                        const watch_button = <Button
-                          key={`${row.filename}_watch`}
-                          onClick={() => {
-                            setVideoUrl(`${apiRoutes.getRecording}?id=${row.id}`);
-                            setShowVideo(true);
+                    row.delete_button = <Button
+                      onClick={() => {
+                            setDeleteRecordingOpen(true);
+                            setDeleteRecording(row.id);
                         }}
-                        ><IconPlayerPlay />
-                                             </Button>;
+                      key={`${row.path}_delete`}
+                      color="red"
+                    ><IconCircleMinus />
+                                          </Button>;
 
-                        let in_progress_icon;
+                    row.watch_button = <Button
+                      key={`${row.filename}_watch`}
+                      onClick={() => {
+                        setVideoUrl(`${apiRoutes.getRecording}?id=${row.id}`);
+                        setShowVideo(true);
+                    }}
+                    ><IconPlayerPlay />
+                                         </Button>;
 
-                        if (row.in_progress) {
-                            in_progress_icon = <IconCheck size={14} color="green" />;
-                        } else {
-                            in_progress_icon = <IconX size={14} color="red" />;
-                        }
-
-                        let formattedDuration = '';
-                        if (row.duration) {
-                            const duration = intervalToDuration({ start: 0, end: row.duration * 1000 });
-                            formattedDuration = formatDuration(duration);
-                        }
-
-                        const download_button = <Button component="a" href={`${apiRoutes.getRecording}?id=${row.id}`}><IconDownload /></Button>;
-
-                        tableData.body.push([thumbnail, row.start_time, row.stop_time, formattedDuration,
-                            `${row.width} x ${row.height}`, in_progress_icon, row.path, bytes_formatter(row.file_size),
-                            row.video_codec, bytes_formatter(row.video_bitrate, 2, true),
-                            row.audio_codec, `${bytes_formatter(row.audio_bitrate, 2, true)}`,
-                            watch_button, delete_button, download_button]);
+                    if (row.in_progress) {
+                        row.in_progress_icon = <IconCheck size={14} color="green" />;
+                    } else {
+                        row.in_progress_icon = <IconX size={14} color="red" />;
                     }
+
+                    if (row.duration) {
+                        const duration = intervalToDuration({ start: 0, end: row.duration * 1000 });
+                        row.formatted_duration = formatDuration(duration);
+                    }
+
+                    row.download_button = <Button component="a" href={`${apiRoutes.getRecording}?id=${row.id}`}><IconDownload /></Button>;
+
+                    row.resolution = `${row.width} x ${row.height}`
+
+                    row.formatted_video_bitrate = bytes_formatter(row.video_bitrate, 2, true)
+                    row.formatted_audio_bitrate = bytes_formatter(row.audio_bitrate, 2, true)
+                    row.formatted_file_size = bytes_formatter(row.file_size)
+
+                    recordings.push(row);
                 });
 
                 setPage(r.data.current_page);
                 setTotalPages(r.data.total_pages);
-                setVideoStreams(tableData);
+                setVideoRecordings(recordings);
             }
         }).catch(err => {
             setLoading(false);
@@ -120,8 +150,13 @@ export default function VideoRecordings() {
     }
 
     useEffect(() => {
+        setPage(1);
+        getVideoRecordings()
+    }, [pageSize]);
+
+    useEffect(() => {
         getVideoRecordings();
-    }, [activePage]);
+    }, [activePage, sortStatus]);
 
     function deleteVideoRecording() {
         setLoading(true);
@@ -155,9 +190,34 @@ export default function VideoRecordings() {
             <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2, fixed: true }} />
 
             <Table.ScrollContainer minWidth="100%">
-                <Table stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" data={videoStreams} highlightOnHover withTableBorder mb="md" />
+                <DataTable
+                    withTableBorder
+                    borderRadius="md"
+                    shadow="sm"
+                    striped
+                    highlightOnHover
+                    records={videoRecordings}
+                    columns={[{accessor: "thumbnail_image", title: t("Thumbnail")}, {accessor: "start_time", title: t("Start Time"), sortable: true},
+                        {accessor: "stop_time", title: t("End Time"), sortable: true}, {accessor: "formatted_duration", title: t("Duration"), sortable: true},
+                        {accessor: "resolution", title: t("Resolution"), sortable: true}, {accessor: "in_progress_icon", title: t("In Progress"), sortable: true},
+                        {accessor: "path", title: t("Path"), sortable: true}, {accessor: "formatted_file_size", title: t("File Size"), sortable: true},
+                        {accessor: "video_codec", title: t("Video Codec"), sortable: true}, {accessor: "formatted_video_bitrate", title: t("Video Bitrate"), sortable: true},
+                        {accessor: "audio_codec", title: t("Audio Codec"), sortable: true}, {accessor: "formatted_audio_bitrate", title: t("Audio Bitrate"), sortable: true},
+                        {accessor: "watch_button", title: t("Watch")}, {accessor: "download_button", title: t("Download")}
+                    ]}
+                    page={activePage}
+                    onPageChange={(p) => setPage(p)}
+                    onRecordsPerPageChange={setPageSize}
+                    totalRecords={recordingCount}
+                    recordsPerPage={pageSize}
+                    recordsPerPageOptions={[10, 15, 20, 25, 30, 35, 40, 45, 50]}
+                    sortStatus={sortStatus}
+                    onSortStatusChange={setSortStatus}
+                    fetching={loading}
+                    minHeight={180}
+                />
             </Table.ScrollContainer>
-            <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
+
             <Modal opened={deleteRecordingOpen} onClose={() => setDeleteRecordingOpen(false)} title={t("Are you sure you want to delete this recording?")}>
                 <Center>
                     <Button
