@@ -67,8 +67,7 @@
     "semver-parser": "^4.1.8",
     "socket.io-client": "^4.7.4",
     "styled-components": "^6.1.13",
-    "yaml": "^2.7.0",
-    "yarn": "^1.22.22"
+    "yaml": "^2.7.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.12.0",
@@ -120,5 +119,5 @@
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "3.2.3"
   },
-  "packageManager": "yarn@4.0.2"
+  "packageManager": "yarn@4.12.0"
 }
