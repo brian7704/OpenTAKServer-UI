@@ -26,7 +26,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: yarn install
+    - run: npm install
     - run: npm run build
 
     - name: Zip artifact for deployment
