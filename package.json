@@ -20,6 +20,8 @@
     "storybook:build": "storybook build"
   },
   "dependencies": {
+    "@codemirror/lang-yaml": "^6.1.2",
+    "@codemirror/view": "^6.39.9",
     "@mantine/charts": "^8.3.10",
     "@mantine/core": "^8.3.10",
     "@mantine/dates": "^8.3.10",

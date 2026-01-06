@@ -544,7 +544,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/lang-yaml@npm:^6.0.0":
+"@codemirror/lang-yaml@npm:^6.0.0, @codemirror/lang-yaml@npm:^6.1.2":
   version: 6.1.2
   resolution: "@codemirror/lang-yaml@npm:6.1.2"
   dependencies:
@@ -656,7 +656,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/view@npm:^6.0.0, @codemirror/view@npm:^6.17.0, @codemirror/view@npm:^6.23.0, @codemirror/view@npm:^6.27.0, @codemirror/view@npm:^6.35.0":
+"@codemirror/view@npm:^6.0.0, @codemirror/view@npm:^6.17.0, @codemirror/view@npm:^6.23.0, @codemirror/view@npm:^6.27.0, @codemirror/view@npm:^6.35.0, @codemirror/view@npm:^6.39.9":
   version: 6.39.9
   resolution: "@codemirror/view@npm:6.39.9"
   dependencies:
@@ -8165,6 +8165,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "opentakserver-ui@workspace:."
   dependencies:
+    "@codemirror/lang-yaml": "npm:^6.1.2"
+    "@codemirror/view": "npm:^6.39.9"
     "@eslint/js": "npm:^9.12.0"
     "@mantine/charts": "npm:^8.3.10"
     "@mantine/core": "npm:^8.3.10"

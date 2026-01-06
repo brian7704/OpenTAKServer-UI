@@ -13,7 +13,8 @@ import { socket } from '@/socketio';
 import { apiRoutes } from '../apiRoutes';
 import {Link} from "react-router";
 import Markdown from "react-markdown";
-import CodeMirror, {ViewPlugin} from "@uiw/react-codemirror";
+import CodeMirror from "@uiw/react-codemirror";
+import {ViewPlugin} from "@codemirror/view";
 
 interface About {
     author: string;
