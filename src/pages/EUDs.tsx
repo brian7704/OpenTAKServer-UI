@@ -1,10 +1,4 @@
-import {
-    Table,
-    TableData,
-    Pagination,
-    Center,
-    useComputedColorScheme, LoadingOverlay,
-} from '@mantine/core';
+import {Table} from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import { notifications } from '@mantine/notifications';
 import {IconCheck, IconDownload, IconPlus, IconX} from '@tabler/icons-react';
@@ -13,7 +7,6 @@ import { apiRoutes } from '../apiRoutes';
 import {Link} from "react-router";
 import {t} from "i18next";
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
-import sortBy from "lodash.sortby";
 
 interface EUD {
     callsign: React.ReactNode;

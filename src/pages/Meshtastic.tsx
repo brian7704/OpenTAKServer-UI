@@ -3,22 +3,49 @@ import {
     Center, CopyButton, Modal, NumberInput,
     Pagination, Paper, Select, Switch,
     Table,
-    TableData, TextInput, Tooltip,
+    TextInput, Tooltip,
     useComputedColorScheme,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import React, { useEffect, useState } from 'react';
-import { IconCircleMinus, IconX, IconCheck, IconQrcode, IconPlus, IconReload } from '@tabler/icons-react';
+import { IconCircleMinus, IconX, IconCheck, IconQrcode, IconPlus, IconReload, IconCopy } from '@tabler/icons-react';
 import { QRCode } from 'react-qrcode-logo';
 import axios from '@/axios_config';
 import { apiRoutes } from '@/apiRoutes';
 import Logo from "@/images/ots-logo.png";
 import {t} from "i18next";
+import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
+
+interface MeshtasticChannel {
+    name: string;
+    psk: string;
+    uplink_enabled: boolean;
+    downlink_enabled: boolean;
+    position_precision: number;
+    lora_region: string;
+    lora_hop_limit: number;
+    lora_tx_enabled: boolean;
+    lora_tx_power: number;
+    lora_sx126x_rx_boosted_gain: boolean;
+    modem_preset: string;
+    url: string;
+    delete_button: React.ReactNode | null;
+    qr_button: React.ReactNode | null;
+    psk_button: React.ReactNode | null;
+    uplink_enabled_icon: React.ReactNode | null;
+    downlink_enabled_icon: React.ReactNode | null;
+    tx_enabled_icon: React.ReactNode | null;
+    lora_sx126x_rx_boosted_gain_icon: React.ReactNode | null;
+    url_button: React.ReactNode | null;
+}
 
 export default function Meshtastic() {
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
     const [activePage, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [channelCount, setChannelCount] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const [pageSize, setPageSize] = useState(10);
     const [showQrCode, setShowQrCode] = useState(false);
     const [qrTitle, setQrTitle] = useState('');
     const [channelUrl, setChannelUrl] = useState('');
@@ -28,7 +55,11 @@ export default function Meshtastic() {
     const [showAddChannel, setShowAddChannel] = useState(false);
     const [showNewChannel, setShowNewChannel] = useState(false);
     const [psk, setPsk] = useState('');
-    const [channelProperties, setChannelProperties] = useState({
+    const [sortStatus, setSortStatus] = useState<DataTableSortStatus<MeshtasticChannel>>({
+        columnAccessor: 'name',
+        direction: 'asc',
+    });
+    const [channelProperties, setChannelProperties] = useState<MeshtasticChannel>({
         name: '',
         psk: '',
         uplink_enabled: false,
@@ -40,12 +71,17 @@ export default function Meshtastic() {
         lora_tx_power: 30,
         lora_sx126x_rx_boosted_gain: false,
         modem_preset: 'LONG_FAST',
+        url: '',
+        delete_button: null,
+        qr_button: null,
+        psk_button: null,
+        uplink_enabled_icon: null,
+        downlink_enabled_icon: null,
+        tx_enabled_icon: null,
+        lora_sx126x_rx_boosted_gain_icon: null,
+        url_button: null
     });
-    const [channels, setChannels] = useState<TableData>({
-        caption: '',
-        head: [t('Name'), t('PSK'), t('Uplink Enabled'), t('Downlink Enabled'), t('Position Precision'), t('LoRa Region'), t('Hop Limit'), t('TX Enabled'), t('TX Power'), t('RX Gain Boost'), t('Modem Preset')],
-        body: [],
-    });
+    const [channels, setChannels] = useState<MeshtasticChannel[]>([]);
 
     function generatePsk() {
         axios.get(
@@ -82,12 +118,21 @@ export default function Meshtastic() {
                         uplink_enabled: false,
                         downlink_enabled: false,
                         position_precision: 32,
-                                                lora_region: 'UNSET',
+                        lora_region: 'UNSET',
                         lora_hop_limit: 3,
                         lora_tx_enabled: false,
                         lora_tx_power: 30,
                         lora_sx126x_rx_boosted_gain: false,
                         modem_preset: 'LONG_FAST',
+                        url: '',
+                        delete_button: null,
+                        qr_button: null,
+                        psk_button: null,
+                        uplink_enabled_icon: null,
+                        downlink_enabled_icon: null,
+                        tx_enabled_icon: null,
+                        lora_sx126x_rx_boosted_gain_icon: null,
+                        url_button: null
                     });
                 }
             }).catch(err => {
@@ -104,7 +149,12 @@ export default function Meshtastic() {
 
     useEffect(() => {
         getChannels();
-    }, [activePage]);
+    }, [activePage, sortStatus]);
+
+    useEffect(() => {
+        setPage(1);
+        getChannels();
+    }, [pageSize]);
 
     function addChannelByUrl(e:any) {
         e.preventDefault();
@@ -133,82 +183,71 @@ export default function Meshtastic() {
     }
 
     function getChannels() {
+        setLoading(true);
         axios.get(
             apiRoutes.meshtasticChannels,
-            { params: {
-                    page: activePage,
-                } }
+            { params: { page: activePage, per_page: pageSize, sort_by: sortStatus.columnAccessor, sort_direction: sortStatus.direction}}
         ).then(r => {
+            setLoading(false);
             if (r.status === 200) {
-                const tableData: TableData = {
-                    caption: '',
-                    head: [t('Name'), t('PSK'), t('Uplink Enabled'), t('Downlink Enabled'), t('Position Precision'), t('LoRa Region'), t('Hop Limit'), t('TX Enabled'), t('TX Power'), t('RX Gain Boost'), t('Modem Preset')],
-                    body: [],
-                };
+                setChannelCount(r.data.total);
+                let rows: MeshtasticChannel[] = [];
 
-                r.data.results.map((row: any) => {
-                    if (tableData.body !== undefined) {
-                        const qrButton = <Button
-                          rightSection={<IconQrcode size={14} />}
-                          onClick={() => {
-                                setShowQrCode(true);
-                                setChannelUrl(row.url);
-                                setQrTitle(row.name);
-                            }}
-                        >{t("QR Code")}
-                                         </Button>;
+                r.data.results.map((row: MeshtasticChannel) => {
 
-                        const delete_button = <Button
-                          onClick={() => {
-                                setChannelToDelete(row.url);
-                                setDeleteChanelOpen(true);
-                            }}
-                          key={`${row.hash}_delete`}
-                          rightSection={<IconCircleMinus size={14} />}
-                          color="red"
-                        >{t("Delete")}
-                                              </Button>;
+                    row.qr_button = <Button
+                      onClick={() => {
+                            setShowQrCode(true);
+                            setChannelUrl(row.url);
+                            setQrTitle(row.name);
+                        }}
+                    ><IconQrcode size={14} /></Button>;
 
-                        const uplink_enabled = row.uplink_enabled ? <IconCheck color="green" /> : <IconX color="red" />;
-                        const downlink_enabled = row.downlink_enabled ? <IconCheck color="green" /> : <IconX color="red" />;
-                        const tx_enabled = row.lora_tx_enabled ? <IconCheck color="green" /> : <IconX color="red" />;
-                        const lora_sx126x_rx_boosted_gain = row.lora_sx126x_rx_boosted_gain ? <IconCheck color="green" /> : <IconX color="red" />;
-                        const url = <CopyButton value={row.url}>{({ copied, copy }) => (
-                                                <Tooltip label={row.url}>
-                                                    <Button color={copied ? 'teal' : 'blue'} onClick={copy}>
-                                                        {copied ? t('Copied URL') : t('Copy URL')}
-                                                    </Button>
-                                                </Tooltip>
-                                                )}
-                                    </CopyButton>;
+                    row.delete_button = <Button
+                      onClick={() => {
+                            setChannelToDelete(row.url);
+                            setDeleteChanelOpen(true);
+                        }}
+                      key={`${row.name}_delete`}
+                      color="red"
+                    ><IconCircleMinus size={14} /></Button>;
 
-                        let psk_button;
-                        if (row.psk) {
-                            psk_button = <CopyButton value={row.psk}>{({ copied, copy }) => (
-                                    <Tooltip label={row.psk}>
-                                        <Button color={copied ? 'teal' : 'blue'} onClick={copy}>
-                                            {copied ? t('Copied PSK') : t('Copy PSK')}
-                                        </Button>
-                                    </Tooltip>
-                                    )}
-                                         </CopyButton>;
-                        } else {
-                            psk_button = <Button disabled>Encryption Disabled</Button>;
-                        }
+                    row.uplink_enabled_icon = row.uplink_enabled ? <IconCheck color="green" /> : <IconX color="red" />;
+                    row.downlink_enabled_icon = row.downlink_enabled ? <IconCheck color="green" /> : <IconX color="red" />;
+                    row.tx_enabled_icon = row.lora_tx_enabled ? <IconCheck color="green" /> : <IconX color="red" />;
+                    row.lora_sx126x_rx_boosted_gain_icon = row.lora_sx126x_rx_boosted_gain ? <IconCheck color="green" /> : <IconX color="red" />;
+                    row.url_button = <CopyButton value={row.url}>{({ copied, copy }) => (
+                                            <Tooltip label={row.url}>
+                                                <Button color={copied ? 'teal' : 'blue'} onClick={copy}>
+                                                    {copied ? t('Copied URL') : <IconCopy size={14} />}
+                                                </Button>
+                                            </Tooltip>
+                                            )}
+                                </CopyButton>;
 
-                        tableData.body.push([row.name, psk_button, uplink_enabled, downlink_enabled,
-                            row.position_precision, row.lora_region, row.lora_hop_limit, tx_enabled,
-                            row.lora_tx_power, lora_sx126x_rx_boosted_gain, row.modem_preset, url,
-                            qrButton, delete_button,
-                        ]);
+
+                    if (row.psk) {
+                        row.psk_button = <CopyButton value={row.psk}>{({ copied, copy }) => (
+                                <Tooltip label={row.psk}>
+                                    <Button color={copied ? 'teal' : 'blue'} onClick={copy}>
+                                        {copied ? t('Copied PSK') : <IconCopy size={14} />}
+                                    </Button>
+                                </Tooltip>
+                                )}
+                                     </CopyButton>;
+                    } else {
+                        row.psk_button = <Button disabled>Encryption Disabled</Button>;
                     }
 
-                    setPage(r.data.current_page);
-                    setTotalPages(r.data.total_pages);
-                    setChannels(tableData);
+                    rows.push(row);
                 });
+
+                setPage(r.data.current_page);
+                setTotalPages(r.data.total_pages);
+                setChannels(rows);
             }
         }).catch(err => {
+            setLoading(false);
             notifications.show({
                 title: t('Error getting channel list'),
                 message: err.response.data.error,
@@ -300,10 +339,34 @@ export default function Meshtastic() {
             </Modal>
             <Button leftSection={<IconPlus size={14} />} onClick={() => setShowAddChannel(true)} mr="md">{t("Add Existing Channel")}</Button>
             <Button leftSection={<IconPlus size={14} />} onClick={() => setShowNewChannel(true)}>{t("Add New Channel")}</Button>
-            <Table.ScrollContainer minWidth="100%">
-                <Table data={channels} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mt="md" mb="md" />
+            <Table.ScrollContainer minWidth="100%" mt="md">
+                <DataTable
+                    withTableBorder
+                    borderRadius="md"
+                    shadow="sm"
+                    striped
+                    highlightOnHover
+                    records={channels}
+                    columns={[{accessor: "name", title: t("Name"), sortable: true}, {accessor: "psk_button", title: t("PSK")},
+                        {accessor: "uplink_enabled_icon", title: t("Uplink Enabled"), sortable: true}, {accessor: "downlink_enabled_icon", title: t("Downlink Enabled"), sortable: true},
+                        {accessor: "position_precision", title: t("Position Precision"), sortable: true}, {accessor: "lora_region", title: t("LoRa Region"), sortable: true},
+                        {accessor: "lora_hop_limit", title: t("Hop Limit"), sortable: true}, {accessor: "tx_enabled_icon", title: t("TX Enabled"), sortable: true},
+                        {accessor: "lora_tx_power", title: t("TX Power"), sortable: true}, {accessor: "lora_sx126x_rx_boosted_gain_icon", title: t("RX Gain Boost"), sortable: true},
+                        {accessor: "modem_preset", title: t("Modem Preset"), sortable: true}, {accessor: "url_button", title: t("Copy URL")}, {accessor: "qr_button", title: t("QR Code")},
+                        {accessor: "delete_button", title: t("Delete")}
+                    ]}
+                    page={activePage}
+                    onPageChange={(p) => setPage(p)}
+                    onRecordsPerPageChange={setPageSize}
+                    totalRecords={channelCount}
+                    recordsPerPage={pageSize}
+                    recordsPerPageOptions={[10, 15, 20, 25, 30, 35, 40, 45, 50]}
+                    sortStatus={sortStatus}
+                    onSortStatusChange={setSortStatus}
+                    fetching={loading}
+                    minHeight={180}
+                />
             </Table.ScrollContainer>
-            <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
         </>
     );
 }
