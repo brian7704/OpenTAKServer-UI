@@ -277,7 +277,7 @@ export default function DataPackages() {
                     records={dataPackages}
                     columns={[{accessor: "filename", title: t("File Name"), sortable: true}, {accessor: "formatted_size", title: t("Size"), sortable: true},
                         {accessor: "submission_user", title: t("Uploader Username"), sortable: true}, {accessor: "callsign", title: t("Uploader Callsign")},
-                        {accessor: "submission_time", title: t("Upload Time"), sortable: true}, {accessor: "install_on_enrollment_switch", title: t("Install on Enrollment"), sortable: true},
+                        {accessor: "submission_time", title: t("Upload Time"), sortable: true}, {accessor: "install_on_enrollment_switch", title: t("Install on Enrollment")},
                         {accessor: "install_on_connection_switch", title: t("Install on Connection")}, {accessor: "download_button", title: t("Download")},
                         {accessor: "delete_button", title: t("Delete")}, {accessor: "qr_button", title: t("QR Code")}]}
                     page={activePage}

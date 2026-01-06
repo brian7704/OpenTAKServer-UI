@@ -1,10 +1,17 @@
-import {Center, Pagination, Table, TableData, useComputedColorScheme} from '@mantine/core';
+import {Table, Button, Modal, Center} from '@mantine/core';
+import {IconCheck, IconCircleMinus, IconX} from '@tabler/icons-react';
 import React, { useEffect, useState } from 'react';
 import axios from '@/axios_config';
 import { apiRoutes } from '@/apiRoutes';
 import {t} from "i18next";
+import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
+import { notifications } from '@mantine/notifications';
+import {type EUD} from "@/pages/EUDs.tsx";
 
-interface alert {
+interface Casevac {
+    uid: string;
+    title: string;
+    timestamp: string;
     callsign: string;
     casevac: boolean;
     urgent: number;
@@ -31,6 +38,7 @@ interface alert {
     terrain_other: boolean;
     terrain_other_detail: string;
     medline_remarks: string;
+    eud: EUD;
     zmist: {
         i: string;
         m: string;
@@ -39,70 +47,139 @@ interface alert {
         title: string;
         z: string;
     }
+    delete_button: React.ReactNode;
 }
 
 export default function Casevac() {
-    const [casevacs, setCasevacs] = useState<TableData>({
-        caption: '',
-        head: [t('Callsign'), t('Casevac'), t('Urgent'), t('Priority'), t('Routine'), t('Hoist'), t('Extraction Equipment'), t('Ventilator'),
-        t('Equipment Detail'), t('Litter'), t('Ambulatory'), t('Security'), t('HLZ Marking'), t('HLZ Remarks'), t('Coalition Military'),
-        t('Coalition Civilian'), t('Non-Coalition Military'), t('Non-Coalition Civilian'), t('Opposing Force or Detainee'),
-        t('Children'), t('Terrain Slope Direction'), t('Rough Terrain'), t('Loose Terrain'), t('Terrain Remarks'), t('Remarks'),
-        t('Injuries Sustained'), t('Mechanism of Injury'), t('Symptoms and Signs'), t('Treatment Given')],
-        body: [],
-    });
+    const [casevacs, setCasevacs] = useState<Casevac[]>([]);
+    const [casevactToDelete, setCasevacToDelete] = useState('');
+    const [deleteCasevacOpen, setDeleteCasevacOpen] = useState(false);
+    const [casevacCount, setCasevacCount] = useState(0);
     const [activePage, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
+    const [loading, setLoading] = useState(false);
+    const [pageSize, setPageSize] = useState(10);
+    const [sortStatus, setSortStatus] = useState<DataTableSortStatus<Casevac>>({
+        columnAccessor: 'title',
+        direction: 'desc',
+    });
 
-    useEffect(() => {
-        axios.get(
-            apiRoutes.casevac,
-            { params: {
-                    page: activePage,
-                } }
-        ).then(r => {
+    function deleteCasevac(uid: string) {
+        axios.delete(apiRoutes.casevac, {params: {uid}}).then(r => {
             if (r.status === 200) {
-                const tableData: TableData = {
-                    caption: '',
-                    head: [t('Title'), t('Timestamp'), t('Callsign'), t('Casevac'), t('Urgent'), t('Priority'), t('Routine'), t('Hoist'), t('Extraction Equipment'), t('Ventilator'),
-                        t('Equipment Detail'), t('Litter'), t('Ambulatory'), t('Security'), t('HLZ Marking'), t('HLZ Remarks'), t('Coalition Military'),
-                        t('Coalition Civilian'), t('Non-Coalition Military'), t('Non-Coalition Civilian'), t('Opposing Force or Detainee'),
-                        t('Children'), t('Terrain Slope Direction'), t('Rough Terrain'), t('Loose Terrain'), t('Terrain Remarks'), t('Remarks'),
-                        t('Injuries Sustained'), t('Mechanism of Injury'), t('Symptoms and Signs'), t('Treatment Given'), t('Title'), t('Zap Number')],
-                    body: [],
-                };
+                getCasevacs();
+                notifications.show({
+                    message: t("Successfully Deleted CasEvac"),
+                    icon: <IconCheck />,
+                    color: 'green',
+                })
+            }
+        }).catch(err => {
+            notifications.show({
+                title: t('Failed to delete CasEvac'),
+                message: err.response.data.error,
+                icon: <IconX />,
+                color: 'red',
+            })
+        })
+    }
 
-                r.data.results.map((row:any) => {
-                    if (tableData.body !== undefined) {
-                        const { zmist } = row;
+    function getCasevacs() {
+        setLoading(true);
+        axios.get(apiRoutes.casevac, { params: { page: activePage, per_page: pageSize, sort_by: sortStatus.columnAccessor, sort_direction: sortStatus.direction} }).then(r => {
+            setLoading(false);
+            if (r.status === 200) {
+                setCasevacCount(r.data.total);
+                let rows: Casevac[] = [];
 
-                        tableData.body.push([row.title, row.timestamp, row.eud.callsign,
-                        String(row.casevac), row.urgent, row.priority, row.routine,
-                        String(row.hoist), String(row.extraction_equipment),
-                        String(row.ventilator), row.equipment_detail, row.litter, row.ambulatory,
-                        row.security, row.hlz_marking, row.hlz_remarks, row.us_military,
-                        row.us_civilian, row.nonus_military, row.nonus_civilian, row.epw,
-                        row.child, row.terrain_slope_dir, String(row.terrain_rough),
-                        String(row.terrain_loose), String(row.terrain_other_detail),
-                        row.medline_remarks, (zmist ? zmist.i : ''), (zmist ? zmist.m : ''),
-                        (zmist ? zmist.s : ''), (zmist ? zmist.t : ''), (zmist ? zmist.title : ''),
-                        (zmist ? zmist.z : '')]);
-                    }
+                r.data.results.map((row: Casevac) => {
+                    row.delete_button = <Button
+                        onClick={() => {
+                            setCasevacToDelete(row.uid);
+                            setDeleteCasevacOpen(true);
+                        }}
+                        key={`${row.title}_delete`}
+                        color="red"
+                    ><IconCircleMinus size={14} /></Button>;
+
+                    rows.push(row);
                 });
 
                 setPage(r.data.current_page);
                 setTotalPages(r.data.total_pages);
-                setCasevacs(tableData);
+                setCasevacs(rows);
             }
-});
-}, [activePage]);
+        }).catch(err => {
+            setLoading(false);
+            notifications.show({
+                title: t('Failed to get CasEvacs'),
+                message: err.response.data.error,
+                icon: <IconX />,
+                color: 'red',
+            })
+        });
+    }
+
+    useEffect(() => {
+        getCasevacs()
+    }, [activePage, sortStatus]);
+
+    useEffect(() => {
+        setPage(1);
+        getCasevacs();
+    }, [pageSize]);
+
     return (
         <>
+            <Modal opened={deleteCasevacOpen} onClose={() => setDeleteCasevacOpen(false)} title={t("Are you sure you want to delete this CasEvac?")}>
+                <Center>
+                    <Button onClick={() => {
+                        deleteCasevac(casevactToDelete);
+                        setDeleteCasevacOpen(false);
+                    }}
+                    mr="md"
+                    >{t("Yes")}</Button>
+                    <Button onClick={() => setDeleteCasevacOpen(false)}>{t("No")}</Button>
+                </Center>
+            </Modal>
             <Table.ScrollContainer minWidth="100%">
-                <Table data={casevacs} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mb="md" />
+                <DataTable
+                    withTableBorder
+                    borderRadius="md"
+                    shadow="sm"
+                    striped
+                    highlightOnHover
+                    records={casevacs}
+                    columns={[{accessor: "title", title: t("Title"), sortable: true}, {accessor: "timestamp", title: t("Timestamp"), sortable: true},
+                        {accessor: "eud.callsign", title: t("Callsign"), sortable: true}, {accessor: "casevac", title: t("CasEvac"), sortable: true},
+                        {accessor: "urgent", title: t("Urgent"), sortable: true}, {accessor: "hoist", title: t("Hoist")},
+                        {accessor: "routine", title: t("Routine")}, {accessor: "version", title: t("Version"), sortable: true},
+                        {accessor: "extraction_equipment", title: t("Extraction Equipment"), sortable: true}, {accessor: "ventilator", title: t("Ventilator"), sortable: true},
+                        {accessor: "equipment_detail", title: t("Equipment Detail"), sortable: true}, {accessor: "litter", title: t("Litter"), sortable: true},
+                        {accessor: "ambulatory", title: t("Ambulatory"), sortable: true}, {accessor: "security", title: t("Security"), sortable: true},
+                        {accessor: "hlz_marking", title: t("HLZ Marking"), sortable: true}, {accessor: "hlz_remarks", title: t("HLZ Remarks"), sortable: true},
+                        {accessor: "us_military", title: t("Coalition Military"), sortable: true}, {accessor: "us_civilian", title: t("Coalition Civilian"), sortable: true},
+                        {accessor: "nonus_military", title: t("Non-Coalition Military"), sortable: true}, {accessor: "nonus_civilian", title: t("Non-Coalition Civilian"), sortable: true},
+                        {accessor: "epw", title: t("Opposing Force or Detainee"), sortable: true}, {accessor: "child", title: t("Children"), sortable: true},
+                        {accessor: "terrain_slope_dir", title: t("Terrain Slope Direction"), sortable: true}, {accessor: "terrain_rough", title: t("Rough Terrain"), sortable: true},
+                        {accessor: "terrain_loose", title: t("Loose Terrain"), sortable: true}, {accessor: "terrain_other_detail", title: t("Terrain Remarks"), sortable: true},
+                        {accessor: "medline_remarks", title: t("Remarks"), sortable: true}, {accessor: "zmist.i", title: t("Injuries Sustained"), sortable: true},
+                        {accessor: "zmist.m", title: t("Mechanism of Injury"), sortable: true}, {accessor: "zmist.s", title: t("Symptoms and Signs"), sortable: true},
+                        {accessor: "zmist.t", title: t("Treatment Given"), sortable: true}, {accessor: "zmist.title", title: t("Title"), sortable: true},
+                        {accessor: "zmist.z", title: t("Zap Number"), sortable: true}, {accessor: "delete_button", title: t("Delete")}
+                    ]}
+                    page={activePage}
+                    onPageChange={(p) => setPage(p)}
+                    onRecordsPerPageChange={setPageSize}
+                    totalRecords={casevacCount}
+                    recordsPerPage={pageSize}
+                    recordsPerPageOptions={[10, 15, 20, 25, 30, 35, 40, 45, 50]}
+                    sortStatus={sortStatus}
+                    onSortStatusChange={setSortStatus}
+                    fetching={loading}
+                    minHeight={180}
+                />
             </Table.ScrollContainer>
-            <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
         </>
 );
 }

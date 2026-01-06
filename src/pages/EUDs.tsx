@@ -8,7 +8,7 @@ import {Link} from "react-router";
 import {t} from "i18next";
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
 
-interface EUD {
+export interface EUD {
     callsign: React.ReactNode;
     device: string;
     platform: string;
@@ -98,7 +98,7 @@ export default function EUDs() {
                     records={euds}
                     columns={[{accessor: "callsign", title: t("Callsign"), sortable: true}, {accessor: "device", title: t("Device"), sortable: true},
                         {accessor: "platform", title: t("Platform"), sortable: true}, {accessor: "os", title: t("OS"), sortable: true},
-                        {accessor: "phone_number", title: t("Phone Number"), sortable: true}, {accessor: "username", title: "username"},
+                        {accessor: "phone_number", title: t("Phone Number"), sortable: true}, {accessor: "username", title: t("Username")},
                         {accessor: "uid", title: t("UID")}, {accessor: "version", title: t("Version"), sortable: true},
                         {accessor: "last_event_time", title: t("Last Event Time"), sortable: true}, {accessor: "last_status", title: t("Last Event"), sortable: true}]}
                     page={activePage}
