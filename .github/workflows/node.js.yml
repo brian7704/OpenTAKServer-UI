@@ -30,7 +30,7 @@ jobs:
     - run: npm run build
 
     - name: Zip artifact for deployment
-      run: zip OpenTAKServer-UI-${{ github.ref_name }}.zip ./* -r
+      run: mv dist opentakserver && zip OpenTAKServer-UI-${{ github.ref_name }}.zip ./opentakserver -r
 
     - name: Release with Notes
       uses: softprops/action-gh-release@v2
