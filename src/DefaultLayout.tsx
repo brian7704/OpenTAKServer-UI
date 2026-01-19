@@ -24,7 +24,7 @@ import axios from './axios_config';
 import { apiRoutes } from './apiRoutes';
 import Navbar from './components/Navbar/Navbar';
 import { socket } from './socketio';
-import {t} from "i18next";
+import { t } from "i18next";
 
 export function DefaultLayout() {
     const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
@@ -44,11 +44,11 @@ export function DefaultLayout() {
             setSocketConnected(false);
         }
 
-        function onAlert(alert:any) {
+        function onAlert(alert: any) {
             let message = `${alert.alert_type} from ${alert.callsign}`;
             let color = 'red';
             let icon = <IconAlertTriangle style={{ width: rem(20), height: rem(20) }} />;
-            const alert_sound = new Audio('/alert.mp3');
+            const alert_sound = new Audio('alert.mp3');
             alert_sound.play();
 
             if (alert.cancel_time !== null) {
@@ -93,13 +93,13 @@ export function DefaultLayout() {
 
     return (
         <AppShell
-          header={{ height: 60 }}
-          navbar={{
+            header={{ height: 60 }}
+            navbar={{
                 width: 300,
                 breakpoint: 'sm',
                 collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
             }}
-          padding="md"
+            padding="md"
         >
             <AppShell.Header pb={0} bg={computedColorScheme === 'light' ? '#2a2d43' : 'dark.8'}>
                 <Group justify="space-between" pr={5} h="100%">
@@ -120,13 +120,13 @@ export function DefaultLayout() {
                                 <Menu.Label>OpenTAKServer</Menu.Label>
                                 <Menu.Divider />
                                 <Menu.Item
-                                    leftSection={<IconUser size={14} />} onClick={() => {navigate('/profile')}}>
+                                    leftSection={<IconUser size={14} />} onClick={() => { navigate('/profile') }}>
                                     {t("Profile")}
                                 </Menu.Item>
                                 <Menu.Item
-                                  disabled={localStorage.getItem('loggedIn') !== 'true'}
-                                  leftSection={<IconLogout style={{ width: rem(14), height: rem(14) }} />}
-                                  onClick={() => {
+                                    disabled={localStorage.getItem('loggedIn') !== 'true'}
+                                    leftSection={<IconLogout style={{ width: rem(14), height: rem(14) }} />}
+                                    onClick={() => {
                                         logout();
                                     }}
                                 >
