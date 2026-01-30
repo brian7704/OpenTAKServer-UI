@@ -6,7 +6,7 @@ import {
     TextInput,
     useComputedColorScheme,
     Button,
-    Pagination, Center, Switch, FileInput,
+    Pagination, Center, Switch, ComboboxItem,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import { IconCircleMinus, IconUpload, IconX } from '@tabler/icons-react';
@@ -17,12 +17,15 @@ import { apiRoutes } from '../apiRoutes';
 import {t} from "i18next";
 
 interface ProfileInterface {
-    key: string;
-    value: string;
+    preference_key: string;
+    preference_value: string;
     value_class: string;
     enrollment: boolean;
     connection: boolean;
     active: boolean;
+    eud_uid: string | null;
+    publish_time: string;
+    callsign: string | null;
 }
 
 export default function DeviceProfiles() {
@@ -30,25 +33,32 @@ export default function DeviceProfiles() {
     const [addProfile, setAddProfile] = useState(false);
     const [activePage, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [callsigns, setCallsigns] = useState<ComboboxItem[]>([]);
     const [editProfile, setEditProfile] = useState<ProfileInterface>({
-        key: '',
-        value: '',
+        preference_key: '',
+        preference_value: '',
         value_class: 'String',
         enrollment: false,
         connection: false,
-        active: false });
+        active: false,
+        callsign: null,
+        publish_time: '',
+        eud_uid: null });
     const [newProfile, setNewProfile] = useState<ProfileInterface>({
-        key: '',
-        value: '',
+        preference_key: '',
+        preference_value: '',
         value_class: 'String',
         enrollment: false,
         connection: false,
-        active: false });
+        active: false,
+        callsign: null,
+        publish_time: '',
+        eud_uid: null });
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [deleteProfile, setDeleteProfile] = useState<any>();
     const [profiles, setProfiles] = useState<TableData>({
         caption: '',
-        head: [t('Key'), t('Value'), t('Value Type'), t('Install on Enrollment'), t('Install on Connection'), t('Active'), t('Publish Time'), t('Delete')],
+        head: [t('Key'), t('Value'), t('Value Type'), t('Callsign'), t('Install on Enrollment'), t('Install on Connection'), t('Active'), t('Publish Time'), t('Delete')],
         body: [],
     });
 
@@ -58,11 +68,11 @@ export default function DeviceProfiles() {
             if (r.status === 200) {
                 const tableData: TableData = {
                     caption: '',
-                    head: [t('Key'), t('Value'), t('Value Type'), t('Install on Enrollment'), t('Install on Connection'), t('Active'), t('Publish Time'), t('Delete')],
+                    head: [t('Key'), t('Value'), t('Value Type'), t('Callsign'), t('Install on Enrollment'), t('Install on Connection'), t('Active'), t('Publish Time'), t('Delete')],
                     body: [],
                 };
 
-                r.data.results.map((row:any) => {
+                r.data.results.map((row: ProfileInterface) => {
                     if (tableData.body !== undefined) {
                         const delete_button = <Button
                           onClick={() => {
@@ -77,38 +87,23 @@ export default function DeviceProfiles() {
                         const enrollment = <Switch
                           checked={row.enrollment}
                           onChange={(e) => {
-                            setEditProfile({ key: row.preference_key,
-                                                    value: row.preference_value,
-                                                    value_class: row.value_class,
-                                                    enrollment: e.target.checked,
-                                                    connection: row.connection,
-                                                    active: row.active });
+                            setEditProfile({ ...row, enrollment: e.target.checked });
                           }}
                         />;
                         const connection = <Switch
                           checked={row.connection}
                           onChange={(e) => {
-                            setEditProfile({ key: row.preference_key,
-                                                    value: row.preference_value,
-                                                    value_class: row.value_class,
-                                                    enrollment: row.enrollment,
-                                                    connection: e.target.checked,
-                                                    active: row.active });
+                            setEditProfile({ ...row, connection: e.target.checked });
                             }}
                         />;
                         const active = <Switch
                           checked={row.active}
                           onChange={(e) => {
-                            setEditProfile({ key: row.preference_key,
-                                                    value: row.preference_value,
-                                                    value_class: row.value_class,
-                                                    enrollment: row.enrollment,
-                                                    connection: row.connection,
-                                                    active: e.target.checked });
+                            setEditProfile({ ...row, active: e.target.checked });
                             }}
                         />;
 
-                        tableData.body.push([row.preference_key, row.preference_value, row.value_class, enrollment, connection, active, formatISO(parseISO(row.publish_time)), delete_button]);
+                        tableData.body.push([row.preference_key, row.preference_value, row.value_class, row.callsign, enrollment, connection, active, formatISO(parseISO(row.publish_time)), delete_button]);
                     }
                 });
 
@@ -132,19 +127,24 @@ export default function DeviceProfiles() {
     }, [activePage]);
 
     useEffect(() => {
-        if (editProfile.key) {add_profile(null, editProfile);}
+        if (editProfile.preference_key) {add_profile(null, editProfile);}
     }, [editProfile]);
+
+    useEffect(() => {
+        get_euds();
+    }, [addProfile]);
 
     function add_profile(e:any, profile:ProfileInterface) {
         if (e !== null) {e.preventDefault();}
 
         const body = new FormData();
-        body.append('preference_key', profile.key);
-        body.append('preference_value', profile.value);
+        body.append('preference_key', profile.preference_key);
+        body.append('preference_value', profile.preference_value);
         body.append('value_class', profile.value_class);
         body.append('enrollment', String(profile.enrollment));
         body.append('connection', String(profile.connection));
         body.append('active', String(profile.active));
+        body.append('eud_uid', String(profile.eud_uid));
         axios.post(apiRoutes.deviceProfiles, body)
             .then(r => {
                 if (r.status === 200) {
@@ -180,6 +180,19 @@ export default function DeviceProfiles() {
         });
     }
 
+    function get_euds() {
+        axios.get(apiRoutes.eud, {params: {'all': true}})
+            .then(r => {
+                if (r.status === 200) {
+                    const all_callsigns: ComboboxItem[] = []
+                    r.data.map((row:any) => {
+                        all_callsigns.push({value: row.uid, label: row.callsign});
+                    });
+                    setCallsigns(all_callsigns);
+                }
+            })
+    }
+
     const value_class = <Select
       label="Value Type"
       value={newProfile.value_class}
@@ -199,9 +212,19 @@ export default function DeviceProfiles() {
             </Table.ScrollContainer>
             <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
             <Modal opened={addProfile} onClose={() => setAddProfile(false)} title={t("Add Device Profile")}>
-                <TextInput required label={t("Key")} onChange={e => { setNewProfile({ ...newProfile, key: e.currentTarget.value }); }} />
-                <TextInput required label={t("Value")} onChange={e => { setNewProfile({ ...newProfile, value: e.currentTarget.value }); }} />
+                <TextInput required label={t("Key")} onChange={e => { setNewProfile({ ...newProfile, preference_key: e.currentTarget.value }); }} />
+                <TextInput required label={t("Value")} onChange={e => { setNewProfile({ ...newProfile, preference_value: e.currentTarget.value }); }} />
                 {value_class}
+                <Select
+                    placeholder={t("Search")}
+                    searchable
+                    clearable
+                    nothingFoundMessage={t("Nothing found...")}
+                    label={t("Callsign")}
+                    onChange={(value, option) => {setNewProfile({...newProfile, eud_uid: value})}}
+                    data={callsigns}
+                    allowDeselect={true}
+                    mb="md" />
                 <Switch label={t("Install on Enrollment")} onChange={(e) => setNewProfile({ ...newProfile, enrollment: e.target.checked })} mb="md" />
                 <Switch label={t("Install on Connection")} onChange={(e) => setNewProfile({ ...newProfile, connection: e.target.checked })} mb="md" />
                 <Switch label="Active" onChange={(e) => setNewProfile({ ...newProfile, active: e.target.checked })} mb="md" />
