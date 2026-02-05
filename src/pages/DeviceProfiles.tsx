@@ -55,7 +55,7 @@ export default function DeviceProfiles() {
         publish_time: '',
         eud_uid: null });
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-    const [deleteProfile, setDeleteProfile] = useState<any>();
+    const [deleteProfile, setDeleteProfile] = useState<ProfileInterface>();
     const [profiles, setProfiles] = useState<TableData>({
         caption: '',
         head: [t('Key'), t('Value'), t('Value Type'), t('Callsign'), t('Install on Enrollment'), t('Install on Connection'), t('Active'), t('Publish Time'), t('Delete')],
@@ -77,7 +77,7 @@ export default function DeviceProfiles() {
                         const delete_button = <Button
                           onClick={() => {
                                 setDeleteModalOpen(true);
-                                setDeleteProfile(row.preference_key);
+                                setDeleteProfile(row);
                             }}
                           key={`${row.preference_key}_delete`}
                           color="red"
@@ -163,7 +163,7 @@ export default function DeviceProfiles() {
     }
 
     function delete_profile() {
-        axios.delete(apiRoutes.deviceProfiles, { params: { preference_key: deleteProfile } })
+        axios.delete(apiRoutes.deviceProfiles, { params: { preference_key: deleteProfile?.preference_key, eud_uid: deleteProfile?.eud_uid} })
             .then(r => {
                 if (r.status === 200) {
                     get_profiles();
@@ -230,7 +230,7 @@ export default function DeviceProfiles() {
                 <Switch label="Active" onChange={(e) => setNewProfile({ ...newProfile, active: e.target.checked })} mb="md" />
                 <Button onClick={(e) => { add_profile(e, newProfile); }}>Add Device Profile</Button>
             </Modal>
-            <Modal opened={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} title={`Are you sure you want to delete ${deleteProfile}?`}>
+            <Modal opened={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} title={`Are you sure you want to delete ${deleteProfile?.preference_key}?`}>
                 <Button onClick={() => delete_profile()} mr="md">Yes</Button>
                 <Button onClick={() => setDeleteModalOpen(false)}>No</Button>
             </Modal>
