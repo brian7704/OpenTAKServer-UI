@@ -162,7 +162,7 @@ export default function DataPackages() {
         ).then(r => {
             if (r.status === 200) {
                 setLoading(false);
-                setDataPackages(r.data.total);
+                setDataPackageCount(r.data.total);
                 let rows: DataPackage[] = [];
 
                 r.data.results.map((row: DataPackage) => {
