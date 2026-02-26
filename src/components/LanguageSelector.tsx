@@ -15,7 +15,7 @@ export default function LanguageSelector(): React.ReactElement {
     const [languages, setLanguages] = useState<Map<string, LanguageInfo>>();
     const [countries, setCountries] = useState<string[]>([]);
     const [labels, setLabels] = useState({});
-    const [selectedCountry, setSelectedCountry] = useState(localStorage.getItem("country") === undefined ? "US" : localStorage.getItem("country")!);
+    const [selectedCountry, setSelectedCountry] = useState(localStorage.getItem("country") === null ? "US" : localStorage.getItem("country")!);
     const { t, i18n } = useTranslation();
 
     useEffect(() => {
@@ -27,7 +27,7 @@ export default function LanguageSelector(): React.ReactElement {
     }, [selectedCountry]);
 
     function set_language(selectedCountry: string) {
-        if (languages === undefined || selectedCountry === undefined || languages.get(selectedCountry) === undefined) {
+        if (languages === undefined || languages.get(selectedCountry) === undefined) {
             return;
         }
 
