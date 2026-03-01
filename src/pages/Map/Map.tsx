@@ -38,9 +38,9 @@ export default function Map() {
     const markersLayer = new L.LayerGroup();
     const fovsLayer = new L.LayerGroup();
 
-    function formatDrawer(eud:any, point:any) {
-        const detail_rows:ReactElement[] = [];
-        const position_rows:ReactElement[] = [];
+    function formatDrawer(eud: any, point: any) {
+        const detail_rows: ReactElement[] = [];
+        const position_rows: ReactElement[] = [];
 
         if (eud !== null) {
             Object.keys(eud).map((key, index) => {
@@ -109,7 +109,7 @@ export default function Map() {
         return null;
     }
 
-    function handleFov(point:any) {
+    function handleFov(point: any) {
         if (!point) return;
 
         const uid = point.device_uid;
@@ -139,12 +139,12 @@ export default function Map() {
                 setFovs(fovs);
             } else {
                 fovs[uid].setLatLngs([[point.latitude, point.longitude],
-                    [p1.LAT, p1.LON], [p2.LAT, p2.LON]]);
+                [p1.LAT, p1.LON], [p2.LAT, p2.LON]]);
             }
         }
     }
 
-    function addEud(eud:any) {
+    function addEud(eud: any) {
         let className = classes.disconnected;
         if (eud.last_status === 'Connected') {
             className = classes.connected;
@@ -309,26 +309,26 @@ export default function Map() {
                 if (Object.hasOwn(value, 'iconset_path') &&
                     value.iconset_path !== null &&
                     value.iconset_path.includes('COT_MAPPING_SPOTMAP')) {
-                        if (Object.hasOwn(circles, uid)) {
-                            map.removeLayer(circles[uid]);
-                        }
-                        const circle = L.circle(
-                            [value.point.latitude, value.point.longitude],
-                            { radius: 5, color: `#${value.color_hex.slice(2)}` }
-                        );
-                        circle.bindTooltip(value.callsign, {
-                            opacity: 0.7,
-                            permanent: true,
-                            direction: 'bottom',
-                        });
-                        circle.on('click', (e) => {
-                            setDrawerTitle(value.callsign);
-                            formatDrawer(value, null);
-                            open();
-                        });
-                        circles[uid] = circle;
-                        setCircles(circles);
-                        circle.addTo(map);
+                    if (Object.hasOwn(circles, uid)) {
+                        map.removeLayer(circles[uid]);
+                    }
+                    const circle = L.circle(
+                        [value.point.latitude, value.point.longitude],
+                        { radius: 5, color: `#${value.color_hex.slice(2)}` }
+                    );
+                    circle.bindTooltip(value.callsign, {
+                        opacity: 0.7,
+                        permanent: true,
+                        direction: 'bottom',
+                    });
+                    circle.on('click', (e) => {
+                        setDrawerTitle(value.callsign);
+                        formatDrawer(value, null);
+                        open();
+                    });
+                    circles[uid] = circle;
+                    setCircles(circles);
+                    circle.addTo(map);
                 } else {
                     let marker = L.marker([value.point.latitude, value.point.longitude]);
                     if (Object.hasOwn(markers, uid)) {
@@ -372,8 +372,8 @@ export default function Map() {
                         }));
                     } else {
                         marker.setIcon(L.icon({
-                            iconUrl: '/map_icons/marker-icon.png',
-                            shadowUrl: '/map_icons/marker-shadow.png',
+                            iconUrl: 'map_icons/marker-icon.png',
+                            shadowUrl: 'map_icons/marker-shadow.png',
                             iconAnchor: [12, 24],
                             popupAnchor: [7, -20],
                             tooltipAnchor: [-4, -10],
@@ -457,13 +457,13 @@ export default function Map() {
     return (
         <>
             <Drawer
-              radius="md"
-              position="right"
-              opened={opened}
-              onClose={close}
-              title={drawerTitle}
-              overlayProps={{ backgroundOpacity: 0 }}
-              shadow="xl"
+                radius="md"
+                position="right"
+                opened={opened}
+                onClose={close}
+                title={drawerTitle}
+                overlayProps={{ backgroundOpacity: 0 }}
+                shadow="xl"
             >
                 <Divider label="Details" labelPosition="left" color={computedColorScheme === 'light' ? 'black' : 'gray.4'} />
                 <Table>
@@ -476,21 +476,21 @@ export default function Map() {
             </Drawer>
             <Paper shadow="xl" radius="md" p="md" withBorder>
                 <MapContainer
-                  center={[10, 0]}
-                  zoom={3}
-                  scrollWheelZoom
-                  style={{ height: 'calc(100vh - 10rem)', width: '100%', zIndex: 90 }}
+                    center={[10, 0]}
+                    zoom={3}
+                    scrollWheelZoom
+                    style={{ height: 'calc(100vh - 10rem)', width: '100%', zIndex: 90 }}
                 >
                     <MapContext />
                     <ScaleControl />
                     <LayersControl>
                         <LayersControl.BaseLayer name="OSM" checked>
                             <TileLayer
-                              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                              zIndex={0}
-                              minZoom={0}
-                              maxZoom={20}
+                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                zIndex={0}
+                                minZoom={0}
+                                maxZoom={20}
                             />
                         </LayersControl.BaseLayer>
                         <LayersControl.BaseLayer name="Google Streets">
@@ -512,19 +512,20 @@ export default function Map() {
                     <LayersControl position="topright">
                         <LayersControl.Overlay name="Google Street View Coverage">
                             <TileLayer
-                              url="https://www.google.com/maps/vt?pb=!1m7!8m6!1m3!1i{z}!2i{x}!3i{y}!2i9!3x1!2m8!1e2!2ssvv!4m2!1scc!2s*211m3*211e2*212b1*213e2*212b1*214b1!4m2!1ssvl!2s*211b0*212b1!3m8!2sen!3sus!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m4!1e0!8m2!1e1!1e1!6m6!1e12!2i2!11e0!39b0!44e0!50e0"
-                              pane="overlayPane"
+                                url="https://www.google.com/maps/vt?pb=!1m7!8m6!1m3!1i{z}!2i{x}!3i{y}!2i9!3x1!2m8!1e2!2ssvv!4m2!1scc!2s*211m3*211e2*212b1*213e2*212b1*214b1!4m2!1ssvl!2s*211b0*212b1!3m8!2sen!3sus!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m4!1e0!8m2!1e1!1e1!6m6!1e12!2i2!11e0!39b0!44e0!50e0"
+                                pane="overlayPane"
                             />
                         </LayersControl.Overlay>
                         <LayersControl.Overlay name="Weather">
                             <WMSTileLayer
-                              url="http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi"
-                              params={{
-                                layers: 'nexrad-n0r-900913',
-                                format: 'image/png',
-                                transparent: true }}
-                              attribution="Weather data © 2012 IEM Nexrad"
-                              pane="overlayPane"
+                                url="http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi"
+                                params={{
+                                    layers: 'nexrad-n0r-900913',
+                                    format: 'image/png',
+                                    transparent: true
+                                }}
+                                attribution="Weather data © 2012 IEM Nexrad"
+                                pane="overlayPane"
                             />
                         </LayersControl.Overlay>
                         <LayersControl.Overlay name="Google Roads Overlay">
