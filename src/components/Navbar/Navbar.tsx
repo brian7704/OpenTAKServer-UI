@@ -26,7 +26,10 @@ import {
     IconPlugConnected,
     IconPlug,
     IconCircleMinus,
-    IconUsersGroup, IconLink, IconUser
+    IconUsersGroup,
+    IconLink,
+    IconUser,
+    IconTopologyStar3
 } from '@tabler/icons-react';
 import {
     NavLink,
@@ -73,7 +76,8 @@ const adminLinks = [
     { link: '/plugin_updates', label: t('Plugin Updates'), icon: IconPuzzle },
     { link: '/device_profiles', label: t('Device Profiles'), icon: IconDeviceMobile },
     { link: '/server_plugin_manager', label: t('Server Plugin Manager'), icon: IconPlugConnected },
-    { link: '/link_account', 'label': t('Link TAK.gov Account'), icon: IconLink}
+    { link: '/link_account', 'label': t('Link TAK.gov Account'), icon: IconLink },
+    { link: '/federation', 'label': t('Federation'), icon: IconTopologyStar3 }
 ];
 
 interface ATAKQrCode {
