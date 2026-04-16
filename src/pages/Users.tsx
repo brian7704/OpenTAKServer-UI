@@ -320,6 +320,8 @@ export default function Users() {
                 shadow="sm"
                 striped
                 highlightOnHover
+                horizontalSpacing="xs"
+                scrollAreaProps={{ type: 'auto', offsetScrollbars: true }}
                 records={users}
                 columns={[
                     {
