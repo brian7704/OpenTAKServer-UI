@@ -7,7 +7,7 @@ import 'react-leaflet-fullscreen/styles.css';
 import 'leaflet.marker.slideto';
 import 'leaflet-rotatedmarker';
 import { Divider, Drawer, Image, Paper, Table, Text, useComputedColorScheme } from '@mantine/core';
-import axios from 'axios';
+import axios from '../axios_config';
 import { notifications } from '@mantine/notifications';
 import { IconX } from '@tabler/icons-react';
 import * as milsymbol from 'milsymbol';
@@ -32,6 +32,38 @@ export default function Map() {
     const [detailRows, setDetailRows] = useState<ReactElement[]>([]);
     const [positionRows, setPositionRows] = useState<ReactElement[]>([]);
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
+
+    const [mapCenter, setMapCenter] = useState<[number, number]>([10, 0]);
+    const [mapZoom, setMapZoom] = useState<number>(3);
+    const [defaultLayer, setDefaultLayer] = useState<string>('OSM');
+    const [mapReady, setMapReady] = useState(false);
+
+    useEffect(() => {
+        const savedLat = localStorage.getItem('ots_map_lat');
+        const savedLon = localStorage.getItem('ots_map_lon');
+        const savedZoom = localStorage.getItem('ots_map_zoom');
+        const savedLayer = localStorage.getItem('ots_map_layer');
+
+        if (savedLat && savedLon && savedZoom) {
+            setMapCenter([parseFloat(savedLat), parseFloat(savedLon)]);
+            setMapZoom(parseInt(savedZoom));
+            if (savedLayer) setDefaultLayer(savedLayer);
+            setMapReady(true);
+        } else {
+            axios.get(apiRoutes.adminSettings)
+                .then(r => {
+                    if (r.status === 200) {
+                        setMapCenter([r.data.OTS_MAP_DEFAULT_LAT, r.data.OTS_MAP_DEFAULT_LON]);
+                        setMapZoom(r.data.OTS_MAP_DEFAULT_ZOOM);
+                        setDefaultLayer(r.data.OTS_MAP_DEFAULT_LAYER);
+                    }
+                    setMapReady(true);
+                })
+                .catch(() => {
+                    setMapReady(true);
+                });
+        }
+    }, []);
 
     const eudsLayer = new L.LayerGroup();
     const rbLinesLayer = new L.LayerGroup();
@@ -435,6 +467,17 @@ export default function Map() {
             socket.on('eud', onEud);
             socket.on('casevac', onCaseEvac);
 
+            map.on('moveend', () => {
+                const center = map.getCenter();
+                localStorage.setItem('ots_map_lat', String(center.lat));
+                localStorage.setItem('ots_map_lon', String(center.lng));
+                localStorage.setItem('ots_map_zoom', String(map.getZoom()));
+            });
+
+            map.on('baselayerchange', (e: any) => {
+                localStorage.setItem('ots_map_layer', e.name);
+            });
+
             return () => {
                 socket.off('point', onPointEvent);
                 socket.off('rb_line', onRBLine);
@@ -475,16 +518,16 @@ export default function Map() {
                 </Table>
             </Drawer>
             <Paper shadow="xl" radius="md" p="md" withBorder>
-                <MapContainer
-                  center={[10, 0]}
-                  zoom={3}
+                {mapReady && <MapContainer
+                  center={mapCenter}
+                  zoom={mapZoom}
                   scrollWheelZoom
                   style={{ height: 'calc(100vh - 10rem)', width: '100%', zIndex: 90 }}
                 >
                     <MapContext />
                     <ScaleControl />
                     <LayersControl>
-                        <LayersControl.BaseLayer name="OSM" checked>
+                        <LayersControl.BaseLayer name="OSM" checked={defaultLayer === 'OSM'}>
                             <TileLayer
                               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -493,19 +536,19 @@ export default function Map() {
                               maxZoom={20}
                             />
                         </LayersControl.BaseLayer>
-                        <LayersControl.BaseLayer name="Google Streets">
+                        <LayersControl.BaseLayer name="Google Streets" checked={defaultLayer === 'Google Streets'}>
                             <TileLayer url="http://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}" zIndex={0} minZoom={0} maxZoom={20} />
                         </LayersControl.BaseLayer>
-                        <LayersControl.BaseLayer name="Google Hybrid">
+                        <LayersControl.BaseLayer name="Google Hybrid" checked={defaultLayer === 'Google Hybrid'}>
                             <TileLayer url="http://mt0.google.com/vt/lyrs=y&hl=en&x={x}&y={y}&z={z}&s=Ga" zIndex={0} minZoom={0} maxZoom={20} />
                         </LayersControl.BaseLayer>
-                        <LayersControl.BaseLayer name="Google Terrain">
+                        <LayersControl.BaseLayer name="Google Terrain" checked={defaultLayer === 'Google Terrain'}>
                             <TileLayer url="http://mt1.google.com/vt/lyrs=p&amp;x={x}&amp;y={y}&amp;z={z}" zIndex={0} minZoom={0} maxZoom={20} />
                         </LayersControl.BaseLayer>
-                        <LayersControl.BaseLayer name="ESRI World Imagery (Clarity) Beta">
+                        <LayersControl.BaseLayer name="ESRI World Imagery (Clarity) Beta" checked={defaultLayer === 'ESRI World Imagery (Clarity) Beta'}>
                             <TileLayer url="http://clarity.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" minZoom={0} maxZoom={20} />
                         </LayersControl.BaseLayer>
-                        <LayersControl.BaseLayer name="ESRI World Topo">
+                        <LayersControl.BaseLayer name="ESRI World Topo" checked={defaultLayer === 'ESRI World Topo'}>
                             <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}" minZoom={0} maxZoom={20} />
                         </LayersControl.BaseLayer>
                     </LayersControl>
@@ -534,7 +577,7 @@ export default function Map() {
                             <TileLayer url="http://mt1.google.com/vt/lyrs=t&amp;x={x}&amp;y={y}&amp;z={z}" pane="overlayPane" />
                         </LayersControl.Overlay>
                     </LayersControl>
-                </MapContainer>
+                </MapContainer>}
             </Paper>
         </>
     );
