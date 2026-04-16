@@ -33,13 +33,14 @@ const TILE_URLS: Record<string, string> = {
     'ESRI World Topo': 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
 };
 
-function MapEvents({ onClickMap, onZoomEnd }: { onClickMap: (lat: number, lon: number) => void, onZoomEnd: (zoom: number) => void }) {
+function MapEvents({ onClickMap, onZoomEnd }: { onClickMap: (lat: number, lon: number) => void, onZoomEnd: (zoom: number, lat: number, lon: number) => void }) {
     useMapEvents({
         click(e) {
             onClickMap(e.latlng.lat, e.latlng.lng);
         },
         zoomend(e) {
-            onZoomEnd(e.target.getZoom());
+            const center = e.target.getCenter();
+            onZoomEnd(e.target.getZoom(), center.lat, center.lng);
         },
     });
     return null;
@@ -48,13 +49,26 @@ function MapEvents({ onClickMap, onZoomEnd }: { onClickMap: (lat: number, lon: n
 function MapSync({ lat, lon, zoom }: { lat: number, lon: number, zoom: number }) {
     const map = useMap();
     const isFirstRender = useRef(true);
+    const prevLat = useRef(lat);
+    const prevLon = useRef(lon);
+    const prevZoom = useRef(zoom);
 
     useEffect(() => {
         if (isFirstRender.current) {
             isFirstRender.current = false;
             return;
         }
-        map.setView([lat, lon], zoom);
+        const latLonChanged = prevLat.current !== lat || prevLon.current !== lon;
+        const zoomChanged = prevZoom.current !== zoom;
+        prevLat.current = lat;
+        prevLon.current = lon;
+        prevZoom.current = zoom;
+
+        if (latLonChanged) {
+            map.setView([lat, lon], zoom);
+        } else if (zoomChanged) {
+            map.setZoom(zoom);
+        }
     }, [lat, lon, zoom]);
 
     return null;
@@ -190,8 +204,10 @@ export default function Settings() {
                                     setLat(parseFloat(newLat.toFixed(6)));
                                     setLon(parseFloat(newLon.toFixed(6)));
                                 }}
-                                onZoomEnd={(newZoom) => {
+                                onZoomEnd={(newZoom, newLat, newLon) => {
                                     setZoom(newZoom);
+                                    setLat(parseFloat(newLat.toFixed(6)));
+                                    setLon(parseFloat(newLon.toFixed(6)));
                                 }}
                             />
                             <MapSync lat={lat} lon={lon} zoom={zoom} />
