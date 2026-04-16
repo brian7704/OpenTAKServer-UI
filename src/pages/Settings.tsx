@@ -191,7 +191,7 @@ export default function Settings() {
                             center={[lat, lon]}
                             zoom={zoom}
                             scrollWheelZoom
-                            style={{ height: '500px', width: '100%' }}
+                            style={{ height: '500px', width: '100%', zIndex: 1 }}
                         >
                             <TileLayer
                                 url={TILE_URLS[layer] || TILE_URLS['OSM']}
