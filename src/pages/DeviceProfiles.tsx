@@ -144,7 +144,9 @@ export default function DeviceProfiles() {
         body.append('enrollment', String(profile.enrollment));
         body.append('connection', String(profile.connection));
         body.append('active', String(profile.active));
-        body.append('eud_uid', String(profile.eud_uid));
+        if (profile.eud_uid) {
+            body.append('eud_uid', profile.eud_uid);
+        }
         axios.post(apiRoutes.deviceProfiles, body)
             .then(r => {
                 if (r.status === 200) {
