@@ -103,7 +103,7 @@ export default function DeviceProfiles() {
                             }}
                         />;
 
-                        tableData.body.push([row.preference_key, row.preference_value, row.value_class, row.callsign, enrollment, connection, active, formatISO(parseISO(row.publish_time)), delete_button]);
+                        tableData.body.push([row.preference_key, row.preference_value, row.value_class.replace('class java.lang.', ''), row.callsign, enrollment, connection, active, formatISO(parseISO(row.publish_time)), delete_button]);
                     }
                 });
 
