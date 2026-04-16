@@ -7,7 +7,7 @@ import 'react-leaflet-fullscreen/styles.css';
 import 'leaflet.marker.slideto';
 import 'leaflet-rotatedmarker';
 import { Divider, Drawer, Image, Paper, Table, Text, useComputedColorScheme } from '@mantine/core';
-import axios from '../axios_config';
+import axios from 'axios';
 import { notifications } from '@mantine/notifications';
 import { IconX } from '@tabler/icons-react';
 import * as milsymbol from 'milsymbol';
