@@ -103,7 +103,7 @@ export default function DeviceProfiles() {
                             }}
                         />;
 
-                        tableData.body.push([row.preference_key, row.preference_value, row.value_class, row.callsign, enrollment, connection, active, formatISO(parseISO(row.publish_time)), delete_button]);
+                        tableData.body.push([row.preference_key, row.preference_value, row.value_class.replace('class java.lang.', ''), row.callsign, enrollment, connection, active, formatISO(parseISO(row.publish_time)), delete_button]);
                     }
                 });
 
@@ -144,7 +144,9 @@ export default function DeviceProfiles() {
         body.append('enrollment', String(profile.enrollment));
         body.append('connection', String(profile.connection));
         body.append('active', String(profile.active));
-        body.append('eud_uid', String(profile.eud_uid));
+        if (profile.eud_uid) {
+            body.append('eud_uid', profile.eud_uid);
+        }
         axios.post(apiRoutes.deviceProfiles, body)
             .then(r => {
                 if (r.status === 200) {
