@@ -2,14 +2,13 @@ import {
     Button,
     Center, Grid,
     Modal, MultiSelect,
-    Pagination, Paper,
+    Paper,
     PasswordInput,
     Select,
     Switch,
-    Table,
     TableData,
     ComboboxItem,
-    TextInput, useComputedColorScheme, Title, Tooltip, LoadingOverlay,
+    TextInput, Title, Tooltip,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import {
@@ -26,15 +25,29 @@ import axios from '../axios_config';
 import { apiRoutes } from '../apiRoutes';
 import {t} from "i18next";
 import {Link} from "react-router";
+import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
+
+export interface User {
+    username: string;
+    roles: { name: string }[];
+    active: boolean;
+    last_login_at: string | null;
+    last_login_ip: string | null;
+    current_login_at: string | null;
+    current_login_ip: string | null;
+    login_count: number;
+}
 
 export default function Users() {
-    const [users, setUsers] = useState<TableData>({
-        caption: '',
-        head: [t('Username'), t('Role'), t('Active'), t('Last Login'), t('Last Login IP'), t('Current Login'), t('Current Login IP'), t('Login Count')],
-        body: [],
-    });
+    const [users, setUsers] = useState<User[]>([]);
+    const [userCount, setUserCount] = useState<number>(0);
     const [activePage, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [sortStatus, setSortStatus] = useState<DataTableSortStatus<User>>({
+        columnAccessor: 'username',
+        direction: 'asc',
+    });
     const [addUserOpen, setAddUserOpen] = useState(false);
     const [showResetPassword, setShowResetPassword] = useState(false);
     const [showDeleteUser, setShowDeleteUser] = useState(false);
@@ -51,93 +64,38 @@ export default function Users() {
         head: [t('Group Name'), t('Direction'), t('Active')],
         body: [],
     });
-    const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
 
     function getUsers() {
         setLoading(true);
-        axios.get(apiRoutes.users, { params: { page: activePage,} }).then(r => {
+        axios.get(apiRoutes.users, {
+            params: {
+                page: activePage,
+                per_page: pageSize,
+                sort_by: sortStatus.columnAccessor,
+                sort_direction: sortStatus.direction,
+            }
+        }).then(r => {
             setLoading(false);
             if (r.status === 200) {
-                const tableData: TableData = {
-                    caption: '',
-                    head: [t('Username'), t('Role'), t('Active'), t('Last Login'), t('Last Login IP'), t('Current Login'), t('Current Login IP'), t('Login Count')],
-                    body: [],
-                };
-
-                r.data.results.map((row:any) => {
-                    if (tableData.body !== undefined) {
-                        const reset_password_button = <Button
-                          onClick={() => {
-                            setShowResetPassword(true);
-                            setUsername(row.username);
-                        }}
-                          rightSection={<IconPassword />}
-                        >Reset Password</Button>;
-
-                        const user_profile_link = <Link to={`/profile/${row.username}`}>{row.username}</Link>
-
-                        const manage_groups_button = <Button
-                            rightSection={<IconUserCog />}
-                            onClick={() => {
-                                setShowManageGroups(true);
-                                getAllGroups();
-                                getMemberships(row.username);
-                                setUsername(row.username);
-                            }}
-                        >Manage Groups</Button>;
-
-                        const delete_user_button = <Button
-                            color='red'
-                          disabled={row.username === localStorage.getItem('username')}
-                            rightSection={<IconUserMinus />}
-                          onClick={() => {
-                            setUsername(row.username);
-                            setShowDeleteUser(true);
-                        }}
-                        >Delete User</Button>;
-
-                        const active_switch = <Switch
-                          disabled={row.username === localStorage.getItem('username')}
-                          checked={row.active}
-                          onChange={(e) => {
-                            if (e.target.checked) { activateUser(row.username); } else { deactivateUser(row.username); }
-                        }}
-                        />;
-
-                        const role_select = <Select
-                          value={row.roles[0].name}
-                          onChange={(_value, option) => {
-                            changeRole(row.username, option.value);
-                        }}
-                          data={[{ value: 'administrator', label: 'Administrator' }, { value: 'user', label: 'User' }]}
-                          placeholder="Role"
-                        />;
-
-                        tableData.body.push([user_profile_link, (row.username === localStorage.getItem('username') ? row.roles[0].name : role_select),
-                            active_switch, row.last_login_at, row.last_login_ip, row.current_login_at, row.current_login_ip, row.login_count,
-                            reset_password_button, manage_groups_button, delete_user_button]);
-                    }
-                    });
-
-                    setPage(r.data.current_page);
-                    setTotalPages(r.data.total_pages);
-                    setUsers(tableData);
-                }
-            }).catch((err) => {
-                setLoading(false)
-                console.log(err);
-                notifications.show({
-                    title: t('Failed to get users'),
-                    message: err.response.data.error,
-                    icon: <IconX />,
-                    color: 'red',
-                });
+                setUsers(r.data.results);
+                setPage(r.data.current_page);
+                setTotalPages(r.data.total_pages);
+                setUserCount(r.data.total);
+            }
+        }).catch((err) => {
+            setLoading(false);
+            console.log(err);
+            notifications.show({
+                title: t('Failed to get users'),
+                message: err.response.data.error,
+                icon: <IconX />,
+                color: 'red',
             });
-        }
+        });
+    }
 
-    useEffect(() => {
-        getUsers();
-    }, [activePage]);
+    useEffect(() => { setPage(1); getUsers(); }, [pageSize]);
+    useEffect(() => { getUsers(); }, [activePage, sortStatus]);
 
     function getAllGroups() {
         axios.get(apiRoutes.allGroups).then(r => {
@@ -355,13 +313,128 @@ export default function Users() {
 
     return (
         <>
-            <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
-
             <Button onClick={() => { setAddUserOpen(true); }} mb="md" leftSection={<IconUserPlus size={14} />}>Add User</Button>
-            <Table.ScrollContainer minWidth="100%">
-                <Table data={users} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mb="md" />
-            </Table.ScrollContainer>
-            <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
+            <DataTable
+                withTableBorder
+                borderRadius="md"
+                shadow="sm"
+                striped
+                highlightOnHover
+                horizontalSpacing="xs"
+                scrollAreaProps={{ type: 'auto', offsetScrollbars: true }}
+                records={users}
+                columns={[
+                    {
+                        accessor: 'username',
+                        title: t('Username'),
+                        sortable: true,
+                        render: (row) => <Link to={`/profile/${row.username}`}>{row.username}</Link>,
+                    },
+                    {
+                        accessor: 'role',
+                        title: t('Role'),
+                        render: (row) => row.username === localStorage.getItem('username')
+                            ? row.roles[0]?.name
+                            : (
+                                <Select
+                                    value={row.roles[0]?.name}
+                                    onChange={(_value, option) => { changeRole(row.username, option.value); }}
+                                    data={[{ value: 'administrator', label: 'Administrator' }, { value: 'user', label: 'User' }]}
+                                    placeholder="Role"
+                                />
+                            ),
+                    },
+                    {
+                        accessor: 'active',
+                        title: t('Active'),
+                        render: (row) => (
+                            <Switch
+                                disabled={row.username === localStorage.getItem('username')}
+                                checked={row.active}
+                                onChange={(e) => {
+                                    if (e.target.checked) { activateUser(row.username); } else { deactivateUser(row.username); }
+                                }}
+                            />
+                        ),
+                    },
+                    {
+                        accessor: 'last_login_at',
+                        title: t('Last Login'),
+                        sortable: true,
+                    },
+                    {
+                        accessor: 'last_login_ip',
+                        title: t('Last Login IP'),
+                    },
+                    {
+                        accessor: 'current_login_at',
+                        title: t('Current Login'),
+                        sortable: true,
+                    },
+                    {
+                        accessor: 'current_login_ip',
+                        title: t('Current Login IP'),
+                    },
+                    {
+                        accessor: 'login_count',
+                        title: t('Login Count'),
+                        sortable: true,
+                    },
+                    {
+                        accessor: 'reset_password',
+                        title: '',
+                        render: (row) => (
+                            <Button
+                                onClick={() => {
+                                    setShowResetPassword(true);
+                                    setUsername(row.username);
+                                }}
+                                rightSection={<IconPassword />}
+                            >Reset Password</Button>
+                        ),
+                    },
+                    {
+                        accessor: 'manage_groups',
+                        title: '',
+                        render: (row) => (
+                            <Button
+                                rightSection={<IconUserCog />}
+                                onClick={() => {
+                                    setShowManageGroups(true);
+                                    getAllGroups();
+                                    getMemberships(row.username);
+                                    setUsername(row.username);
+                                }}
+                            >Manage Groups</Button>
+                        ),
+                    },
+                    {
+                        accessor: 'delete_user',
+                        title: '',
+                        render: (row) => (
+                            <Button
+                                color='red'
+                                disabled={row.username === localStorage.getItem('username')}
+                                rightSection={<IconUserMinus />}
+                                onClick={() => {
+                                    setUsername(row.username);
+                                    setShowDeleteUser(true);
+                                }}
+                            >Delete User</Button>
+                        ),
+                    },
+                ]}
+                page={activePage}
+                onPageChange={(p) => setPage(p)}
+                onRecordsPerPageChange={setPageSize}
+                totalRecords={userCount}
+                recordsPerPage={pageSize}
+                recordsPerPageOptions={[10, 15, 20, 25, 30, 35, 40, 45, 50]}
+                sortStatus={sortStatus}
+                onSortStatusChange={setSortStatus}
+                fetching={loading}
+                minHeight={180}
+            />
             <Modal size="lg" opened={showManageGroups} onClose={() => setShowManageGroups(false)} title={`Manage Groups for ${username}`}>
                 <Paper withBorder p="md" mb="md">
                     <Grid align="flex-end" justify="space-between">
@@ -400,9 +473,26 @@ export default function Users() {
                     </Grid>
                 </Paper>
                 <Title order={4} mb="md">{t("Memberships")}</Title>
-                <Table.ScrollContainer minWidth="100%">
-                    <Table data={memberships} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mt="md" mb="md" />
-                </Table.ScrollContainer>
+                <DataTable
+                    withTableBorder
+                    borderRadius="md"
+                    striped
+                    highlightOnHover
+                    records={memberships.body?.map((row: any[], idx: number) => ({
+                        id: idx,
+                        group_name: row[0],
+                        direction: row[1],
+                        active: row[2],
+                        actions: row[3],
+                    }))}
+                    columns={[
+                        { accessor: 'group_name', title: t('Group Name') },
+                        { accessor: 'direction', title: t('Direction') },
+                        { accessor: 'active', title: t('Active') },
+                        { accessor: 'actions', title: '' },
+                    ]}
+                    minHeight={120}
+                />
             </Modal>
             <Modal opened={addUserOpen} onClose={() => setAddUserOpen(false)} title={t("Add User")}>
                 <TextInput required label="Username" placeholder="Username" onChange={e => { setUsername(e.target.value); }} />
