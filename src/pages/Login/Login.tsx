@@ -52,10 +52,16 @@ export default function Login(props: PaperProps) {
                 setLdapEnabled(r.data.response.identity_attributes.includes('ldap'));
                 localStorage.setItem('emailEnabled', r.data.response.identity_attributes.includes('email'));
                 axios.interceptors.request.use((config) => {
+                    console.log("FUCKIING METHOD IS " + config.method);
                     if (['post', 'delete', 'patch', 'put'].includes(config.method!)) {
                         if (r.data.response.csrf_token !== '') {
+                            console.log("WTF");
+                            localStorage.setItem('csrfToken', r.data.response.csrf_token);
                             config.headers['X-XSRF-Token'] = r.data.response.csrf_token;
-                            axios.defaults.headers.common = { 'X-XSRF-Token': r.data.response.csrf_token };
+                            //config.headers['X-CSRFToken'] = r.data.response.csrf_token;
+                            axios.defaults.headers.common = { 'X-XSRF-Token': r.data.response.csrf_token }; //flask-security
+                            //axios.defaults.headers.common = { 'X-CSRFToken': r.data.response.csrf_token }; //flask-wtf
+                            console.log(axios);
                         }
                     }
                     return config;

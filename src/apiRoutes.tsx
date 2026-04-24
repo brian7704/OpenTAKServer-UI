@@ -66,4 +66,7 @@ export const apiRoutes = {
   takgovIcon: '/api/takgov/icon',
   takgovPlugin: '/api/takgov/plugin',
   language: '/api/language',
+  settingsForm: '/api/settings/form',
+  settings: '/api/settings',
+  downloadConfig: '/api/settings/download',
 };
