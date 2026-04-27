@@ -58,6 +58,8 @@ export default function Missions() {
     const [addEditTitle, setAddEditTitle] = useState(t("Add Mission"));
     const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
+    const [isDirty, setIsDirty] = useState(false);
+    const [showUnsavedWarning, setShowUnsavedWarning] = useState(false);
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus<MissionProperties>>({
         columnAccessor: 'name',
         direction: 'asc',
@@ -156,6 +158,7 @@ export default function Missions() {
                                 });
                                 setShowAddMission(true);
                                 setAddEditTitle(t("Edit Mission"));
+                                setIsDirty(false);
                                 let selected_groups: string[] = [];
                                 row.groups.map((group: any) => {
                                     selected_groups.push("" + group.id);
@@ -397,9 +400,15 @@ export default function Missions() {
                     <Button onClick={() => setDeleteMissionOpen(false)}>No</Button>
                 </Center>
             </Modal>
-            <Modal opened={showAddMission} onClose={() => {setShowAddMission(false);}} title={addEditTitle}>
-                <TextInput defaultValue={missionProperties.name} required placeholder={t("Mission")} label={t("Name")} onChange={e => { missionProperties.name = e.target.value; }} mb="md" />
-                <TextInput defaultValue={missionProperties.description} placeholder={t("Description")} label={t("Description")} onChange={e => { missionProperties.description = e.target.value; }} mb="md" />
+            <Modal opened={showUnsavedWarning} onClose={() => setShowUnsavedWarning(false)} title={t("Discard unsaved changes?")}>
+                <Center>
+                    <Button mr="md" color="red" onClick={() => { setShowUnsavedWarning(false); setIsDirty(false); setShowAddMission(false); }}>{t("Discard")}</Button>
+                    <Button onClick={() => setShowUnsavedWarning(false)}>{t("Keep editing")}</Button>
+                </Center>
+            </Modal>
+            <Modal opened={showAddMission} onClose={() => { if (isDirty) { setShowUnsavedWarning(true); } else { setShowAddMission(false); } }} title={addEditTitle}>
+                <TextInput defaultValue={missionProperties.name} required placeholder={t("Mission")} label={t("Name")} onChange={e => { missionProperties.name = e.target.value; setIsDirty(true); }} mb="md" />
+                <TextInput defaultValue={missionProperties.description} placeholder={t("Description")} label={t("Description")} onChange={e => { missionProperties.description = e.target.value; setIsDirty(true); }} mb="md" />
                 <MultiSelect
                     pb="md"
                     placeholder={t("Search")}
@@ -408,12 +417,12 @@ export default function Missions() {
                     nothingFoundMessage={t("Nothing found...")}
                     label={t("Groups")}
                     defaultValue={selectedGroups}
-                    onChange={(value) => {setGroups(value)}}
+                    onChange={(value) => { setGroups(value); setIsDirty(true); }}
                     data={allGroups} />
                 <Select
                     required
                     label={t("Default Role")}
-                    onChange={e => { missionProperties.default_role = String(e); }}
+                    onChange={e => { missionProperties.default_role = String(e); setIsDirty(true); }}
                     data={[{value: 'MISSION_SUBSCRIBER', label: t('Subscriber')}, {value: 'MISSION_OWNER', label: t('Owner')}, {value: 'MISSION_READ_ONLY', label: t('Read Only')}]}
                     mb="md"
                     defaultValue={missionProperties.default_role || "MISSION_SUBSCRIBER"}
@@ -426,16 +435,18 @@ export default function Missions() {
                     nothingFoundMessage={t("Nothing found...")}
                     label={t("Creator")}
                     description={t("The callsign of the EUD that owns this mission")}
-                    onChange={(value, option) => {missionProperties.creator_uid = option.value;}}
+                    onChange={(value, option) => { missionProperties.creator_uid = option.value; setIsDirty(true); }}
                     data={callsigns}
                     defaultValue={missionProperties.creator_uid}
                     allowDeselect={false}
                     mb="md" />
-                <PasswordInput defaultValue={missionProperties.password} label={t("Password")} onChange={e => { missionProperties.password = e.target.value; }} mb="md" />
-                <Button onClick={() => {add_mission()}}>{addEditTitle}</Button>
+                <PasswordInput defaultValue={missionProperties.password} label={t("Password")} onChange={e => { missionProperties.password = e.target.value; setIsDirty(true); }} mb="md" />
+                <Button onClick={() => { setIsDirty(false); add_mission(); }}>{addEditTitle}</Button>
             </Modal>
             <Button leftSection={<IconPlus size={14} />} mb="md" onClick={() => {
                 setShowAddMission(true);
+                setAddEditTitle(t("Add Mission"));
+                setIsDirty(false);
                 setMissionProperties({
                     name: "",
                     description: "",
