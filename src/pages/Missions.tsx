@@ -56,6 +56,7 @@ export default function Missions() {
     const [allGroups, setAllGroups] = useState<ComboboxItem[]>([]);
     const [groups, setGroups] = useState<string[]>([]);
     const [addEditTitle, setAddEditTitle] = useState(t("Add Mission"));
+    const [edit, setEdit] = useState(false);
     const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus<MissionProperties>>({
@@ -154,6 +155,7 @@ export default function Missions() {
                                     qr_button: <Button></Button>,
                                     delete_button: <Button></Button>
                                 });
+                                setEdit(true);
                                 setShowAddMission(true);
                                 setAddEditTitle(t("Edit Mission"));
                                 let selected_groups: string[] = [];
@@ -398,7 +400,7 @@ export default function Missions() {
                 </Center>
             </Modal>
             <Modal opened={showAddMission} onClose={() => {setShowAddMission(false);}} title={addEditTitle}>
-                <TextInput defaultValue={missionProperties.name} required placeholder={t("Mission")} label={t("Name")} onChange={e => { missionProperties.name = e.target.value; }} mb="md" />
+                <TextInput disabled={edit} defaultValue={missionProperties.name} required placeholder={t("Mission")} label={t("Name")} onChange={e => { missionProperties.name = e.target.value; }} mb="md" />
                 <TextInput defaultValue={missionProperties.description} placeholder={t("Description")} label={t("Description")} onChange={e => { missionProperties.description = e.target.value; }} mb="md" />
                 <MultiSelect
                     pb="md"
@@ -436,6 +438,7 @@ export default function Missions() {
             </Modal>
             <Button leftSection={<IconPlus size={14} />} mb="md" onClick={() => {
                 setShowAddMission(true);
+                setEdit(false);
                 setMissionProperties({
                     name: "",
                     description: "",

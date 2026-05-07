@@ -111,7 +111,7 @@
     "prettier": "^3.3.3",
     "prop-types": "^15.8.1",
     "react-leaflet": "^5.0.0",
-    "react-leaflet-fullscreen": "github:eYdr1en/react-leaflet-fullscreen",
+    "react-leaflet-fullscreen": "https://github.com/eYdr1en/react-leaflet-fullscreen",
     "storybook": "^10.1.4",
     "storybook-dark-mode": "^4.0.2",
     "stylelint": "^16.9.0",
