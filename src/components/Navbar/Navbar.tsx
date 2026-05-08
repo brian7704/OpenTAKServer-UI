@@ -73,7 +73,8 @@ const adminLinks = [
     { link: '/plugin_updates', label: t('Plugin Updates'), icon: IconPuzzle },
     { link: '/device_profiles', label: t('Device Profiles'), icon: IconDeviceMobile },
     { link: '/server_plugin_manager', label: t('Server Plugin Manager'), icon: IconPlugConnected },
-    { link: '/link_account', 'label': t('Link TAK.gov Account'), icon: IconLink}
+    { link: '/link_account', 'label': t('Link TAK.gov Account'), icon: IconLink},
+    { link: '/settings', label: t('Settings'), icon: IconSettings },
 ];
 
 interface ATAKQrCode {
