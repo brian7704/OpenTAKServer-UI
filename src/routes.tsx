@@ -1,29 +1,29 @@
 import React from 'react';
 
-const Login = React.lazy(() => import('./pages/Login/Login'));
-const Error404 = React.lazy(() => import('./pages/Errors/Error404'));
-const Dashboard = React.lazy(() => import('./pages/Dashboard/Dashboard'));
-const Map = React.lazy(() => import('./pages/Map/Map'));
-const EUDs = React.lazy(() => import('./pages/EUDs'));
-const Casevac = React.lazy(() => import('./pages/Casevac'));
-const DataPackages = React.lazy(() => import('./pages/DataPackages'));
-const VideoStreams = React.lazy(() => import('./pages/VideoStreams'));
-const Users = React.lazy(() => import('./pages/Users'));
-const TFASetup = React.lazy(() => import('./pages/TFASetup'));
-const Alerts = React.lazy(() => import('./pages/Alerts'));
-const PasswordReset = React.lazy(() => import('./pages/PasswordReset'));
-const ScheduledJobs = React.lazy(() => import('./pages/ScheduledJobs'));
-const VideoRecordings = React.lazy(() => import('./pages/VideoRecordings'));
-const Meshtastic = React.lazy(() => import('./pages/Meshtastic'));
-const PluginUpdates = React.lazy(() => import('./pages/PluginUpdates'));
-const DeviceProfiles = React.lazy(() => import('./pages/DeviceProfiles'));
-const Missions = React.lazy(() => import('./pages/Missions'))
-const Groups = React.lazy(() => import('./pages/Groups'))
-const EUDStats = React.lazy(() => import('./pages/EUDStats'));
-const Plugin = React.lazy(() => import('./pages/Plugin'));
-const ServerPluginManager = React.lazy(() => import('./pages/ServerPluginManager.tsx'));
-const LinkTAKGovAccount = React.lazy(() => import('./pages/LinkTakGov.tsx'));
-const UserProfile = React.lazy(() => import('./pages/UserProfile.tsx'));
+const Login = React.lazy(() => import('./pages/Login/Login.tsx').then());
+const Error404 = React.lazy(() => import('./pages/Errors/Error404.tsx').then());
+const Dashboard = React.lazy(() => import('./pages/Dashboard/Dashboard.tsx').then());
+const Map = React.lazy(() => import('./pages/Map/Map.tsx').then());
+const EUDs = React.lazy(() => import('./pages/EUDs.tsx').then());
+const Casevac = React.lazy(() => import('./pages/Casevac.tsx').then());
+const DataPackages = React.lazy(() => import('./pages/DataPackages.tsx').then());
+const VideoStreams = React.lazy(() => import('./pages/VideoStreams.tsx').then());
+const Users = React.lazy(() => import('./pages/Users.tsx').then());
+const TFASetup = React.lazy(() => import('./pages/TFASetup.tsx').then());
+const Alerts = React.lazy(() => import('./pages/Alerts.tsx').then());
+const PasswordReset = React.lazy(() => import('./pages/PasswordReset.tsx').then());
+const ScheduledJobs = React.lazy(() => import('./pages/ScheduledJobs.tsx').then());
+const VideoRecordings = React.lazy(() => import('./pages/VideoRecordings.tsx').then());
+const Meshtastic = React.lazy(() => import('./pages/Meshtastic.tsx').then());
+const PluginUpdates = React.lazy(() => import('./pages/PluginUpdates.tsx').then());
+const DeviceProfiles = React.lazy(() => import('./pages/DeviceProfiles.tsx').then());
+const Missions = React.lazy(() => import('./pages/Missions.tsx').then())
+const Groups = React.lazy(() => import('./pages/Groups.tsx').then())
+const EUDStats = React.lazy(() => import('./pages/EUDStats.tsx').then());
+const Plugin = React.lazy(() => import('./pages/Plugin.tsx').then());
+const ServerPluginManager = React.lazy(() => import('./pages/ServerPluginManager.tsx').then());
+const LinkTAKGovAccount = React.lazy(() => import('./pages/LinkTakGov.tsx').then());
+const UserProfile = React.lazy(() => import('./pages/UserProfile.tsx').then());
 
 const routes = [
   { path: '/', exact: true, name: 'Home', element: Dashboard },
