@@ -1,6 +1,8 @@
 import React, { Suspense } from 'react';
 import { Route, Routes } from 'react-router';
 
+const Error404 = React.lazy(() => import('../pages/Errors/Error404.tsx').then());
+
 // routes config
 import { LoadingOverlay } from '@mantine/core';
 import routes from '../routes';
@@ -21,6 +23,7 @@ export const AppContent = () => (
               )
             ))}
           <Route path="/" element={<PrivateRoute />} />
+          <Route path="*" key="404" element={<Error404 />} />
         </Routes>
       </Suspense>
   );

@@ -14,7 +14,7 @@ export default function Error404() {
     page has been moved to another URL. If you think this is an error contact support.
     </Text>
     <Group justify="center">
-    <Button size="md">Take me back to home page</Button>
+    <Button size="md" component="a" href="/">Take me back to home page</Button>
     </Group>
     </div>
         </div>
