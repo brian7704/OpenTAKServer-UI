@@ -13,10 +13,10 @@ import 'mantine-datatable/styles.css';
 import './i18n';
 import {I18nextProvider, useTranslation} from "react-i18next";
 
-const Login = React.lazy(() => import('./pages/Login/Login'));
-const Error404 = React.lazy(() => import('./pages/Errors/Error404'));
-const DefaultLayout = React.lazy(() => import('./DefaultLayout'));
-const PasswordReset = React.lazy(() => import('./pages/PasswordReset'));
+const Login = React.lazy(() => import('./pages/Login/Login.tsx').then());
+const Error404 = React.lazy(() => import('./pages/Errors/Error404.tsx').then());
+const DefaultLayout = React.lazy(() => import('./DefaultLayout.tsx').then());
+const PasswordReset = React.lazy(() => import('./pages/PasswordReset.tsx').then());
 
 export default function App() {
     const { t, i18n } = useTranslation();

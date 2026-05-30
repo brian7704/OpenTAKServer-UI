@@ -16,7 +16,7 @@ import {
     IconAlertTriangle,
     IconUser,
 } from '@tabler/icons-react';
-import { useNavigate } from 'react-router';
+import { Navigate, useNavigate } from 'react-router';
 import { notifications } from '@mantine/notifications';
 import Logo from './images/ots-logo.png';
 import { AppContent } from './components/AppContent';
@@ -27,6 +27,11 @@ import { socket } from './socketio';
 import {t} from "i18next";
 
 export function DefaultLayout() {
+    const loggedIn = JSON.parse(String(localStorage.getItem('loggedIn'))) === true;
+    if (!loggedIn) {
+        return <Navigate to="/login" />;
+    }
+
     const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
     const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });

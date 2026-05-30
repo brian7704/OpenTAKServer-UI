@@ -1,7 +1,7 @@
 import {
     Button,
-    Center, ComboboxItem, CopyButton, Grid, Modal, MultiSelect, NumberInput,
-    Pagination, Paper, PasswordInput, Select, Switch,
+    Center, ComboboxItem, Grid, Modal, MultiSelect, Paper,
+    Switch,
     Table,
     TableData, TextInput, Title, Tooltip,
     useComputedColorScheme,
@@ -10,13 +10,28 @@ import { notifications } from '@mantine/notifications';
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
 import {apiRoutes} from "@/apiRoutes.tsx";
-import {IconCircleMinus, IconPlus, IconUserCog, IconUserMinus, IconX} from "@tabler/icons-react";
+import {IconCircleMinus, IconUserCog, IconUserMinus, IconX} from "@tabler/icons-react";
 import {t} from "i18next";
+import { DataTable, type DataTableSortStatus } from 'mantine-datatable';
+
+export interface Group {
+    name: string;
+    created: string;
+    type: string;
+    bitpos: number;
+    description: string;
+}
 
 export default function Groups() {
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
     const [activePage, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
+    const [totalRecords, setTotalRecords] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const [pageSize, setPageSize] = useState(10);
+    const [sortStatus, setSortStatus] = useState<DataTableSortStatus<Group>>({
+        columnAccessor: 'name',
+        direction: 'asc',
+    });
     const [groupToDelete, setGroupToDelete] = useState('');
     const [deleteGroupOpen, setDeleteGroupOpen] = useState(false);
     const [showAddGroup, setShowAddGroup] = useState(false);
@@ -31,11 +46,7 @@ export default function Groups() {
         head: [t('Username'), t('Direction'), t('Active')],
         body: [],
     });
-    const [groups, setGroups] = useState<TableData>({
-        caption: '',
-        head: [t('Name'), t('Created'), t('Type'), t('Bit Position'), t('Description')],
-        body: [],
-    });
+    const [groups, setGroups] = useState<Group[]>([]);
     const [newGroupProperties, setNewGroupProperties] = useState(
         {   name: '',
             created: '',
@@ -46,57 +57,42 @@ export default function Groups() {
     );
 
     function get_groups() {
-        axios.get(apiRoutes.groups, { params: {page: activePage,} })
+        if (loading) {
+            return;
+        }
+        setLoading(true);
+        axios.get(apiRoutes.groups, {
+            params: {
+                page: activePage,
+                per_page: pageSize,
+                sort_by: sortStatus.columnAccessor,
+                sort_direction: sortStatus.direction,
+            }
+        })
             .then((r) => {
+                setLoading(false);
                 if (r.status === 200) {
-                    const tableData: TableData = {
-                        caption: '',
-                        head: [t('Name'), t('Created'), t('Type'), t('Bit Position'), t('Description')],
-                        body: [],
-                    }
-
-                    r.data.results.map((row: any) => {
-                        if (tableData.body !== undefined) {
-                            const delete_button = <Button
-                                color="red"
-                                onClick={() => {
-                                    setGroupToDelete(row.name);
-                                    setDeleteGroupOpen(true);
-                                }}
-                                key={`${row.name}_delete`}
-                                disabled={row.name === "__ANON__"}
-                                rightSection={<IconCircleMinus size={14} />}
-                            >Delete
-                            </Button>;
-
-                            const add_users_button = <Button
-                                onClick={() => {
-                                    getGroupMembers(row.name);
-                                    getAllUsers();
-                                    setGroup(row.name);
-                                    setShowAddUserToGroup(true);
-                                }}
-                                key={`${row.name}_add`}
-                                rightSection={<IconUserCog size={14} />}
-                            >Manage Users</Button>;
-
-                            tableData.body.push([row.name, row.created, row.type, parseInt(row.bitpos, 2), row.description, add_users_button, delete_button]);
-                            console.log(tableData)
-                        }
-                    });
+                    const rows: Group[] = r.data.results.map((row: any) => ({
+                        name: row.name,
+                        created: row.created,
+                        type: row.type,
+                        bitpos: parseInt(row.bitpos, 2),
+                        description: row.description,
+                    }));
                     setPage(r.data.current_page);
-                    setTotalPages(r.data.total_pages);
-                    setGroups(tableData);
+                    setTotalRecords(r.data.total);
+                    setGroups(rows);
                 }
             }).catch((err) => {
-            console.log(err);
-            notifications.show({
-                title: t('Failed to get groups'),
-                message: err.response.data.error,
-                icon: <IconX />,
-                color: 'red',
+                setLoading(false);
+                console.log(err);
+                notifications.show({
+                    title: t('Failed to get groups'),
+                    message: err.response.data.error,
+                    icon: <IconX />,
+                    color: 'red',
+                });
             });
-        })
     }
 
     function addGroup() {
@@ -246,8 +242,13 @@ export default function Groups() {
     }
 
     useEffect(() => {
+        setPage(1);
         get_groups();
-    }, [activePage]);
+    }, [pageSize]);
+
+    useEffect(() => {
+        get_groups();
+    }, [activePage, sortStatus]);
 
     return (
         <>
@@ -318,9 +319,62 @@ export default function Groups() {
                 </Center>
             </Modal>
             <Table.ScrollContainer minWidth="100%">
-                <Table data={groups} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mt="md" mb="md" />
+                <DataTable
+                    withTableBorder
+                    borderRadius="md"
+                    shadow="sm"
+                    striped
+                    highlightOnHover
+                    records={groups}
+                    columns={[
+                        { accessor: 'name', title: t('Name'), sortable: true },
+                        { accessor: 'created', title: t('Created'), sortable: true },
+                        { accessor: 'type', title: t('Type'), sortable: true },
+                        { accessor: 'bitpos', title: t('Bit Position'), sortable: true },
+                        { accessor: 'description', title: t('Description'), sortable: true },
+                        {
+                            accessor: 'actions_manage',
+                            title: '',
+                            render: (row: Group) => (
+                                <Button
+                                    onClick={() => {
+                                        getGroupMembers(row.name);
+                                        getAllUsers();
+                                        setGroup(row.name);
+                                        setShowAddUserToGroup(true);
+                                    }}
+                                    rightSection={<IconUserCog size={14} />}
+                                >Manage Users</Button>
+                            ),
+                        },
+                        {
+                            accessor: 'actions_delete',
+                            title: '',
+                            render: (row: Group) => (
+                                <Button
+                                    color="red"
+                                    onClick={() => {
+                                        setGroupToDelete(row.name);
+                                        setDeleteGroupOpen(true);
+                                    }}
+                                    disabled={row.name === "__ANON__"}
+                                    rightSection={<IconCircleMinus size={14} />}
+                                >Delete</Button>
+                            ),
+                        },
+                    ]}
+                    page={activePage}
+                    onPageChange={(p) => setPage(p)}
+                    onRecordsPerPageChange={setPageSize}
+                    totalRecords={totalRecords}
+                    recordsPerPage={pageSize}
+                    recordsPerPageOptions={[10, 15, 20, 25, 30, 35, 40, 45, 50]}
+                    sortStatus={sortStatus}
+                    onSortStatusChange={setSortStatus}
+                    fetching={loading}
+                    minHeight={180}
+                />
             </Table.ScrollContainer>
-            <Center><Pagination total={totalPages} value={activePage} onChange={setPage} withEdges /></Center>
         </>
     )
 }

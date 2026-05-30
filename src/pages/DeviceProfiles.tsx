@@ -132,6 +132,16 @@ export default function DeviceProfiles() {
 
     useEffect(() => {
         get_euds();
+        setNewProfile({
+            preference_key: '',
+            preference_value: '',
+            value_class: 'String',
+            enrollment: false,
+            connection: false,
+            active: false,
+            callsign: null,
+            publish_time: '',
+            eud_uid: null })
     }, [addProfile]);
 
     function add_profile(e:any, profile:ProfileInterface) {

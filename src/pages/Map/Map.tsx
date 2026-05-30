@@ -17,7 +17,8 @@ import { apiRoutes } from '@/apiRoutes';
 import { socket } from '@/socketio';
 import classes from './Map.module.css';
 import 'leaflet.fullscreen';
-import 'leaflet.fullscreen/Control.FullScreen.css';
+import 'leaflet.fullscreen/dist/Control.FullScreen.css';
+import { FullscreenControl } from "react-leaflet-fullscreen";
 import Arrow from './Arrow';
 import Video from './Video';
 
@@ -224,8 +225,8 @@ export default function Map() {
 
     function MapContext() {
         const map = useMap();
-        const fullscreenControl = L.control.fullscreen();
-        map.addControl(fullscreenControl);
+        //const fullscreenControl = L.Control.fullscreen();
+        //map.addControl(fullscreenControl);
 
         useEffect(() => {
             map.addLayer(eudsLayer);
@@ -443,11 +444,11 @@ export default function Map() {
                 socket.off('casevac', onCaseEvac);
 
                 // janky fix for duplicate fullscreen buttons
-                const elementsToRemove =
-                    fullscreenControl.getContainer()?.getElementsByClassName('leaflet-control-zoom-fullscreen') ?? [];
-                for (let i = 0; i < elementsToRemove.length; i++) {
-                    elementsToRemove[i].remove();
-                }
+                //const elementsToRemove =
+                //    fullscreenControl.getContainer()?.getElementsByClassName('leaflet-control-zoom-fullscreen') ?? [];
+                //for (let i = 0; i < elementsToRemove.length; i++) {
+                //    elementsToRemove[i].remove();
+                //}
             };
         }, []);
 
@@ -534,6 +535,7 @@ export default function Map() {
                             <TileLayer url="http://mt1.google.com/vt/lyrs=t&amp;x={x}&amp;y={y}&amp;z={z}" pane="overlayPane" />
                         </LayersControl.Overlay>
                     </LayersControl>
+                    <FullscreenControl />
                 </MapContainer>
             </Paper>
         </>

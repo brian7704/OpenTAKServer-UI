@@ -227,7 +227,7 @@ export default function PluginUpdates() {
                 />
                 <Button loading={uploading} onClick={(e) => { upload_plugin(e); }}>Upload Plugin</Button>
             </Modal>
-            <Modal opened={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} title={t("Are you sure you want to delete ${deleteName}?")}>
+            <Modal opened={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} title={t("Are you sure you want to delete {{deleteName}}?", {"deleteName": deleteName})}>
                 <Button onClick={() => delete_plugin()} mr="md">Yes</Button>
                 <Button onClick={() => setDeleteModalOpen(false)}>No</Button>
             </Modal>
