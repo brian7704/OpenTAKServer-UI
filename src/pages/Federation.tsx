@@ -1,4 +1,4 @@
-import {Button, Checkbox, Combobox, ComboboxHeader, Flex, Grid, Group,
+import {Button, Checkbox, Combobox, ComboboxHeader, FileInput, Flex, Grid, Group,
     InputBase, Modal, NumberInput, Radio, ScrollArea, Select, Switch, Table, TextInput, Title} from '@mantine/core';
 import {DataTable, DataTableSortStatus} from "mantine-datatable";
 import {t} from "i18next";
@@ -66,14 +66,14 @@ export default function Federation () {
     );
     const [newFederate, setNewFederate] = useState<Federate>({
         archive: false,
-        automatic_group_matching: false,
+        automatic_group_matching: true,
         certificate_file: "",
         fallback_group_matching: false,
         federate_group_matching: false,
-        max_hops: 0,
+        max_hops: -1,
         name: "",
         notes: "",
-        shared_alerts: false,
+        shared_alerts: true,
         use_group_hop_limiting: false
 
     })
@@ -143,6 +143,7 @@ export default function Federation () {
                     minHeight={180}
                 />
             </Table.ScrollContainer>
+
             <Modal opened={federationConnectionModalOpen} onClose={() => setFederationConnectionModalOpen(false)} title={t("New Federation Connection")}>
                 <TextInput required label={t("Name")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, display_name: e.target.value }))}} mb="md" />
                 <TextInput required label={t("Address")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, address: e.target.value }))}} mb="md" />
@@ -163,6 +164,21 @@ export default function Federation () {
                 </Radio.Group>
                 <TextInput disabled={!newFederationConnection.use_token_auth || newFederationConnection.auth_token_type === "automatic"} required label={t("Auth Token")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, display_name: e.target.value }))}} mb="md" />
                 <TextInput required label={t("Description")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, description  : e.target.value }))}} mb="md" />
+                <Button>{t("Submit")}</Button>
+            </Modal>
+
+            <Modal opened={federateModalOpen} onClose={() => setFederateModalOpen(false)} title={t("New Federate")}>
+                <TextInput required label={t("Name")} onChange={e => { setNewFederate(prevState => ({ ...prevState, name    : e.target.value }))}} mb="md" />
+                <Switch checked label={t("Shared Alerts")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, shared_alerts : e.target.checked }))}} mb="md" />
+                <Switch label={t("Archive")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, archive : e.target.checked }))}} mb="md" />
+                <Switch checked label={t("Automatic Group Matching")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, automatic_group_matching : e.target.checked }))}} mb="md" />
+                <Switch label={t("Fallback Group Matching")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, fallback_group_matching : e.target.checked }))}} mb="md" />
+                <NumberInput required value={-1} label={t("Max Hops")} onChange={e => { setNewFederate(prevState => ({ ...prevState, max_hops: +e }))}} mb="md" min={-1} />
+                <Switch label={t("Use Group Hop Limiting")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, fallback_group_matching : e.target.checked }))}} mb="md" />
+                <TextInput required label={t("Notes")} onChange={e => { setNewFederate(prevState => ({ ...prevState, notes: e.target.value }))}} mb="md" />
+                <TextInput required label={t("Certificate")} onChange={e => { setNewFederate(prevState => ({ ...prevState, notes: e.target.value }))}} mb="md" />
+                <FileInput label={t("Certificate File")} description={t("Must be in PEM format")} accept="application/x-pem-file" mb="md"/>
+                <Button>{t("Submit")}</Button>
             </Modal>
         </ScrollArea>
     )
