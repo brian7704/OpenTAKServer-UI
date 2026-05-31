@@ -24,7 +24,7 @@ const Plugin = React.lazy(() => import('./pages/Plugin.tsx').then());
 const ServerPluginManager = React.lazy(() => import('./pages/ServerPluginManager.tsx').then());
 const LinkTAKGovAccount = React.lazy(() => import('./pages/LinkTakGov.tsx').then());
 const UserProfile = React.lazy(() => import('./pages/UserProfile.tsx').then());
-const Federation = React.lazy(() => import('./pages/Federation').then());
+const Federation = React.lazy(() => import('./pages/Federation.tsx').then());
 
 const routes = [
   { path: '/', exact: true, name: 'Home', element: Dashboard },
