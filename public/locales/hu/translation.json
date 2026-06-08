@@ -140,7 +140,7 @@
     "Icon": "Ikon",
     "In Progress": "Folyamatban",
     "Injuries Sustained": "Sérülések",
-    "Install on Connection": "Telepítés kapcsolatkor",
+    "Install on Connection": "Telepítés kapcsolatonként",
     "Install on Enrollment": "Telepítés regisztrációkor",
     "Invite": "Meghívás",
     "iTAK Connection Details": "iTAK csatlakozási részletek",
@@ -294,5 +294,9 @@
     "Yes": "Igen",
     "Your password": "A jelszavad",
     "Your password has been changed": "A jelszavad megváltozott",
-    "Zap Number": "ZAP kód"
+    "Zap Number": "ZAP kód",
+    "5": {
+        "4 or lower": "5.4 vagy régebbi"
+    },
+    "Minutes": "Percek"
 }
