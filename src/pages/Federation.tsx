@@ -6,7 +6,7 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {apiRoutes} from "@/apiRoutes.tsx";
 import {notifications} from "@mantine/notifications";
-import {IconCircleMinus, IconX} from "@tabler/icons-react";
+import {IconCircleMinus, IconEdit, IconX} from "@tabler/icons-react";
 
 interface Federate {
     id: string;
@@ -33,6 +33,7 @@ interface Federate {
     group_hop_limiting_switch: React.ReactNode | undefined,
     federate_group_matching_switch: React.ReactNode | undefined,
     enabled_switch: React.ReactNode | undefined,
+    edit_button: React.ReactNode | undefined,
     enabled: boolean,
 }
 
@@ -42,7 +43,7 @@ interface FederationConnection {
     address: string | undefined;
     port: number | undefined;
     enabled: boolean;
-    enabled_button: React.ReactNode | null;
+    enabled_switch: React.ReactNode | null;
     protocol_version: string | undefined;
     reconnect_interval: number;
     unlimited_retries: boolean;
@@ -56,6 +57,7 @@ interface FederationConnection {
     federate_id: string | undefined | null;
     federate: Federate | undefined;
     delete_button: React.ReactNode | null;
+    edit_button: React.ReactNode | undefined,
 }
 
 export default function Federation () {
@@ -79,8 +81,11 @@ export default function Federation () {
     const [fedConnectionToDelete, setFedConnectionToDelete] = useState<FederationConnection | undefined>(undefined);
     const [deleteFederateModalOpen, setDeleteFederateModalOpen] = useState(false);
     const [federateToDelete, setFederateToDelete] = useState<Federate | undefined>(undefined);
+    const [fedConnectionToEdit, setFedConnectionToEdit] = useState<FederationConnection | undefined>(undefined);
+    const [federateToEdit, setFederateToEdit] = useState<Federate | undefined>(undefined);
     const [newFederationConnection, setNewFederationConnection] = useState<FederationConnection>(
         {
+            edit_button: undefined,
             federate_id: undefined,
             id: "",
             address: undefined,
@@ -90,7 +95,7 @@ export default function Federation () {
             description: undefined,
             display_name: "",
             enabled: true,
-            enabled_button: undefined,
+            enabled_switch: undefined,
             federate: undefined,
             last_error: undefined,
             max_retries: 3,
@@ -103,6 +108,7 @@ export default function Federation () {
         }
     );
     const [newFederate, setNewFederate] = useState<Federate>({
+        edit_button: undefined,
         enabled: false,
         enabled_switch: undefined,
         federate_group_matching_switch: undefined,
@@ -139,16 +145,23 @@ export default function Federation () {
     });
 
     function getFederationConnections() {
-        axios.get(apiRoutes.federation).then((r) => {
+        axios.get(apiRoutes.allFederationConnections).then((r) => {
             if (r.status === 200) {
                 const all_fed_connections: ComboboxItem[] = [];
                 r.data.results.map((fedConnection: FederationConnection) => {
                     all_fed_connections.push({label: fedConnection.display_name, value: fedConnection.id})
 
+                    fedConnection.enabled_switch = <Switch checked={fedConnection.enabled} />
+
                     fedConnection.delete_button = <Button color="red" onClick={() => {
                         setFedConnectionToDelete(fedConnection);
                         setDeleteFedConnectionOpen(true);
                     }}><IconCircleMinus size={14} /></Button>
+
+                    fedConnection.edit_button = <Button onClick={() => {
+                        setFedConnectionToEdit(fedConnection);
+                        setFederationConnectionModalOpen(true)
+                    }}><IconEdit /></Button>
 
                 })
                 setFederationConnections(r.data.results);
@@ -171,6 +184,11 @@ export default function Federation () {
                         setFederateToDelete(federate)
                         setDeleteFederateModalOpen(true);
                     }}><IconCircleMinus size={14} /></Button>
+
+                    federate.edit_button = <Button onClick={() => {
+                        setFederateToEdit(federate);
+                        setFederateModalOpen(true);
+                    }}><IconEdit /></Button>
 
                     federate.shared_alerts_switch = <Switch checked={federate.shared_alerts} />
                     federate.archive_switch = <Switch checked={federate.archive} />
@@ -323,8 +341,8 @@ export default function Federation () {
                         {accessor: "port", title: t("Port"), sortable: true}, {accessor: "status", title: t("Status"), sortable: true},
                         {accessor: "reconnect_interval", title: t("Reconnect Interval"), sortable: true}, {accessor: "max_retries", title: t("Max Retries"), sortable: true},
                         {accessor: "federate.name", title: t("Federate"), sortable: true}, {accessor: "protocol_version", title: t("Protocol Version"), sortable: true},
-                        {accessor: "enabled", title: t("Enabled"), sortable: true}, {accessor: "last_error", title: t("Last Error"), sortable: true},
-                        {accessor: "delete_button", title: t("Delete"), sortable: true}
+                        {accessor: "enabled_switch", title: t("Enabled"), sortable: true}, {accessor: "last_error", title: t("Last Error"), sortable: true},
+                        {accessor: "edit_button", title: t("Edit"), sortable: true}, {accessor: "delete_button", title: t("Delete"), sortable: true}
                     ]}
                     page={0}
                     onPageChange={() => {}}
@@ -341,7 +359,7 @@ export default function Federation () {
 
             <Grid mb="md">
                 <Grid.Col span={{"sm": 6, "lg": 10}}><Title mb="xl" order={2}>{t("Federate Configuration")}</Title></Grid.Col>
-                <Grid.Col span={{"sm": 6, "lg": 2}}><Button onClick={() => setFederateModalOpen(true)}>{t('Add Federate')}</Button></Grid.Col>
+                <Grid.Col span={{"sm": 6, "lg": 2}}><Button onClick={() => {setFederateModalOpen(true); setFederateToEdit(undefined)}}>{t('Add Federate')}</Button></Grid.Col>
             </Grid>
             <Table.ScrollContainer minWidth="100%">
                 <DataTable
@@ -357,7 +375,7 @@ export default function Federation () {
                         {accessor: "max_hops", title: t("Max Hops"), sortable: true}, {accessor: "group_hop_limiting_switch", title: t("Group Hop Limiting"), sortable: true},
                         {accessor: "notes", title: t("Notes"), sortable: true}, {accessor: "issuer", title: t("Issuer"), sortable: true},
                         {accessor: "subject", title: t("Subject"), sortable: true}, {accessor: "serial_number", title: t("Serial Number"), sortable: true},
-                        {accessor: "certificate_download_button", title: t("Download Certificate"), sortable: true}, {accessor: "delete_button", title: t("Delete"), sortable: true},
+                        {accessor: "certificate_download_button", title: t("Download Certificate"), sortable: true}, {accessor: "edit_button", title: t("Edit"), sortable: true}, {accessor: "delete_button", title: t("Delete"), sortable: true},
                     ]}
                     page={0}
                     onPageChange={() => {}}
@@ -372,42 +390,42 @@ export default function Federation () {
                 />
             </Table.ScrollContainer>
 
-            <Modal opened={federationConnectionModalOpen} onClose={() => setFederationConnectionModalOpen(false)} title={t("New Federation Connection")}>
-                <TextInput required label={t("Name")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, display_name: e.target.value }))}} mb="md" />
-                <TextInput required label={t("Address")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, address: e.target.value }))}} mb="md" />
-                <NumberInput required defaultValue={9102} label={t("Port")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, port: +e }))}} mb="md" min={1} max={65535} />
-                <Switch defaultChecked={true} label={t("Enabled")} onChange={(e) => {setNewFederationConnection(prevState => ({ ...prevState, enabled : e.target.checked }))}} mb="md" />
+            <Modal opened={federationConnectionModalOpen} onClose={() => {setFederationConnectionModalOpen(false); setFedConnectionToEdit(undefined)}} title={t("New Federation Connection")}>
+                <TextInput defaultValue={fedConnectionToEdit != undefined ? fedConnectionToEdit.display_name : ""} required label={t("Name")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, display_name: e.target.value }))}} mb="md" />
+                <TextInput defaultValue={fedConnectionToEdit != undefined ? fedConnectionToEdit.address : ""} required label={t("Address")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, address: e.target.value }))}} mb="md" />
+                <NumberInput defaultValue={fedConnectionToEdit != undefined ? fedConnectionToEdit.port : 9102} required label={t("Port")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, port: +e }))}} mb="md" min={1} max={65535} />
+                <Switch defaultChecked={fedConnectionToEdit != undefined ? fedConnectionToEdit.enabled : true} label={t("Enabled")} onChange={(e) => {setNewFederationConnection(prevState => ({ ...prevState, enabled : e.target.checked }))}} mb="md" />
                 <NumberInput disabled label={t("Protocol Version")} mb="md" value={2} description={t("OpenTAKServer supports only protocol version 2")} />
-                <NumberInput required defaultValue={30} label={t("Reconnect Interval")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, reconnect_interval: +e }))}} mb="md" min={0} description={t("Set to zero to disable")} />
-                <Switch defaultChecked={true} label={t("Unlimited Retries")} onChange={(e) => {setNewFederationConnection(prevState => ({ ...prevState, unlimited_retries : e.target.checked }))}} mb="md" />
-                <NumberInput required defaultValue={3} label={t("Max Retries")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, max_retries: +e }))}} mb="md" min={0} description={t("Has no effect when unlimited retries is enabled")} />
-                <Select required label={t("Federate")} onChange={(value, option) => {setNewFederationConnection(prevState => ({...prevState, federate_id: value}))}} data={allFederates} placeholder={t("Choose Federate")} nothingFoundMessage={t("Nothing found...")} mb="md"></Select>
-                <Select label={t("Fallback Connection")} placeholder={t("Choose Fallback Connection")} data={allFederationConnections} nothingFoundMessage={t("Nothing found...")} mb="md"></Select>
-                <Switch label={t("Use Token Auth")} onChange={(e) => {setNewFederationConnection(prevState => ({ ...prevState, use_token_auth : e.target.checked }))}} mb="md" />
-                <Radio.Group defaultValue="automatic" name="auth_token_type" label={t("Auth Token Type")} disabled={!newFederationConnection.use_token_auth} onChange={(e) => setNewFederationConnection(prevState => ({...prevState, auth_token_type: e}))} mb="md">
+                <NumberInput defaultValue={fedConnectionToEdit != undefined ? fedConnectionToEdit.reconnect_interval : 30} required label={t("Reconnect Interval")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, reconnect_interval: +e }))}} mb="md" min={0} description={t("Set to zero to disable")} />
+                <Switch defaultChecked={fedConnectionToEdit != undefined ? fedConnectionToEdit.unlimited_retries : true} label={t("Unlimited Retries")} onChange={(e) => {setNewFederationConnection(prevState => ({ ...prevState, unlimited_retries : e.target.checked }))}} mb="md" />
+                <NumberInput defaultValue={fedConnectionToEdit != undefined ? fedConnectionToEdit.max_retries : 3} required label={t("Max Retries")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, max_retries: +e }))}} mb="md" min={0} description={t("Has no effect when unlimited retries is enabled")} />
+                <Select defaultValue={fedConnectionToEdit != undefined ? fedConnectionToEdit.federate_id : undefined} required label={t("Federate")} onChange={(value, option) => {setNewFederationConnection(prevState => ({...prevState, federate_id: value}))}} data={allFederates} placeholder={t("Choose Federate")} nothingFoundMessage={t("Nothing found...")} mb="md"></Select>
+                {/*<Select label={t("Fallback Connection")} placeholder={t("Choose Fallback Connection")} data={allFederationConnections} nothingFoundMessage={t("Nothing found...")} mb="md"></Select>*/}
+                <Switch defaultChecked={fedConnectionToEdit != undefined ? fedConnectionToEdit.use_token_auth : false} label={t("Use Token Auth")} onChange={(e) => {setNewFederationConnection(prevState => ({ ...prevState, use_token_auth : e.target.checked }))}} mb="md" />
+                <Radio.Group defaultValue={fedConnectionToEdit != undefined ? fedConnectionToEdit.auth_token_type : "automatic"} name="auth_token_type" label={t("Auth Token Type")} disabled={!newFederationConnection.use_token_auth && !fedConnectionToEdit?.use_token_auth} onChange={(e) => setNewFederationConnection(prevState => ({...prevState, auth_token_type: e}))} mb="md">
                     <Group>
                         <Radio label={t("Automatic Token")} value="automatic" />
                         <Radio label={t("Manual Token")} value="manual" />
                     </Group>
                 </Radio.Group>
-                <TextInput disabled={!newFederationConnection.use_token_auth || newFederationConnection.auth_token_type === "automatic"} label={t("Auth Token")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, display_name: e.target.value }))}} mb="md" />
-                <TextInput label={t("Description")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, description  : e.target.value }))}} mb="md" />
+                <TextInput defaultValue={fedConnectionToEdit != undefined ? fedConnectionToEdit.auth_token : ""} disabled={fedConnectionToEdit != undefined ? (!fedConnectionToEdit.use_token_auth || fedConnectionToEdit.auth_token_type === "automatic") : (!newFederationConnection.use_token_auth || newFederationConnection.auth_token_type === "automatic")} label={t("Auth Token")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, auth_token: e.target.value }))}} mb="md" />
+                <TextInput defaultValue={fedConnectionToEdit != undefined ? fedConnectionToEdit.description : ""} label={t("Description")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, description  : e.target.value }))}} mb="md" />
                 <Button onClick={() => {addFederationConnection()}}>{t("Submit")}</Button>
             </Modal>
 
             <Modal opened={federateModalOpen} onClose={() => setFederateModalOpen(false)} title={t("New Federate")} size="lg">
-                <TextInput required error={nameError} label={t("Name")} onChange={e => { setNewFederate(prevState => ({ ...prevState, name    : e.target.value })); setNameError(false)}} mb="md" />
-                <Switch defaultChecked={true} label={t("Shared Alerts")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, shared_alerts : e.target.checked }))}} mb="md" />
-                <Switch label={t("Archive")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, archive : e.target.checked }))}} mb="md" />
-                <Switch defaultChecked={true} label={t("Automatic Group Matching")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, automatic_group_matching : e.target.checked }))}} mb="md" />
-                <Switch label={t("Fallback Group Matching")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, fallback_group_matching : e.target.checked }))}} mb="md" />
-                <NumberInput defaultValue={-1} label={t("Max Hops")} onChange={e => { setNewFederate(prevState => ({ ...prevState, max_hops: +e }))}} mb="md" min={-1} />
-                <Switch label={t("Use Group Hop Limiting")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, fallback_group_matching : e.target.checked }))}} mb="md" />
-                <TextInput label={t("Notes")} onChange={e => { setNewFederate(prevState => ({ ...prevState, notes: e.target.value }))}} mb="md" />
+                <TextInput required defaultValue={federateToEdit != undefined ? federateToEdit.name : ""} error={nameError} label={t("Name")} onChange={e => { setNewFederate(prevState => ({ ...prevState, name: e.target.value })); setNameError(false)}} mb="md" />
+                <Switch defaultChecked={federateToEdit != undefined ? federateToEdit.shared_alerts : true} label={t("Shared Alerts")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, shared_alerts : e.target.checked }))}} mb="md" />
+                <Switch defaultChecked={federateToEdit != undefined ? federateToEdit.archive : false} label={t("Archive")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, archive : e.target.checked }))}} mb="md" />
+                <Switch defaultChecked={federateToEdit != undefined ? federateToEdit.automatic_group_matching : true} label={t("Automatic Group Matching")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, automatic_group_matching : e.target.checked }))}} mb="md" />
+                <Switch defaultChecked={federateToEdit != undefined ? federateToEdit.fallback_group_matching : false} label={t("Fallback Group Matching")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, fallback_group_matching : e.target.checked }))}} mb="md" />
+                <NumberInput defaultValue={federateToEdit != undefined ? federateToEdit.max_hops : -1} label={t("Max Hops")} onChange={e => { setNewFederate(prevState => ({ ...prevState, max_hops: +e }))}} mb="md" min={-1} />
+                <Switch defaultChecked={federateToEdit != undefined ? federateToEdit.use_group_hop_limiting : false} label={t("Use Group Hop Limiting")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, use_group_hop_limiting : e.target.checked }))}} mb="md" />
+                <TextInput defaultValue={federateToEdit != undefined ? federateToEdit.notes : ""} label={t("Notes")} onChange={e => { setNewFederate(prevState => ({ ...prevState, notes: e.target.value }))}} mb="md" />
                 <FileInput required clearable label={t("Certificate File")} description={t("Must be in PEM format")} accept="application/x-pem-file" mb="md" onChange={setNewFederateCert} />
-                <TextInput disabled required error={issuerError} label={t("Issuer")} value={newFederate.issuer} mb="md" />
-                <TextInput disabled required error={subjectError} label={t("Subject")} value={newFederate.subject} mb="md" />
-                <TextInput disabled required error={serialNumberError} label={t("Serial Number")} value={newFederate.serial_number} mb="md" />
+                <TextInput defaultValue={federateToEdit != undefined ? federateToEdit.issuer : ""} disabled required error={issuerError} label={t("Issuer")} value={newFederate.issuer} mb="md" />
+                <TextInput defaultValue={federateToEdit != undefined ? federateToEdit.subject : ""} disabled required error={subjectError} label={t("Subject")} value={newFederate.subject} mb="md" />
+                <TextInput defaultValue={federateToEdit != undefined ? federateToEdit.serial_number : ""} disabled required error={serialNumberError} label={t("Serial Number")} value={newFederate.serial_number} mb="md" />
                 <Button onClick={() => {addFederate()}}>{t("Submit")}</Button>
             </Modal>
 
