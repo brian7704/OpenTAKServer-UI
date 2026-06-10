@@ -1,4 +1,4 @@
-import {Button, Checkbox, Combobox, ComboboxData, ComboboxHeader, ComboboxItem, FileInput, Flex, Grid, Group,
+import {Button, Center, Checkbox, Combobox, ComboboxData, ComboboxHeader, ComboboxItem, FileInput, Flex, Grid, Group,
     InputBase, Modal, NumberInput, Radio, ScrollArea, Select, Switch, Table, TextInput, Title} from '@mantine/core';
 import {DataTable, DataTableSortStatus} from "mantine-datatable";
 import {t} from "i18next";
@@ -6,7 +6,7 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {apiRoutes} from "@/apiRoutes.tsx";
 import {notifications} from "@mantine/notifications";
-import {IconX} from "@tabler/icons-react";
+import {IconCircleMinus, IconX} from "@tabler/icons-react";
 
 interface Federate {
     id: string;
@@ -25,7 +25,15 @@ interface Federate {
     serial_number: string;
     certificate_download_button: React.ReactNode | null;
     common_name: string;
-    delete_button: undefined,
+    delete_button: React.ReactNode | undefined,
+    shared_alerts_switch: React.ReactNode | undefined,
+    archive_switch: React.ReactNode | undefined,
+    automatic_group_matching_switch: React.ReactNode | undefined,
+    fallback_group_matching_switch: React.ReactNode | undefined,
+    group_hop_limiting_switch: React.ReactNode | undefined,
+    federate_group_matching_switch: React.ReactNode | undefined,
+    enabled_switch: React.ReactNode | undefined,
+    enabled: boolean,
 }
 
 interface FederationConnection {
@@ -67,6 +75,10 @@ export default function Federation () {
     const [subjectError, setSubjectError] = useState<boolean>(false);
     const [serialNumberError, setSerialNumberError] = useState<boolean>(false);
     const [nameError, setNameError] = useState<boolean>(false);
+    const [deleteFedConnectionOpen, setDeleteFedConnectionOpen] = useState(false);
+    const [fedConnectionToDelete, setFedConnectionToDelete] = useState<FederationConnection | undefined>(undefined);
+    const [deleteFederateModalOpen, setDeleteFederateModalOpen] = useState(false);
+    const [federateToDelete, setFederateToDelete] = useState<Federate | undefined>(undefined);
     const [newFederationConnection, setNewFederationConnection] = useState<FederationConnection>(
         {
             federate_id: undefined,
@@ -91,6 +103,14 @@ export default function Federation () {
         }
     );
     const [newFederate, setNewFederate] = useState<Federate>({
+        enabled: false,
+        enabled_switch: undefined,
+        federate_group_matching_switch: undefined,
+        archive_switch: undefined,
+        automatic_group_matching_switch: undefined,
+        fallback_group_matching_switch: undefined,
+        group_hop_limiting_switch: undefined,
+        shared_alerts_switch: undefined,
         id: "",
         issuer: "", serial_number: "", subject: "",
         archive: false,
@@ -124,6 +144,12 @@ export default function Federation () {
                 const all_fed_connections: ComboboxItem[] = [];
                 r.data.results.map((fedConnection: FederationConnection) => {
                     all_fed_connections.push({label: fedConnection.display_name, value: fedConnection.id})
+
+                    fedConnection.delete_button = <Button color="red" onClick={() => {
+                        setFedConnectionToDelete(fedConnection);
+                        setDeleteFedConnectionOpen(true);
+                    }}><IconCircleMinus size={14} /></Button>
+
                 })
                 setFederationConnections(r.data.results);
                 setAllFederationConnections(all_fed_connections);
@@ -140,6 +166,19 @@ export default function Federation () {
                 const all_federates: ComboboxItem[] = [];
                 r.data.results.map((federate: Federate) => {
                     all_federates.push({label: federate.name, value: federate.id})
+
+                    federate.delete_button = <Button color="red" onClick={() => {
+                        setFederateToDelete(federate)
+                        setDeleteFederateModalOpen(true);
+                    }}><IconCircleMinus size={14} /></Button>
+
+                    federate.shared_alerts_switch = <Switch checked={federate.shared_alerts} />
+                    federate.archive_switch = <Switch checked={federate.archive} />
+                    federate.automatic_group_matching_switch = <Switch checked={federate.automatic_group_matching} />
+                    federate.fallback_group_matching_switch = <Switch checked={federate.fallback_group_matching} />
+                    federate.group_hop_limiting_switch = <Switch checked={federate.use_group_hop_limiting} />
+                    federate.federate_group_matching_switch = <Switch checked={federate.federate_group_matching} />
+                    federate.enabled_switch = <Switch checked={federate.enabled} />
                 })
                 setAllFederates(all_federates)
                 setFederates(r.data.results);
@@ -156,10 +195,39 @@ export default function Federation () {
         });
     }
 
+    function deleteFedConnection() {
+        axios.delete(apiRoutes.federation, {params: {"id": fedConnectionToDelete?.id}}).then((r) => {
+            getFederationConnections();
+        }).catch((err) => {
+            console.log(err);
+            notifications.show({
+                title: t("Failed to delete federation connection"),
+                message: err.response.data.error,
+                color: 'red',
+                icon: <IconX />
+            })
+        })
+    }
+
+    function deleteFederate() {
+        axios.delete(apiRoutes.federate, {params: {"id": federateToDelete?.id}}).then((r) => {
+            getFederates();
+        }).catch((err) => {
+            console.log(err);
+            notifications.show({
+                title: t("Failed to delete federate"),
+                message: err.response.data.error,
+                color: 'red',
+                icon: <IconX />
+            })
+        })
+    }
+
     function addFederationConnection() {
         setFedConnectionsLoading(true);
         axios.post(apiRoutes.federation, newFederationConnection).then((r) => {
             if (r.status === 200) {
+                setFederationConnectionModalOpen(false);
                 getFederationConnections();
             }
             setFedConnectionsLoading(false);
@@ -258,16 +326,16 @@ export default function Federation () {
                         {accessor: "enabled", title: t("Enabled"), sortable: true}, {accessor: "last_error", title: t("Last Error"), sortable: true},
                         {accessor: "delete_button", title: t("Delete"), sortable: true}
                     ]}
-                    page={activePage}
-                    onPageChange={(p) => setPage(p)}
-                    onRecordsPerPageChange={setPageSize}
+                    page={0}
+                    onPageChange={() => {}}
+                    onRecordsPerPageChange={() => {}}
                     totalRecords={federationCount}
                     recordsPerPage={pageSize}
-                    recordsPerPageOptions={[10, 15, 20, 25, 30, 35, 40, 45, 50]}
+                    recordsPerPageOptions={[]}
                     sortStatus={fedConnectionSortStatus}
                     onSortStatusChange={setFedConnectionSortStatus}
                     fetching={fedConnectionsLoading}
-                    minHeight={180}
+                    minHeight={federationConnections.length > 0 ? 10 : 180}
                     />
             </Table.ScrollContainer>
 
@@ -283,10 +351,10 @@ export default function Federation () {
                     striped
                     highlightOnHover
                     records={federates}
-                    columns={[{accessor: "name", title: t("Name"), sortable: true}, {accessor: "shared_alerts", title: t("Shared Alerts"), sortable: true},
-                        {accessor: "archive", title: t("Archive"), sortable: true}, {accessor: "federate_group_matching", title: t("Federate Group Matching"), sortable: true},
-                        {accessor: "automatic_group_matching", title: t("Automatic Group Matching"), sortable: true}, {accessor: "fallback_group_matching", title: t("Fallback Group Matching"), sortable: true},
-                        {accessor: "max_hops", title: t("Max Hops"), sortable: true}, {accessor: "use_group_hop_limiting", title: t("Group Hop Limiting"), sortable: true},
+                    columns={[{accessor: "name", title: t("Name"), sortable: true}, {accessor: "shared_alerts_switch", title: t("Shared Alerts"), sortable: true},
+                        {accessor: "archive_switch", title: t("Archive"), sortable: true}, {accessor: "federate_group_matching_switch", title: t("Federate Group Matching"), sortable: true},
+                        {accessor: "automatic_group_matching_switch", title: t("Automatic Group Matching"), sortable: true}, {accessor: "fallback_group_matching_switch", title: t("Fallback Group Matching"), sortable: true},
+                        {accessor: "max_hops", title: t("Max Hops"), sortable: true}, {accessor: "group_hop_limiting_switch", title: t("Group Hop Limiting"), sortable: true},
                         {accessor: "notes", title: t("Notes"), sortable: true}, {accessor: "issuer", title: t("Issuer"), sortable: true},
                         {accessor: "subject", title: t("Subject"), sortable: true}, {accessor: "serial_number", title: t("Serial Number"), sortable: true},
                         {accessor: "certificate_download_button", title: t("Download Certificate"), sortable: true}, {accessor: "delete_button", title: t("Delete"), sortable: true},
@@ -300,7 +368,7 @@ export default function Federation () {
                     sortStatus={federateSortStatus}
                     onSortStatusChange={setFederateSortStatus}
                     fetching={federatesLoading}
-                    minHeight={180}
+                    minHeight={federates.length > 0 ? 10 : 180}
                 />
             </Table.ScrollContainer>
 
@@ -308,10 +376,10 @@ export default function Federation () {
                 <TextInput required label={t("Name")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, display_name: e.target.value }))}} mb="md" />
                 <TextInput required label={t("Address")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, address: e.target.value }))}} mb="md" />
                 <NumberInput required defaultValue={9102} label={t("Port")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, port: +e }))}} mb="md" min={1} max={65535} />
-                <Switch checked label={t("Enabled")} onChange={(e) => {setNewFederationConnection(prevState => ({ ...prevState, enabled : e.target.checked }))}} mb="md" />
+                <Switch defaultChecked={true} label={t("Enabled")} onChange={(e) => {setNewFederationConnection(prevState => ({ ...prevState, enabled : e.target.checked }))}} mb="md" />
                 <NumberInput disabled label={t("Protocol Version")} mb="md" value={2} description={t("OpenTAKServer supports only protocol version 2")} />
                 <NumberInput required defaultValue={30} label={t("Reconnect Interval")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, reconnect_interval: +e }))}} mb="md" min={0} description={t("Set to zero to disable")} />
-                <Switch checked label={t("Unlimited Retries")} onChange={(e) => {setNewFederationConnection(prevState => ({ ...prevState, unlimited_retries : e.target.checked }))}} mb="md" />
+                <Switch defaultChecked={true} label={t("Unlimited Retries")} onChange={(e) => {setNewFederationConnection(prevState => ({ ...prevState, unlimited_retries : e.target.checked }))}} mb="md" />
                 <NumberInput required defaultValue={3} label={t("Max Retries")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, max_retries: +e }))}} mb="md" min={0} description={t("Has no effect when unlimited retries is enabled")} />
                 <Select required label={t("Federate")} onChange={(value, option) => {setNewFederationConnection(prevState => ({...prevState, federate_id: value}))}} data={allFederates} placeholder={t("Choose Federate")} nothingFoundMessage={t("Nothing found...")} mb="md"></Select>
                 <Select label={t("Fallback Connection")} placeholder={t("Choose Fallback Connection")} data={allFederationConnections} nothingFoundMessage={t("Nothing found...")} mb="md"></Select>
@@ -329,18 +397,46 @@ export default function Federation () {
 
             <Modal opened={federateModalOpen} onClose={() => setFederateModalOpen(false)} title={t("New Federate")} size="lg">
                 <TextInput required error={nameError} label={t("Name")} onChange={e => { setNewFederate(prevState => ({ ...prevState, name    : e.target.value })); setNameError(false)}} mb="md" />
-                <Switch checked label={t("Shared Alerts")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, shared_alerts : e.target.checked }))}} mb="md" />
+                <Switch defaultChecked={true} label={t("Shared Alerts")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, shared_alerts : e.target.checked }))}} mb="md" />
                 <Switch label={t("Archive")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, archive : e.target.checked }))}} mb="md" />
-                <Switch checked label={t("Automatic Group Matching")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, automatic_group_matching : e.target.checked }))}} mb="md" />
+                <Switch defaultChecked={true} label={t("Automatic Group Matching")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, automatic_group_matching : e.target.checked }))}} mb="md" />
                 <Switch label={t("Fallback Group Matching")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, fallback_group_matching : e.target.checked }))}} mb="md" />
                 <NumberInput defaultValue={-1} label={t("Max Hops")} onChange={e => { setNewFederate(prevState => ({ ...prevState, max_hops: +e }))}} mb="md" min={-1} />
                 <Switch label={t("Use Group Hop Limiting")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, fallback_group_matching : e.target.checked }))}} mb="md" />
                 <TextInput label={t("Notes")} onChange={e => { setNewFederate(prevState => ({ ...prevState, notes: e.target.value }))}} mb="md" />
-                <FileInput clearable label={t("Certificate File")} description={t("Must be in PEM format")} accept="application/x-pem-file" mb="md" onChange={setNewFederateCert} />
+                <FileInput required clearable label={t("Certificate File")} description={t("Must be in PEM format")} accept="application/x-pem-file" mb="md" onChange={setNewFederateCert} />
                 <TextInput disabled required error={issuerError} label={t("Issuer")} value={newFederate.issuer} mb="md" />
                 <TextInput disabled required error={subjectError} label={t("Subject")} value={newFederate.subject} mb="md" />
                 <TextInput disabled required error={serialNumberError} label={t("Serial Number")} value={newFederate.serial_number} mb="md" />
                 <Button onClick={() => {addFederate()}}>{t("Submit")}</Button>
+            </Modal>
+
+            <Modal opened={deleteFederateModalOpen} onClose={() => {setDeleteFederateModalOpen(false)}} title={t("Are you sure you want to delete {{federate}}?", {"federate": federateToDelete?.name})}>
+                <Center>
+                    <Button
+                        mr="md"
+                        onClick={() => {
+                            deleteFederate();
+                            setDeleteFederateModalOpen(false);
+                        }}
+                    >{t("Yes")}
+                    </Button>
+                    <Button onClick={() => setDeleteFederateModalOpen(false)}>{t("No")}</Button>
+                </Center>
+            </Modal>
+
+            <Modal opened={deleteFedConnectionOpen} onClose={() => {setDeleteFedConnectionOpen(false)}} title={t("Are you sure you want to delete {{fedConnection}}?", {"fedConnection": fedConnectionToDelete?.display_name})}>
+                <Center>
+                    <Button
+                        mr="md"
+                        onClick={() => {
+                            deleteFedConnection();
+                            setDeleteFedConnectionOpen(false);
+                        }}
+                    >{t("Yes")}
+                    </Button>
+                    <Button onClick={() => setDeleteFederateModalOpen(false)}>{t("No")}</Button>
+                </Center>
             </Modal>
         </ScrollArea>
     )
