@@ -6,7 +6,7 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {apiRoutes} from "@/apiRoutes.tsx";
 import {notifications} from "@mantine/notifications";
-import {IconCircleMinus, IconEdit, IconX} from "@tabler/icons-react";
+import {IconCircleMinus, IconDownload, IconEdit, IconX} from "@tabler/icons-react";
 
 interface Federate {
     id: string;
@@ -190,6 +190,10 @@ export default function Federation () {
                         setFederateModalOpen(true);
                     }}><IconEdit /></Button>
 
+                    federate.certificate_download_button = <Button onClick={() => {
+
+                    }}><IconDownload /></Button>
+
                     federate.shared_alerts_switch = <Switch checked={federate.shared_alerts} />
                     federate.archive_switch = <Switch checked={federate.archive} />
                     federate.automatic_group_matching_switch = <Switch checked={federate.automatic_group_matching} />
@@ -325,6 +329,7 @@ export default function Federation () {
 
     return (
         <ScrollArea>
+            <Button component="a" href="/api/federation/certificate" rightSection={<IconDownload size={14} />} mb="md">{t("Download Federation Certificate")}</Button>
             <Grid mb="md">
                 <Grid.Col span={{"sm": 6, "lg": 10}}><Title mb="xl" order={2}>{t("Outgoing Federation Connections")}</Title></Grid.Col>
                 <Grid.Col span={{"sm": 6, "lg": 2}}><Button onClick={() => setFederationConnectionModalOpen(true)}>{t('Add Connection')}</Button></Grid.Col>
