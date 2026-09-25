@@ -1,12 +1,15 @@
 import {Button, Center, Checkbox, Combobox, ComboboxData, ComboboxHeader, ComboboxItem, FileInput, Flex, Grid, Group,
-    InputBase, Modal, NumberInput, Radio, ScrollArea, Select, Switch, Table, TextInput, Title} from '@mantine/core';
+    InputBase, Modal, MultiSelect, NumberInput, Paper, Radio, ScrollArea, Select, Switch, Table,
+    TableData, TextInput, Title} from '@mantine/core';
 import {DataTable, DataTableSortStatus} from "mantine-datatable";
 import {t} from "i18next";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {apiRoutes} from "@/apiRoutes.tsx";
 import {notifications} from "@mantine/notifications";
-import {IconCircleMinus, IconDownload, IconEdit, IconX} from "@tabler/icons-react";
+import {IconCircleMinus, IconDownload, IconEdit, IconUsersMinus, IconX} from "@tabler/icons-react";
+import {id} from "date-fns/locale";
+import {json} from "node:stream/consumers";
 
 interface Federate {
     id: string;
@@ -38,7 +41,7 @@ interface Federate {
 }
 
 interface FederationConnection {
-    id: string;
+    id: number | undefined;
     display_name: string;
     address: string | undefined;
     port: number | undefined;
@@ -56,6 +59,7 @@ interface FederationConnection {
     uid: string | undefined;
     federate_id: string | undefined | null;
     federate: Federate | undefined;
+    groups_button: React.ReactNode | null;
     delete_button: React.ReactNode | null;
     edit_button: React.ReactNode | undefined,
 }
@@ -83,11 +87,21 @@ export default function Federation () {
     const [federateToDelete, setFederateToDelete] = useState<Federate | undefined>(undefined);
     const [fedConnectionToEdit, setFedConnectionToEdit] = useState<FederationConnection | undefined>(undefined);
     const [federateToEdit, setFederateToEdit] = useState<Federate | undefined>(undefined);
+    const [groupModalOpen, setGroupModalOpen] = useState(false);
+    const [inGroups, setInGroups] = useState<string[]>([]);
+    const [outGroups, setOutGroups] = useState<string[]>([]);
+    const [allGroups, setAllGroups] = useState<ComboboxItem[]>([]);
+    const [memberships, setMemberships] = useState<TableData>({
+        caption: '',
+        head: [t('Group Name'), t('Direction')],
+        body: [],
+    });
     const [newFederationConnection, setNewFederationConnection] = useState<FederationConnection>(
         {
+            groups_button: undefined,
             edit_button: undefined,
             federate_id: undefined,
-            id: "",
+            id: undefined,
             address: undefined,
             auth_token: undefined,
             auth_token_type: "automatic",
@@ -149,7 +163,7 @@ export default function Federation () {
             if (r.status === 200) {
                 const all_fed_connections: ComboboxItem[] = [];
                 r.data.results.map((fedConnection: FederationConnection) => {
-                    all_fed_connections.push({label: fedConnection.display_name, value: fedConnection.id})
+                    all_fed_connections.push({label: fedConnection.display_name, value: fedConnection.id + ""})
 
                     fedConnection.enabled_switch = <Switch checked={fedConnection.enabled} />
 
@@ -161,6 +175,13 @@ export default function Federation () {
                     fedConnection.edit_button = <Button onClick={() => {
                         setFedConnectionToEdit(fedConnection);
                         setFederationConnectionModalOpen(true)
+                    }}><IconEdit /></Button>
+
+                    fedConnection.groups_button = <Button onClick={() => {
+                        getAllGroups();
+                        getMemberships(fedConnection.id);
+                        setFedConnectionToEdit(fedConnection);
+                        setGroupModalOpen(true);
                     }}><IconEdit /></Button>
 
                 })
@@ -297,7 +318,7 @@ export default function Federation () {
             formData.append('cert_file', newFederateCert);
             axios.post(apiRoutes.federationCertificate, formData).then((r) => {
                 if (r.status === 200) {
-                    setNewFederate(prevState => ({...prevState, issuer: r.data.issuer, certificate_file: r.data.certificate_file, subject: r.data.subject, serial_number: r.data.serial_number}));
+                    setNewFederate(prevState => ({...prevState, issuer: r.data.issuer, certificate_file: r.data.certificate_file, subject: r.data.subject, serial_number: r.data.serial_number, common_name: r.data.common_name}));
                     setIssuerError(false);
                     setSubjectError(false);
                     setSerialNumberError(false);
@@ -313,6 +334,97 @@ export default function Federation () {
             })
         }
     }
+
+    function getAllGroups() {
+        axios.get(apiRoutes.allGroups).then(r => {
+            if (r.status === 200) {
+                const all_groups: ComboboxItem[] = [];
+                r.data.map((row: any) => {
+                    all_groups.push(row.name);
+                })
+                setAllGroups(all_groups);
+            }
+        }).catch(err => {
+            console.log(err);
+            notifications.show({
+                title: t('Failed to get group list'),
+                message: err.response.data.error,
+                icon: <IconX />,
+                color: 'red',
+            })
+        });
+    }
+
+    function getMemberships(federation_id: number | undefined) {
+        axios.get(apiRoutes.federationGroups, {params: {federation_id}}).then(r => {
+            if (r.status === 200) {
+                const tableData: TableData = {
+                    caption: '',
+                    head: [t('Group Name'), t('Direction')],
+                    body: [],
+                };
+
+                setInGroups([]);
+                setOutGroups([]);
+
+                r.data.groups.map((row: any) => {
+                    const delete_button = <Button
+                        color="red"
+                        onClick={() => {removeGroup(row.group.id, federation_id, row.direction);}}
+                        key={`${row.group.name}_remove`}
+                        rightSection={<IconUsersMinus size={14} />}
+                    >{t("Remove")}</Button>;
+
+                    tableData.body?.push([row.group.name, row.direction, delete_button]);
+
+                    if (row.direction === "IN")
+                        setInGroups((inGroups) => ([...inGroups, row.group.name]));
+                    else
+                        setOutGroups((outGroups) => ([...outGroups, row.group.name]));
+                });
+
+                setMemberships(tableData);
+            }
+        })
+    }
+
+    function removeGroup(group_id: number | undefined, federation_id: number | undefined, direction: string) {
+        axios.delete(apiRoutes.federationGroups, {params: {federation_id, group_id, direction}})
+            .then(r => {
+                if (r.status === 200) {
+                    getMemberships(federation_id);
+                }
+            }).catch(err => {
+                console.log(err);
+                notifications.show({
+                    title: t('Failed remove group from federation connection'),
+                    message: err.response.data.error,
+                    icon: <IconX />,
+                    color: 'red',
+                })
+        })
+    }
+
+    function addGroupsToFederation(federation_id: number | undefined, direction: string) {
+        axios.put(apiRoutes.federationGroups, {federation_id, direction, groups: direction === "IN" ? inGroups : outGroups})
+            .then(r => {
+                if (r.status === 200) {
+                    getMemberships(federation_id);
+                }
+            }).catch(err => {
+                console.log(err);
+                notifications.show({
+                    title: t('Failed add group to federation connection'),
+                    message: err.response.data.error,
+                    icon: <IconX />,
+                    color: 'red',
+                })
+        })
+    }
+
+    useEffect(() => {
+        console.log(memberships);
+    }, [memberships]);
 
     useEffect(() => {
         if (newFederateCert)
@@ -346,8 +458,8 @@ export default function Federation () {
                         {accessor: "port", title: t("Port"), sortable: true}, {accessor: "status", title: t("Status"), sortable: true},
                         {accessor: "reconnect_interval", title: t("Reconnect Interval"), sortable: true}, {accessor: "max_retries", title: t("Max Retries"), sortable: true},
                         {accessor: "federate.name", title: t("Federate"), sortable: true}, {accessor: "protocol_version", title: t("Protocol Version"), sortable: true},
-                        {accessor: "enabled_switch", title: t("Enabled"), sortable: true}, {accessor: "last_error", title: t("Last Error"), sortable: true},
-                        {accessor: "edit_button", title: t("Edit"), sortable: true}, {accessor: "delete_button", title: t("Delete"), sortable: true}
+                        {accessor: "enabled_switch", title: t("Enabled"), sortable: true}, {accessor: "groups_button", title: t("Groups"), sortable: false},
+                        {accessor: "edit_button", title: t("Edit"), sortable: false}, {accessor: "delete_button", title: t("Delete"), sortable: false}
                     ]}
                     page={0}
                     onPageChange={() => {}}
@@ -379,7 +491,7 @@ export default function Federation () {
                         {accessor: "automatic_group_matching_switch", title: t("Automatic Group Matching"), sortable: true}, {accessor: "fallback_group_matching_switch", title: t("Fallback Group Matching"), sortable: true},
                         {accessor: "max_hops", title: t("Max Hops"), sortable: true}, {accessor: "group_hop_limiting_switch", title: t("Group Hop Limiting"), sortable: true},
                         {accessor: "notes", title: t("Notes"), sortable: true}, {accessor: "issuer", title: t("Issuer"), sortable: true},
-                        {accessor: "subject", title: t("Subject"), sortable: true}, {accessor: "serial_number", title: t("Serial Number"), sortable: true},
+                        {accessor: "subject", title: t("Subject"), sortable: true}, {accessor: "serial_number", title: t("Serial Number"), sortable: true}, {accessor: "common_name", title: t("Common Name"), sortable: true},
                         {accessor: "certificate_download_button", title: t("Download Certificate"), sortable: true}, {accessor: "edit_button", title: t("Edit"), sortable: true}, {accessor: "delete_button", title: t("Delete"), sortable: true},
                     ]}
                     page={0}
@@ -428,6 +540,7 @@ export default function Federation () {
                 <Switch defaultChecked={federateToEdit != undefined ? federateToEdit.use_group_hop_limiting : false} label={t("Use Group Hop Limiting")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, use_group_hop_limiting : e.target.checked }))}} mb="md" />
                 <TextInput defaultValue={federateToEdit != undefined ? federateToEdit.notes : ""} label={t("Notes")} onChange={e => { setNewFederate(prevState => ({ ...prevState, notes: e.target.value }))}} mb="md" />
                 <FileInput required clearable label={t("Certificate File")} description={t("Must be in PEM format")} accept="application/x-pem-file" mb="md" onChange={setNewFederateCert} />
+                <TextInput defaultValue={federateToEdit != undefined ? federateToEdit.common_name : ""} disabled required error={issuerError} label={t("Common Name")} value={newFederate.common_name} mb="md" />
                 <TextInput defaultValue={federateToEdit != undefined ? federateToEdit.issuer : ""} disabled required error={issuerError} label={t("Issuer")} value={newFederate.issuer} mb="md" />
                 <TextInput defaultValue={federateToEdit != undefined ? federateToEdit.subject : ""} disabled required error={subjectError} label={t("Subject")} value={newFederate.subject} mb="md" />
                 <TextInput defaultValue={federateToEdit != undefined ? federateToEdit.serial_number : ""} disabled required error={serialNumberError} label={t("Serial Number")} value={newFederate.serial_number} mb="md" />
@@ -460,6 +573,71 @@ export default function Federation () {
                     </Button>
                     <Button onClick={() => setDeleteFederateModalOpen(false)}>{t("No")}</Button>
                 </Center>
+            </Modal>
+
+            <Modal size="lg" opened={groupModalOpen} onClose={() => setGroupModalOpen(false)} title={t("Manage Groups for {{federation}}", {"federation": fedConnectionToEdit?.display_name})}>
+                <Paper withBorder p="md" mb="md">
+                    <Grid align="flex-end" justify="space-between">
+                        <Grid.Col span={10}>
+                            <Title order={6} mb="md">{t("DirectionIN")}</Title>
+                            <MultiSelect
+                                placeholder={t("Search")}
+                                searchable
+                                clearable
+                                value={inGroups}
+                                nothingFoundMessage={t("Nothing found...")}
+                                label={t("Select Groups")}
+                                onChange={(value) => {setInGroups(value)}}
+                                data={allGroups} />
+                        </Grid.Col>
+                        <Grid.Col span={2}>
+                            <Button onClick={() => {
+                                addGroupsToFederation(fedConnectionToEdit?.id, "IN");
+                            }}>{t("Add")}</Button>
+                        </Grid.Col>
+                    </Grid>
+                </Paper>
+                <Paper withBorder p="md" mb="md">
+                    <Grid align="flex-end" justify="space-between">
+                        <Grid.Col span={10}>
+                            <Title order={6} mb="md">{t("DirectionOUT")}</Title>
+                            <MultiSelect
+                                placeholder={t("Search")}
+                                searchable
+                                clearable
+                                defaultValue={outGroups}
+                                value={outGroups}
+                                nothingFoundMessage={t("Nothing found...")}
+                                label={t("Select Groups")}
+                                onChange={(value) => {setOutGroups(value)}}
+                                data={allGroups} />
+                        </Grid.Col>
+                        <Grid.Col span={2}>
+                            <Button onClick={() => {
+                                addGroupsToFederation(fedConnectionToEdit?.id, "OUT");
+                            }}>{t("Add")}</Button>
+                        </Grid.Col>
+                    </Grid>
+                </Paper>
+                <Title order={4} mb="md">{t("Memberships")}</Title>
+                <DataTable
+                    withTableBorder
+                    borderRadius="md"
+                    striped
+                    highlightOnHover
+                    records={memberships.body?.map((row: any[], idx: number) => ({
+                        id: idx,
+                        group_name: row[0],
+                        direction: row[1],
+                        delete_button: row[2],
+                    }))}
+                    columns={[
+                        { accessor: 'group_name', title: t('Group Name') },
+                        { accessor: 'direction', title: t('Direction') },
+                        { accessor: 'delete_button', title: "" },
+                    ]}
+                    minHeight={120}
+                />
             </Modal>
         </ScrollArea>
     )

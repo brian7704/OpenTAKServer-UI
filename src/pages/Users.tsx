@@ -56,7 +56,7 @@ export default function Users() {
     const [password, setPassword] = useState('');
     const [confirm_password, setConfirmPassword] = useState('');
     const [role, setRole] = useState('');
-    const [allGroups, setAllGroups] = useState<ComboboxItem[]>([])
+    const [allGroups, setAllGroups] = useState<ComboboxItem[]>([]);
     const [inGroups, setInGroups] = useState<string[]>([]);
     const [outGroups, setOutGroups] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
@@ -158,7 +158,7 @@ export default function Users() {
                         onClick={() => {removeUserFromGroup(user_name, row.group_name, row.direction);}}
                         key={`${row.group_name}_remove`}
                         rightSection={<IconUsersMinus size={14} />}
-                    >Remove</Button>;
+                    >{t("Remove")}</Button>;
 
                     tableData.body?.push([row.group_name, row.direction, active_switch, delete_button]);
 
@@ -451,7 +451,7 @@ export default function Users() {
                 <Paper withBorder p="md" mb="md">
                     <Grid align="flex-end" justify="space-between">
                         <Grid.Col span={10}>
-                            <Title order={6} mb="md">{t("Direction: IN")}</Title>
+                            <Title order={6} mb="md">{t("DirectionIN")}</Title>
                             <MultiSelect
                                 placeholder={t("Search")}
                                 searchable
@@ -470,7 +470,7 @@ export default function Users() {
                 <Paper withBorder p="md" mb="md">
                     <Grid align="flex-end" justify="space-between">
                         <Grid.Col span={10}>
-                            <Title order={6} mb="md">{t("Direction: OUT")}</Title>
+                            <Title order={6} mb="md">{t("DirectionOUT")}</Title>
                             <MultiSelect
                                 placeholder={t("Search")}
                                 searchable
@@ -540,7 +540,7 @@ export default function Users() {
                 />
                 <Button onClick={(e) => { addUser(e); }}>Add User</Button>
             </Modal>
-            <Modal opened={showResetPassword} onClose={() => setShowResetPassword(false)} title={`Reset ${username}'s Password`}>
+            <Modal opened={showResetPassword} onClose={() => setShowResetPassword(false)} title={t("Reset password for {{username}}?")}>
                 <PasswordInput
                   label={t("Password")}
                   placeholder="Password"
@@ -552,7 +552,7 @@ export default function Users() {
                 />
                 <Button onClick={(e) => { resetPassword(e); }}>Change Password</Button>
             </Modal>
-            <Modal opened={showDeleteUser} onClose={() => setShowDeleteUser(false)} title={`Are you sure you want to delete ${username}?`}>
+            <Modal opened={showDeleteUser} onClose={() => setShowDeleteUser(false)} title={t("Are you sure you want to delete {{username}}?")}>
                 <Center>
                     <Button
                       mr="md"
