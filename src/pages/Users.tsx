@@ -57,7 +57,8 @@ export default function Users() {
     const [confirm_password, setConfirmPassword] = useState('');
     const [role, setRole] = useState('');
     const [allGroups, setAllGroups] = useState<ComboboxItem[]>([])
-    const [groups, setGroups] = useState<string[]>([]);
+    const [inGroups, setInGroups] = useState<string[]>([]);
+    const [outGroups, setOutGroups] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
     const [memberships, setMemberships] = useState<TableData>({
         caption: '',
@@ -142,6 +143,9 @@ export default function Users() {
                     body: [],
                 };
 
+                setInGroups([]);
+                setOutGroups([]);
+
                 r.data.results.map((row: any) => {
                     const active_switch = <Tooltip refProp="rootRef" label={t("This membership can be activated or deactivated from the user's EUD")}>
                         <Switch
@@ -157,6 +161,11 @@ export default function Users() {
                     >Remove</Button>;
 
                     tableData.body?.push([row.group_name, row.direction, active_switch, delete_button]);
+
+                    if (row.direction === "IN")
+                        setInGroups((inGroups) => ([...inGroups, row.group_name]));
+                    else
+                        setOutGroups((outGroups) => ([...outGroups, row.group_name]));
                 })
 
                 setMemberships(tableData);
@@ -165,10 +174,13 @@ export default function Users() {
     }
 
     function addUserToGroups(direction: string) {
-        axios.put(apiRoutes.userGroups, {username, direction, groups}).then(r => {
+        axios.put(apiRoutes.userGroups, {username, direction, groups: direction === "IN" ? inGroups : outGroups}).then(r => {
             if (r.status === 200) {
                 getMemberships(username);
-                setGroups([]);
+                if (direction === "IN")
+                    setInGroups([]);
+                else
+                    setOutGroups([]);
             }
         }).catch(err => {
             console.log(err);
@@ -390,7 +402,7 @@ export default function Users() {
                                     setUsername(row.username);
                                 }}
                                 rightSection={<IconPassword />}
-                            >Reset Password</Button>
+                            >{t("Reset Password")}</Button>
                         ),
                     },
                     {
@@ -405,7 +417,7 @@ export default function Users() {
                                     getMemberships(row.username);
                                     setUsername(row.username);
                                 }}
-                            >Manage Groups</Button>
+                            >{t("Manage Groups")}</Button>
                         ),
                     },
                     {
@@ -435,18 +447,19 @@ export default function Users() {
                 fetching={loading}
                 minHeight={180}
             />
-            <Modal size="lg" opened={showManageGroups} onClose={() => setShowManageGroups(false)} title={`Manage Groups for ${username}`}>
+            <Modal size="lg" opened={showManageGroups} onClose={() => setShowManageGroups(false)} title={t("Manage Groups for {{username}}", {"username": username})}>
                 <Paper withBorder p="md" mb="md">
                     <Grid align="flex-end" justify="space-between">
                         <Grid.Col span={10}>
-                            <Title order={6} mb="md">Direction: IN</Title>
+                            <Title order={6} mb="md">{t("Direction: IN")}</Title>
                             <MultiSelect
-                                placeholder="Search"
+                                placeholder={t("Search")}
                                 searchable
                                 clearable
-                                nothingFoundMessage="Nothing found..."
-                                label="Select Groups"
-                                onChange={(value) => {setGroups(value)}}
+                                value={inGroups}
+                                nothingFoundMessage={t("Nothing found...")}
+                                label={t("Select Groups")}
+                                onChange={(value) => {setInGroups(value)}}
                                 data={allGroups} />
                         </Grid.Col>
                         <Grid.Col span={2}>
@@ -457,18 +470,22 @@ export default function Users() {
                 <Paper withBorder p="md" mb="md">
                     <Grid align="flex-end" justify="space-between">
                         <Grid.Col span={10}>
-                            <Title order={6} mb="md">{t("Direction")}: OUT</Title>
+                            <Title order={6} mb="md">{t("Direction: OUT")}</Title>
                             <MultiSelect
                                 placeholder={t("Search")}
                                 searchable
                                 clearable
+                                value={outGroups}
                                 nothingFoundMessage={t("Nothing found...")}
-                                label="Select Groups"
-                                onChange={(value) => {setGroups(value)}}
+                                label={t("Select Groups")}
+                                onChange={(value) => {setOutGroups(value)}}
                                 data={allGroups} />
                         </Grid.Col>
                         <Grid.Col span={2}>
-                            <Button onClick={() => addUserToGroups("OUT")}>Add</Button>
+                            <Button onClick={() => {
+                                addUserToGroups("OUT");
+                                setOutGroups([]);
+                            }}>{t("Add")}</Button>
                         </Grid.Col>
                     </Grid>
                 </Paper>
@@ -497,7 +514,7 @@ export default function Users() {
             <Modal opened={addUserOpen} onClose={() => setAddUserOpen(false)} title={t("Add User")}>
                 <TextInput required label="Username" placeholder="Username" onChange={e => { setUsername(e.target.value); }} />
                 <PasswordInput
-                  label="Password"
+                  label={t("Password")}
                   placeholder="Password"
                   required
                   mt="md"
@@ -506,7 +523,7 @@ export default function Users() {
                   value={password}
                 />
                 <PasswordInput
-                  label="Confirm Password"
+                  label={t("Confirm Password")}
                   placeholder="Confirm Password"
                   required
                   mt="md"
@@ -515,7 +532,7 @@ export default function Users() {
                   value={confirm_password}
                 />
                 <Select
-                  label="Role"
+                  label={t("Role")}
                   placeholder="Role"
                   data={['user', 'administrator']}
                   mb="md"
@@ -525,7 +542,7 @@ export default function Users() {
             </Modal>
             <Modal opened={showResetPassword} onClose={() => setShowResetPassword(false)} title={`Reset ${username}'s Password`}>
                 <PasswordInput
-                  label="Password"
+                  label={t("Password")}
                   placeholder="Password"
                   required
                   mt="md"
