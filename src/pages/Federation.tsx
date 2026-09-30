@@ -40,7 +40,7 @@ interface Federate {
     enabled: boolean,
 }
 
-interface FederationConnection {
+interface FederationConnectionRow {
     id: number | undefined;
     display_name: string;
     address: string | undefined;
@@ -64,15 +64,36 @@ interface FederationConnection {
     edit_button: React.ReactNode | undefined,
 }
 
+interface FederationConnection {
+    id: number | undefined;
+    display_name: string;
+    address: string | undefined;
+    port: number | undefined;
+    enabled: boolean;
+    protocol_version: string | undefined;
+    reconnect_interval: number;
+    unlimited_retries: boolean;
+    max_retries: number;
+    use_token_auth: boolean;
+    auth_token_type: string | undefined;
+    auth_token: string | undefined;
+    last_error: string | undefined;
+    description: string | undefined;
+    uid: string | undefined;
+    federate_id: string | undefined | null;
+    federate: Federate | undefined;
+}
+
 export default function Federation () {
     const [activePage, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [fedConnectionsLoading, setFedConnectionsLoading] = useState(false);
     const [federatesLoading, setFederatesLoading] = useState(false);
-    const [federationConnections, setFederationConnections] = useState<FederationConnection[]>([]);
+    const [federationConnections, setFederationConnections] = useState<FederationConnectionRow[]>([]);
     const [allFederationConnections, setAllFederationConnections] = useState<ComboboxItem[]>([]);
     const [federationCount, setFederationCount] = useState(0);
-    const [federationConnectionModalOpen, setFederationConnectionModalOpen] = useState(false);
+    const [newFedConnectionModalOpen, setNewFedConnectionModalOpen] = useState(false);
+    const [editFedConnectionModalOpen, setEditFedConnectionModalOpen] = useState(false);
     const [federateModalOpen, setFederateModalOpen] = useState(false);
     const [newFederateCert, setNewFederateCert] = useState<File | null>(null);
     const [federates, setFederates] = useState<Federate[]>([]);
@@ -85,7 +106,6 @@ export default function Federation () {
     const [fedConnectionToDelete, setFedConnectionToDelete] = useState<FederationConnection | undefined>(undefined);
     const [deleteFederateModalOpen, setDeleteFederateModalOpen] = useState(false);
     const [federateToDelete, setFederateToDelete] = useState<Federate | undefined>(undefined);
-    const [fedConnectionToEdit, setFedConnectionToEdit] = useState<FederationConnection | undefined>(undefined);
     const [federateToEdit, setFederateToEdit] = useState<Federate | undefined>(undefined);
     const [groupModalOpen, setGroupModalOpen] = useState(false);
     const [inGroups, setInGroups] = useState<string[]>([]);
@@ -96,21 +116,16 @@ export default function Federation () {
         head: [t('Group Name'), t('Direction')],
         body: [],
     });
-    const [newFederationConnection, setNewFederationConnection] = useState<FederationConnection>(
+    const [federationConnection, setFederationConnection] = useState<FederationConnection>(
         {
-            groups_button: undefined,
-            edit_button: undefined,
             federate_id: undefined,
             id: undefined,
             address: undefined,
             auth_token: undefined,
             auth_token_type: "automatic",
-            delete_button: undefined,
             description: undefined,
             display_name: "",
             enabled: true,
-            enabled_switch: undefined,
-            federate: undefined,
             last_error: undefined,
             max_retries: 3,
             port: 9102,
@@ -118,7 +133,8 @@ export default function Federation () {
             reconnect_interval: 30,
             uid: undefined,
             unlimited_retries: true,
-            use_token_auth: false
+            use_token_auth: false,
+            federate: undefined,
         }
     );
     const [newFederate, setNewFederate] = useState<Federate>({
@@ -148,7 +164,7 @@ export default function Federation () {
         use_group_hop_limiting: false
 
     })
-    const [fedConnectionSortStatus, setFedConnectionSortStatus] = useState<DataTableSortStatus<FederationConnection>>({
+    const [fedConnectionSortStatus, setFedConnectionSortStatus] = useState<DataTableSortStatus<FederationConnectionRow>>({
         columnAccessor: 'display_name',
         direction: 'desc',
     });
@@ -159,33 +175,44 @@ export default function Federation () {
     });
 
     function getFederationConnections() {
+        setFederationConnections([]);
         axios.get(apiRoutes.allFederationConnections).then((r) => {
             if (r.status === 200) {
                 const all_fed_connections: ComboboxItem[] = [];
                 r.data.results.map((fedConnection: FederationConnection) => {
                     all_fed_connections.push({label: fedConnection.display_name, value: fedConnection.id + ""})
 
-                    fedConnection.enabled_switch = <Switch checked={fedConnection.enabled} />
 
-                    fedConnection.delete_button = <Button color="red" onClick={() => {
+                    let enabled_switch = <Switch
+                                                 defaultChecked={fedConnection.enabled}
+                                                 onChange={(e) =>
+                                                 {
+                                                     fedConnection.enabled = e.target.checked;
+                                                     editFederationConnection(fedConnection);
+                                                 }} />
+
+                    let delete_button = <Button color="red" onClick={() => {
                         setFedConnectionToDelete(fedConnection);
                         setDeleteFedConnectionOpen(true);
                     }}><IconCircleMinus size={14} /></Button>
 
-                    fedConnection.edit_button = <Button onClick={() => {
-                        setFedConnectionToEdit(fedConnection);
-                        setFederationConnectionModalOpen(true)
+                    let edit_button = <Button onClick={() => {
+                        setFederationConnection(fedConnection);
+                        setEditFedConnectionModalOpen(true)
                     }}><IconEdit /></Button>
 
-                    fedConnection.groups_button = <Button onClick={() => {
+                    let groups_button = <Button onClick={() => {
                         getAllGroups();
                         getMemberships(fedConnection.id);
-                        setFedConnectionToEdit(fedConnection);
+                        setFederationConnection(fedConnection);
                         setGroupModalOpen(true);
                     }}><IconEdit /></Button>
 
+                    let new_row: FederationConnectionRow = {...fedConnection, enabled_switch, delete_button, edit_button, groups_button};
+
+                    setFederationConnections(rows => [...rows, new_row]);
+
                 })
-                setFederationConnections(r.data.results);
                 setAllFederationConnections(all_fed_connections);
             }
         }).catch((err) => {
@@ -268,16 +295,80 @@ export default function Federation () {
 
     function addFederationConnection() {
         setFedConnectionsLoading(true);
-        axios.post(apiRoutes.federation, newFederationConnection).then((r) => {
+        axios.post(apiRoutes.federation, federationConnection).then((r) => {
             if (r.status === 200) {
-                setFederationConnectionModalOpen(false);
+                setNewFedConnectionModalOpen(false);
                 getFederationConnections();
+                setFederationConnection({
+                    federate_id: undefined,
+                    id: undefined,
+                    address: undefined,
+                    auth_token: undefined,
+                    auth_token_type: "automatic",
+                    description: undefined,
+                    display_name: "",
+                    enabled: true,
+                    last_error: undefined,
+                    max_retries: 3,
+                    port: 9102,
+                    protocol_version: undefined,
+                    reconnect_interval: 30,
+                    uid: undefined,
+                    unlimited_retries: true,
+                    use_token_auth: false,
+                    federate: undefined,
+                });
             }
             setFedConnectionsLoading(false);
         }).catch((err) => {
             console.log(err);
             notifications.show({
                 message: t("Failed to add federation connection"),
+                color: "red",
+                icon: <IconX />
+            })
+            setFedConnectionsLoading(false);
+        })
+    }
+
+    function editFederationConnection(fedConnectionToEdit: FederationConnection | undefined) {
+        let data: FederationConnection;
+        if (fedConnectionToEdit !== undefined) {
+            data = fedConnectionToEdit;
+        }
+        else {
+            data = federationConnection;
+        }
+        setFedConnectionsLoading(true);
+        axios.patch(apiRoutes.federation, data).then((r) => {
+            if (r.status === 200) {
+                setEditFedConnectionModalOpen(false);
+                getFederationConnections();
+                setFederationConnection({
+                    federate_id: undefined,
+                    id: undefined,
+                    address: undefined,
+                    auth_token: undefined,
+                    auth_token_type: "automatic",
+                    description: undefined,
+                    display_name: "",
+                    enabled: true,
+                    last_error: undefined,
+                    max_retries: 3,
+                    port: 9102,
+                    protocol_version: undefined,
+                    reconnect_interval: 30,
+                    uid: undefined,
+                    unlimited_retries: true,
+                    use_token_auth: false,
+                    federate: undefined,
+                });
+            }
+            setFedConnectionsLoading(false);
+        }).catch((err) => {
+            console.log(err);
+            notifications.show({
+                message: t("Failed to edit federation connection"),
                 color: "red",
                 icon: <IconX />
             })
@@ -444,7 +535,7 @@ export default function Federation () {
             <Button component="a" href="/api/federation/certificate" rightSection={<IconDownload size={14} />} mb="md">{t("Download Federation Certificate")}</Button>
             <Grid mb="md">
                 <Grid.Col span={{"sm": 6, "lg": 10}}><Title mb="xl" order={2}>{t("Outgoing Federation Connections")}</Title></Grid.Col>
-                <Grid.Col span={{"sm": 6, "lg": 2}}><Button onClick={() => setFederationConnectionModalOpen(true)}>{t('Add Connection')}</Button></Grid.Col>
+                <Grid.Col span={{"sm": 6, "lg": 2}}><Button onClick={() => setNewFedConnectionModalOpen(true)}>{t('Add Connection')}</Button></Grid.Col>
             </Grid>
             <Table.ScrollContainer minWidth="100%" mb="md">
                 <DataTable
@@ -507,27 +598,27 @@ export default function Federation () {
                 />
             </Table.ScrollContainer>
 
-            <Modal opened={federationConnectionModalOpen} onClose={() => {setFederationConnectionModalOpen(false); setFedConnectionToEdit(undefined)}} title={t("New Federation Connection")}>
-                <TextInput defaultValue={fedConnectionToEdit != undefined ? fedConnectionToEdit.display_name : ""} required label={t("Name")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, display_name: e.target.value }))}} mb="md" />
-                <TextInput defaultValue={fedConnectionToEdit != undefined ? fedConnectionToEdit.address : ""} required label={t("Address")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, address: e.target.value }))}} mb="md" />
-                <NumberInput defaultValue={fedConnectionToEdit != undefined ? fedConnectionToEdit.port : 9102} required label={t("Port")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, port: +e }))}} mb="md" min={1} max={65535} />
-                <Switch defaultChecked={fedConnectionToEdit != undefined ? fedConnectionToEdit.enabled : true} label={t("Enabled")} onChange={(e) => {setNewFederationConnection(prevState => ({ ...prevState, enabled : e.target.checked }))}} mb="md" />
+            <Modal opened={newFedConnectionModalOpen || editFedConnectionModalOpen} onClose={() => {setNewFedConnectionModalOpen(false); setEditFedConnectionModalOpen(false)}} title={newFedConnectionModalOpen ? t("New Federation Connection") : t("Edit Federation Connection")}>
+                <TextInput defaultValue={federationConnection.display_name} required label={t("Name")} onChange={e => { setFederationConnection(prevState => ({ ...prevState, display_name: e.target.value }))}} mb="md" />
+                <TextInput defaultValue={federationConnection.address} required label={t("Address")} onChange={e => { setFederationConnection(prevState => ({ ...prevState, address: e.target.value }))}} mb="md" />
+                <NumberInput defaultValue={federationConnection.port} required label={t("Port")} onChange={e => { setFederationConnection(prevState => ({ ...prevState, port: +e }))}} mb="md" min={1} max={65535} />
+                <Switch defaultChecked={federationConnection.enabled} label={t("Enabled")} onChange={(e) => {setFederationConnection(prevState => ({ ...prevState, enabled : e.target.checked }))}} mb="md" />
                 <NumberInput disabled label={t("Protocol Version")} mb="md" value={2} description={t("OpenTAKServer supports only protocol version 2")} />
-                <NumberInput defaultValue={fedConnectionToEdit != undefined ? fedConnectionToEdit.reconnect_interval : 30} required label={t("Reconnect Interval")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, reconnect_interval: +e }))}} mb="md" min={0} description={t("Set to zero to disable")} />
-                <Switch defaultChecked={fedConnectionToEdit != undefined ? fedConnectionToEdit.unlimited_retries : true} label={t("Unlimited Retries")} onChange={(e) => {setNewFederationConnection(prevState => ({ ...prevState, unlimited_retries : e.target.checked }))}} mb="md" />
-                <NumberInput defaultValue={fedConnectionToEdit != undefined ? fedConnectionToEdit.max_retries : 3} required label={t("Max Retries")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, max_retries: +e }))}} mb="md" min={0} description={t("Has no effect when unlimited retries is enabled")} />
-                <Select defaultValue={fedConnectionToEdit != undefined ? fedConnectionToEdit.federate_id : undefined} required label={t("Federate")} onChange={(value, option) => {setNewFederationConnection(prevState => ({...prevState, federate_id: value}))}} data={allFederates} placeholder={t("Choose Federate")} nothingFoundMessage={t("Nothing found...")} mb="md"></Select>
+                <NumberInput defaultValue={federationConnection.reconnect_interval} required label={t("Reconnect Interval")} onChange={e => { setFederationConnection(prevState => ({ ...prevState, reconnect_interval: +e }))}} mb="md" min={0} description={t("Set to zero to disable")} />
+                <Switch defaultChecked={federationConnection.unlimited_retries} label={t("Unlimited Retries")} onChange={(e) => {setFederationConnection(prevState => ({ ...prevState, unlimited_retries : e.target.checked }))}} mb="md" />
+                <NumberInput defaultValue={federationConnection.max_retries} required label={t("Max Retries")} onChange={e => { setFederationConnection(prevState => ({ ...prevState, max_retries: +e }))}} mb="md" min={0} description={t("Has no effect when unlimited retries is enabled")} />
+                <Select defaultValue={federationConnection.federate_id} required label={t("Federate")} onChange={(value, option) => {setFederationConnection(prevState => ({...prevState, federate_id: value}))}} data={allFederates} placeholder={t("Choose Federate")} nothingFoundMessage={t("Nothing found...")} mb="md"></Select>
                 {/*<Select label={t("Fallback Connection")} placeholder={t("Choose Fallback Connection")} data={allFederationConnections} nothingFoundMessage={t("Nothing found...")} mb="md"></Select>*/}
-                <Switch defaultChecked={fedConnectionToEdit != undefined ? fedConnectionToEdit.use_token_auth : false} label={t("Use Token Auth")} onChange={(e) => {setNewFederationConnection(prevState => ({ ...prevState, use_token_auth : e.target.checked }))}} mb="md" />
-                <Radio.Group defaultValue={fedConnectionToEdit != undefined ? fedConnectionToEdit.auth_token_type : "automatic"} name="auth_token_type" label={t("Auth Token Type")} disabled={!newFederationConnection.use_token_auth && !fedConnectionToEdit?.use_token_auth} onChange={(e) => setNewFederationConnection(prevState => ({...prevState, auth_token_type: e}))} mb="md">
+                <Switch defaultChecked={federationConnection.use_token_auth} label={t("Use Token Auth")} onChange={(e) => {setFederationConnection(prevState => ({ ...prevState, use_token_auth : e.target.checked }))}} mb="md" />
+                <Radio.Group defaultValue={federationConnection.auth_token_type} name="auth_token_type" label={t("Auth Token Type")} disabled={federationConnection.use_token_auth} onChange={(e) => setFederationConnection(prevState => ({...prevState, auth_token_type: e}))} mb="md">
                     <Group>
                         <Radio label={t("Automatic Token")} value="automatic" />
                         <Radio label={t("Manual Token")} value="manual" />
                     </Group>
                 </Radio.Group>
-                <TextInput defaultValue={fedConnectionToEdit != undefined ? fedConnectionToEdit.auth_token : ""} disabled={fedConnectionToEdit != undefined ? (!fedConnectionToEdit.use_token_auth || fedConnectionToEdit.auth_token_type === "automatic") : (!newFederationConnection.use_token_auth || newFederationConnection.auth_token_type === "automatic")} label={t("Auth Token")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, auth_token: e.target.value }))}} mb="md" />
-                <TextInput defaultValue={fedConnectionToEdit != undefined ? fedConnectionToEdit.description : ""} label={t("Description")} onChange={e => { setNewFederationConnection(prevState => ({ ...prevState, description  : e.target.value }))}} mb="md" />
-                <Button onClick={() => {addFederationConnection()}}>{t("Submit")}</Button>
+                <TextInput defaultValue={federationConnection.auth_token} disabled={(!federationConnection.use_token_auth || federationConnection.auth_token_type === "automatic")} label={t("Auth Token")} onChange={e => { setFederationConnection(prevState => ({ ...prevState, auth_token: e.target.value }))}} mb="md" />
+                <TextInput defaultValue={federationConnection.description} label={t("Description")} onChange={e => { setFederationConnection(prevState => ({ ...prevState, description  : e.target.value }))}} mb="md" />
+                <Button onClick={() => {newFedConnectionModalOpen ? addFederationConnection() : editFederationConnection(undefined)}}>{t("Submit")}</Button>
             </Modal>
 
             <Modal opened={federateModalOpen} onClose={() => setFederateModalOpen(false)} title={t("New Federate")} size="lg">
@@ -575,7 +666,7 @@ export default function Federation () {
                 </Center>
             </Modal>
 
-            <Modal size="lg" opened={groupModalOpen} onClose={() => setGroupModalOpen(false)} title={t("Manage Groups for {{federation}}", {"federation": fedConnectionToEdit?.display_name})}>
+            <Modal size="lg" opened={groupModalOpen} onClose={() => setGroupModalOpen(false)} title={t("Manage Groups for {{federation}}", {"federation": federationConnection.display_name})}>
                 <Paper withBorder p="md" mb="md">
                     <Grid align="flex-end" justify="space-between">
                         <Grid.Col span={10}>
@@ -592,7 +683,7 @@ export default function Federation () {
                         </Grid.Col>
                         <Grid.Col span={2}>
                             <Button onClick={() => {
-                                addGroupsToFederation(fedConnectionToEdit?.id, "IN");
+                                addGroupsToFederation(federationConnection.id, "IN");
                             }}>{t("Add")}</Button>
                         </Grid.Col>
                     </Grid>
@@ -614,7 +705,7 @@ export default function Federation () {
                         </Grid.Col>
                         <Grid.Col span={2}>
                             <Button onClick={() => {
-                                addGroupsToFederation(fedConnectionToEdit?.id, "OUT");
+                                addGroupsToFederation(federationConnection.id, "OUT");
                             }}>{t("Add")}</Button>
                         </Grid.Col>
                     </Grid>
