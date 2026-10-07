@@ -10,6 +10,8 @@ import {notifications} from "@mantine/notifications";
 import {IconCircleMinus, IconDownload, IconEdit, IconUsersMinus, IconX} from "@tabler/icons-react";
 import {id} from "date-fns/locale";
 import {json} from "node:stream/consumers";
+import { socket } from '@/socketio';
+import {Led} from "@gfazioli/mantine-led";
 
 interface Federate {
     id: string;
@@ -62,6 +64,7 @@ interface FederationConnectionRow {
     groups_button: React.ReactNode | null;
     delete_button: React.ReactNode | null;
     edit_button: React.ReactNode | undefined,
+    status_indicator: React.ReactNode | undefined,
 }
 
 interface FederationConnection {
@@ -82,6 +85,7 @@ interface FederationConnection {
     uid: string | undefined;
     federate_id: string | undefined | null;
     federate: Federate | undefined;
+    connected: boolean;
 }
 
 export default function Federation () {
@@ -89,7 +93,8 @@ export default function Federation () {
     const [pageSize, setPageSize] = useState(10);
     const [fedConnectionsLoading, setFedConnectionsLoading] = useState(false);
     const [federatesLoading, setFederatesLoading] = useState(false);
-    const [federationConnections, setFederationConnections] = useState<FederationConnectionRow[]>([]);
+    const [federationConnections, setFederationConnections] = useState<FederationConnection[]>([]);
+    const [federationConnectionsTableRows, setFederationConnectionsTableRows] = useState<FederationConnectionRow[]>([]);
     const [allFederationConnections, setAllFederationConnections] = useState<ComboboxItem[]>([]);
     const [federationCount, setFederationCount] = useState(0);
     const [newFedConnectionModalOpen, setNewFedConnectionModalOpen] = useState(false);
@@ -118,6 +123,7 @@ export default function Federation () {
     });
     const [federationConnection, setFederationConnection] = useState<FederationConnection>(
         {
+            connected: false,
             federate_id: undefined,
             id: undefined,
             address: undefined,
@@ -134,7 +140,7 @@ export default function Federation () {
             uid: undefined,
             unlimited_retries: true,
             use_token_auth: false,
-            federate: undefined,
+            federate: undefined
         }
     );
     const [newFederate, setNewFederate] = useState<Federate>({
@@ -175,49 +181,61 @@ export default function Federation () {
     });
 
     function getFederationConnections() {
-        setFederationConnections([]);
+        setFederationConnectionsTableRows([]);
         axios.get(apiRoutes.allFederationConnections).then((r) => {
             if (r.status === 200) {
-                const all_fed_connections: ComboboxItem[] = [];
-                r.data.results.map((fedConnection: FederationConnection) => {
-                    all_fed_connections.push({label: fedConnection.display_name, value: fedConnection.id + ""})
-
-
-                    let enabled_switch = <Switch
-                                                 defaultChecked={fedConnection.enabled}
-                                                 onChange={(e) =>
-                                                 {
-                                                     fedConnection.enabled = e.target.checked;
-                                                     editFederationConnection(fedConnection);
-                                                 }} />
-
-                    let delete_button = <Button color="red" onClick={() => {
-                        setFedConnectionToDelete(fedConnection);
-                        setDeleteFedConnectionOpen(true);
-                    }}><IconCircleMinus size={14} /></Button>
-
-                    let edit_button = <Button onClick={() => {
-                        setFederationConnection(fedConnection);
-                        setEditFedConnectionModalOpen(true)
-                    }}><IconEdit /></Button>
-
-                    let groups_button = <Button onClick={() => {
-                        getAllGroups();
-                        getMemberships(fedConnection.id);
-                        setFederationConnection(fedConnection);
-                        setGroupModalOpen(true);
-                    }}><IconEdit /></Button>
-
-                    let new_row: FederationConnectionRow = {...fedConnection, enabled_switch, delete_button, edit_button, groups_button};
-
-                    setFederationConnections(rows => [...rows, new_row]);
-
-                })
-                setAllFederationConnections(all_fed_connections);
+                setFederationConnections(r.data.results);
             }
         }).catch((err) => {
             console.log(err);
+            notifications.show({
+                title: t('Failed to get federation connections'),
+                message: err.message,
+                color: "red",
+                icon: <IconX />
+            });
         })
+    }
+
+    function populateFederationConnectionsTable() {
+        let rows: FederationConnectionRow[] = [];
+        const all_fed_connections: ComboboxItem[] = [];
+        federationConnections.map((fedConnection: FederationConnection) => {
+            all_fed_connections.push({label: fedConnection.display_name, value: fedConnection.id + ""})
+
+
+            let enabled_switch = <Switch
+                defaultChecked={fedConnection.enabled}
+                onChange={(e) =>
+                {
+                    fedConnection.enabled = e.target.checked;
+                    editFederationConnection(fedConnection);
+                }} />
+
+            let delete_button = <Button color="red" onClick={() => {
+                setFedConnectionToDelete(fedConnection);
+                setDeleteFedConnectionOpen(true);
+            }}><IconCircleMinus size={14} /></Button>
+
+            let edit_button = <Button onClick={() => {
+                setFederationConnection(fedConnection);
+                setEditFedConnectionModalOpen(true)
+            }}><IconEdit /></Button>
+
+            let groups_button = <Button onClick={() => {
+                getAllGroups();
+                getMemberships(fedConnection.id);
+                setFederationConnection(fedConnection);
+                setGroupModalOpen(true);
+            }}><IconEdit /></Button>
+
+            let status_indicator = <Led color={fedConnection.connected ? "green" : "red"} value={true} size="md" variant="3d" />
+
+            let new_row: FederationConnectionRow = {...fedConnection, enabled_switch, status_indicator, delete_button, edit_button, groups_button};
+            rows.push(new_row);
+        })
+        setFederationConnectionsTableRows(rows);
+        setAllFederationConnections(all_fed_connections);
     }
 
     function getFederates() {
@@ -300,6 +318,7 @@ export default function Federation () {
                 setNewFedConnectionModalOpen(false);
                 getFederationConnections();
                 setFederationConnection({
+                    connected: false,
                     federate_id: undefined,
                     id: undefined,
                     address: undefined,
@@ -316,7 +335,7 @@ export default function Federation () {
                     uid: undefined,
                     unlimited_retries: true,
                     use_token_auth: false,
-                    federate: undefined,
+                    federate: undefined
                 });
             }
             setFedConnectionsLoading(false);
@@ -345,6 +364,7 @@ export default function Federation () {
                 setEditFedConnectionModalOpen(false);
                 getFederationConnections();
                 setFederationConnection({
+                    connected: false,
                     federate_id: undefined,
                     id: undefined,
                     address: undefined,
@@ -361,7 +381,7 @@ export default function Federation () {
                     uid: undefined,
                     unlimited_retries: true,
                     use_token_auth: false,
-                    federate: undefined,
+                    federate: undefined
                 });
             }
             setFedConnectionsLoading(false);
@@ -526,9 +546,25 @@ export default function Federation () {
     }, [newFederateCert]);
 
     useEffect(() => {
+        populateFederationConnectionsTable();
+    }, [federationConnections]);
+
+    useEffect(() => {
         getFederationConnections();
         getFederates();
     }, [fedConnectionSortStatus, federateSortStatus]);
+
+    useEffect(() => {
+        function onFederationEvent(federation: FederationConnection) {
+            getFederationConnections();
+        }
+
+        socket.on('federation', onFederationEvent)
+
+        return () => {
+            socket.off('federation', onFederationEvent);
+        }
+    }, []);
 
     return (
         <ScrollArea>
@@ -544,12 +580,13 @@ export default function Federation () {
                     shadow="sm"
                     striped
                     highlightOnHover
-                    records={federationConnections}
+                    records={federationConnectionsTableRows}
                     columns={[{accessor: "display_name", title: t("Name"), sortable: true}, {accessor: "address", title: t("Address"), sortable: true},
                         {accessor: "port", title: t("Port"), sortable: true}, {accessor: "status", title: t("Status"), sortable: true},
                         {accessor: "reconnect_interval", title: t("Reconnect Interval"), sortable: true}, {accessor: "max_retries", title: t("Max Retries"), sortable: true},
                         {accessor: "federate.name", title: t("Federate"), sortable: true}, {accessor: "protocol_version", title: t("Protocol Version"), sortable: true},
-                        {accessor: "enabled_switch", title: t("Enabled"), sortable: true}, {accessor: "groups_button", title: t("Groups"), sortable: false},
+                        {accessor: "enabled_switch", title: t("Enabled"), sortable: true}, {accessor: "status_indicator", title: t("Connected"), sortable: true},
+                        {accessor: "last_error", title: t("last_error"), sortable: true}, {accessor: "groups_button", title: t("Groups"), sortable: false},
                         {accessor: "edit_button", title: t("Edit"), sortable: false}, {accessor: "delete_button", title: t("Delete"), sortable: false}
                     ]}
                     page={0}
@@ -561,7 +598,7 @@ export default function Federation () {
                     sortStatus={fedConnectionSortStatus}
                     onSortStatusChange={setFedConnectionSortStatus}
                     fetching={fedConnectionsLoading}
-                    minHeight={federationConnections.length > 0 ? 10 : 180}
+                    minHeight={federationConnectionsTableRows.length > 0 ? 10 : 180}
                     />
             </Table.ScrollContainer>
 
@@ -630,7 +667,7 @@ export default function Federation () {
                 <NumberInput defaultValue={federateToEdit != undefined ? federateToEdit.max_hops : -1} label={t("Max Hops")} onChange={e => { setNewFederate(prevState => ({ ...prevState, max_hops: +e }))}} mb="md" min={-1} />
                 <Switch defaultChecked={federateToEdit != undefined ? federateToEdit.use_group_hop_limiting : false} label={t("Use Group Hop Limiting")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, use_group_hop_limiting : e.target.checked }))}} mb="md" />
                 <TextInput defaultValue={federateToEdit != undefined ? federateToEdit.notes : ""} label={t("Notes")} onChange={e => { setNewFederate(prevState => ({ ...prevState, notes: e.target.value }))}} mb="md" />
-                <FileInput required clearable label={t("Certificate File")} description={t("Must be in PEM format")} accept="application/x-pem-file" mb="md" onChange={setNewFederateCert} />
+                <FileInput required clearable label={t("Certificate File")} description={t("Must be in PEM format")} accept=".pem" mb="md" onChange={setNewFederateCert} />
                 <TextInput defaultValue={federateToEdit != undefined ? federateToEdit.common_name : ""} disabled required error={issuerError} label={t("Common Name")} value={newFederate.common_name} mb="md" />
                 <TextInput defaultValue={federateToEdit != undefined ? federateToEdit.issuer : ""} disabled required error={issuerError} label={t("Issuer")} value={newFederate.issuer} mb="md" />
                 <TextInput defaultValue={federateToEdit != undefined ? federateToEdit.subject : ""} disabled required error={subjectError} label={t("Subject")} value={newFederate.subject} mb="md" />
