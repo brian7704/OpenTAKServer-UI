@@ -181,7 +181,6 @@ export default function Federation () {
     });
 
     function getFederationConnections() {
-        setFederationConnectionsTableRows([]);
         axios.get(apiRoutes.allFederationConnections).then((r) => {
             if (r.status === 200) {
                 setFederationConnections(r.data.results);
@@ -229,7 +228,7 @@ export default function Federation () {
                 setGroupModalOpen(true);
             }}><IconEdit /></Button>
 
-            let status_indicator = <Led color={fedConnection.connected ? "green" : "red"} value={true} size="md" variant="3d" />
+            let status_indicator = <Led color={fedConnection.connected ? "green" : "red"} value={fedConnection.enabled} size="md" variant="3d" />
 
             let new_row: FederationConnectionRow = {...fedConnection, enabled_switch, status_indicator, delete_button, edit_button, groups_button};
             rows.push(new_row);
@@ -550,14 +549,12 @@ export default function Federation () {
     }, [federationConnections]);
 
     useEffect(() => {
-        getFederationConnections();
-        getFederates();
-    }, [fedConnectionSortStatus, federateSortStatus]);
-
-    useEffect(() => {
         function onFederationEvent(federation: FederationConnection) {
             getFederationConnections();
         }
+
+        getFederationConnections();
+        getFederates();
 
         socket.on('federation', onFederationEvent)
 
@@ -586,7 +583,7 @@ export default function Federation () {
                         {accessor: "reconnect_interval", title: t("Reconnect Interval"), sortable: true}, {accessor: "max_retries", title: t("Max Retries"), sortable: true},
                         {accessor: "federate.name", title: t("Federate"), sortable: true}, {accessor: "protocol_version", title: t("Protocol Version"), sortable: true},
                         {accessor: "enabled_switch", title: t("Enabled"), sortable: true}, {accessor: "status_indicator", title: t("Connected"), sortable: true},
-                        {accessor: "last_error", title: t("last_error"), sortable: true}, {accessor: "groups_button", title: t("Groups"), sortable: false},
+                        {accessor: "last_error", title: t("Last Error"), sortable: true}, {accessor: "groups_button", title: t("Groups"), sortable: false},
                         {accessor: "edit_button", title: t("Edit"), sortable: false}, {accessor: "delete_button", title: t("Delete"), sortable: false}
                     ]}
                     page={0}
