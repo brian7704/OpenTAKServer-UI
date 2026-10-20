@@ -116,7 +116,8 @@ export default function Navbar() {
     });
 
     useEffect(() => {
-        get_plugins();
+        if (administrator)
+            get_plugins();
     }, []);
 
     useEffect(() => {
