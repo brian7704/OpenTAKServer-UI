@@ -1,26 +1,26 @@
 import {Button, Center, Checkbox, Combobox, ComboboxData, ComboboxHeader, ComboboxItem, FileInput, Flex, Grid, Group,
     InputBase, Modal, MultiSelect, NumberInput, Paper, Radio, ScrollArea, Select, Switch, Table,
-    TableData, TextInput, Title} from '@mantine/core';
+    TableData, TextInput, Title, useComputedColorScheme
+} from '@mantine/core';
 import {DataTable, DataTableSortStatus} from "mantine-datatable";
 import {t} from "i18next";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {apiRoutes} from "@/apiRoutes.tsx";
 import {notifications} from "@mantine/notifications";
-import {IconCircleMinus, IconDownload, IconEdit, IconUsersMinus, IconX} from "@tabler/icons-react";
-import {id} from "date-fns/locale";
-import {json} from "node:stream/consumers";
 import { socket } from '@/socketio';
+import {IconCircleMinus, IconDownload, IconEdit, IconUserMinus, IconUsersMinus, IconX} from "@tabler/icons-react";
 import {Led} from "@gfazioli/mantine-led";
+import { Group as OTSGroup } from "./Groups.tsx"
 
 interface Federate {
     id: string;
     name: string;
     shared_alerts: boolean;
     archive: boolean;
-    federate_group_matching: boolean;
-    automatic_group_matching: boolean;
-    fallback_group_matching: boolean;
+    federate_group_mapping: boolean;
+    automatic_group_mapping: boolean;
+    fallback_group_mapping: boolean;
     max_hops: number;
     use_group_hop_limiting: boolean
     notes: string;
@@ -33,10 +33,10 @@ interface Federate {
     delete_button: React.ReactNode | undefined,
     shared_alerts_switch: React.ReactNode | undefined,
     archive_switch: React.ReactNode | undefined,
-    automatic_group_matching_switch: React.ReactNode | undefined,
-    fallback_group_matching_switch: React.ReactNode | undefined,
+    automatic_group_mapping_switch: React.ReactNode | undefined,
+    fallback_group_mapping_switch: React.ReactNode | undefined,
     group_hop_limiting_switch: React.ReactNode | undefined,
-    federate_group_matching_switch: React.ReactNode | undefined,
+    federate_group_mapping_switch: React.ReactNode | undefined,
     enabled_switch: React.ReactNode | undefined,
     edit_button: React.ReactNode | undefined,
     enabled: boolean,
@@ -62,6 +62,7 @@ interface FederationConnectionRow {
     federate_id: string | undefined | null;
     federate: Federate | undefined;
     groups_button: React.ReactNode | null;
+    federate_group_mapping_button: React.ReactNode | null;
     delete_button: React.ReactNode | null;
     edit_button: React.ReactNode | undefined,
     status_indicator: React.ReactNode | undefined,
@@ -88,7 +89,23 @@ interface FederationConnection {
     connected: boolean;
 }
 
+interface FederateGroup {
+    id: number;
+    federation_id: number;
+    group_name: string;
+}
+
+interface GroupMapping {
+    id: number;
+    federate_group_id: number;
+    group_id: number;
+    federation_id: number | undefined;
+    group: OTSGroup | undefined;
+    federate_group: FederateGroup | undefined;
+}
+
 export default function Federation () {
+    const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
     const [activePage, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [fedConnectionsLoading, setFedConnectionsLoading] = useState(false);
@@ -116,6 +133,23 @@ export default function Federation () {
     const [inGroups, setInGroups] = useState<string[]>([]);
     const [outGroups, setOutGroups] = useState<string[]>([]);
     const [allGroups, setAllGroups] = useState<ComboboxItem[]>([]);
+    const [groupMappingModalOpen, setGroupMappingModalOpen] = useState(false);
+    const [federateGroups, setFederateGroups] = useState<ComboboxItem[]>([]);
+    const [federateGroupMappings, setFederateGroupMappings] = useState<TableData>({
+        caption: '',
+        head: [t('Local Group'), t('Federate Group'), t('Delete')],
+        body: [],
+    });
+    const [newGroupMapping, setNewGroupMapping] = useState<GroupMapping>(
+        {
+            federate_group: undefined,
+            federate_group_id: 0,
+            federation_id: 0,
+            group: undefined,
+            group_id: 0,
+            id: 0,
+        }
+    );
     const [memberships, setMemberships] = useState<TableData>({
         caption: '',
         head: [t('Group Name'), t('Direction')],
@@ -147,22 +181,22 @@ export default function Federation () {
         edit_button: undefined,
         enabled: false,
         enabled_switch: undefined,
-        federate_group_matching_switch: undefined,
+        federate_group_mapping_switch: undefined,
         archive_switch: undefined,
-        automatic_group_matching_switch: undefined,
-        fallback_group_matching_switch: undefined,
+        automatic_group_mapping_switch: undefined,
+        fallback_group_mapping_switch: undefined,
         group_hop_limiting_switch: undefined,
         shared_alerts_switch: undefined,
         id: "",
         issuer: "", serial_number: "", subject: "",
         archive: false,
-        automatic_group_matching: true,
+        automatic_group_mapping: true,
         certificate_file: "",
         certificate_download_button: null,
         common_name: "",
         delete_button: undefined,
-        fallback_group_matching: false,
-        federate_group_matching: false,
+        fallback_group_mapping: false,
+        federate_group_mapping: false,
         max_hops: -1,
         name: "",
         notes: "",
@@ -228,13 +262,90 @@ export default function Federation () {
                 setGroupModalOpen(true);
             }}><IconEdit /></Button>
 
+            let federate_group_mapping_button = <Button onClick={() => {
+                getGroupMappings(fedConnection.id);
+                getFederateGroups(fedConnection.id);
+                getAllGroups();
+                setFederationConnection(fedConnection);
+                setNewGroupMapping(prevState => ({...prevState, federation_id: fedConnection.id}))
+                setGroupMappingModalOpen(true);
+            }}><IconEdit /></Button>
+
             let status_indicator = <Led color={fedConnection.connected ? "green" : "red"} value={fedConnection.enabled} size="md" variant="3d" />
 
-            let new_row: FederationConnectionRow = {...fedConnection, enabled_switch, status_indicator, delete_button, edit_button, groups_button};
+            let new_row: FederationConnectionRow = {...fedConnection, enabled_switch, status_indicator, delete_button, edit_button, groups_button, federate_group_mapping_button};
             rows.push(new_row);
         })
         setFederationConnectionsTableRows(rows);
         setAllFederationConnections(all_fed_connections);
+    }
+
+    function getGroupMappings(federation_id: number | undefined) {
+        axios.get(apiRoutes.federationGroupMappings, {params: {federation_id}}).then((r) => {
+            if (r.status === 200) {
+                const tableData: TableData = {
+                    caption: '',
+                    head: [t('Local Group'), t('Federate Group'), t('Delete')],
+                    body: [],
+                }
+                r.data.results.map((group_mapping: GroupMapping) => {
+                    const delete_button = <Button
+                        color="red"
+                        onClick={() => {
+                            //removeUserFromGroup(row.username, name, row.direction);
+                        }}
+                        rightSection={<IconUserMinus size={14} />}
+                    >Remove
+                    </Button>;
+
+
+                    tableData.body?.push([group_mapping.group?.name, group_mapping.federate_group?.group_name, delete_button]);
+                });
+                setFederateGroupMappings(tableData);
+            }
+        }).catch((err) => {
+            console.log(err);
+            notifications.show({
+                title: t("Failed to get group mappings"),
+                message: err.response.data.error,
+                color: "red",
+                icon: <IconX />
+            })
+        })
+    }
+
+    function newFederateGroupMapping() {
+        axios.post(apiRoutes.federationGroupMappings, {group_id: newGroupMapping.group_id, federation_id: newGroupMapping.federation_id, federate_group_id: newGroupMapping.federate_group_id}).then((r) => {
+            getGroupMappings(newGroupMapping.federation_id);
+        }).catch((err) => {
+            console.log(err);
+            notifications.show({
+                title: t("Failed to set group mappings"),
+                message: err.response.data.error,
+                color: "red",
+                icon: <IconX />
+            })
+        })
+    }
+
+    function getFederateGroups(federation_id: number | undefined) {
+        axios.get(apiRoutes.federateGroups, {params: {federation_id}}).then((r) => {
+            if (r.status === 200) {
+                const federate_groups: ComboboxItem[] = [];
+                r.data.results.map((group: FederateGroup) => {
+                    federate_groups.push({label: group.group_name, value: group.id.toString()});
+                })
+                setFederateGroups(federate_groups);
+            }
+        }).catch((err) => {
+            console.log(err);
+            notifications.show({
+                title: t("Failed to get federate groups"),
+                message: err.response.data.error,
+                color: "red",
+                icon: <IconX />
+            })
+        })
     }
 
     function getFederates() {
@@ -261,10 +372,10 @@ export default function Federation () {
 
                     federate.shared_alerts_switch = <Switch checked={federate.shared_alerts} />
                     federate.archive_switch = <Switch checked={federate.archive} />
-                    federate.automatic_group_matching_switch = <Switch checked={federate.automatic_group_matching} />
-                    federate.fallback_group_matching_switch = <Switch checked={federate.fallback_group_matching} />
+                    federate.automatic_group_mapping_switch = <Switch checked={federate.automatic_group_mapping} />
+                    federate.fallback_group_mapping_switch = <Switch checked={federate.fallback_group_mapping} />
                     federate.group_hop_limiting_switch = <Switch checked={federate.use_group_hop_limiting} />
-                    federate.federate_group_matching_switch = <Switch checked={federate.federate_group_matching} />
+                    federate.federate_group_mapping_switch = <Switch checked={federate.federate_group_mapping} />
                     federate.enabled_switch = <Switch checked={federate.enabled} />
                 })
                 setAllFederates(all_federates)
@@ -450,7 +561,7 @@ export default function Federation () {
             if (r.status === 200) {
                 const all_groups: ComboboxItem[] = [];
                 r.data.map((row: any) => {
-                    all_groups.push(row.name);
+                    all_groups.push({label: row.name, value: row.id});
                 })
                 setAllGroups(all_groups);
             }
@@ -480,17 +591,17 @@ export default function Federation () {
                 r.data.groups.map((row: any) => {
                     const delete_button = <Button
                         color="red"
-                        onClick={() => {removeGroup(row.group.id, federation_id, row.direction);}}
-                        key={`${row.group.name}_remove`}
+                        onClick={() => {removeGroup(row.group_id, federation_id, row.direction);}}
+                        key={`${row.group_name}_remove`}
                         rightSection={<IconUsersMinus size={14} />}
                     >{t("Remove")}</Button>;
 
-                    tableData.body?.push([row.group.name, row.direction, delete_button]);
+                    tableData.body?.push([row.group_name, row.direction, delete_button]);
 
                     if (row.direction === "IN")
-                        setInGroups((inGroups) => ([...inGroups, row.group.name]));
+                        setInGroups((inGroups) => ([...inGroups, row.group_id]));
                     else
-                        setOutGroups((outGroups) => ([...outGroups, row.group.name]));
+                        setOutGroups((outGroups) => ([...outGroups, row.group_id]));
                 });
 
                 setMemberships(tableData);
@@ -563,6 +674,13 @@ export default function Federation () {
         }
     }, []);
 
+    useEffect(() => {
+        console.log("IN GROUP");
+        console.log(inGroups);
+        console.log("OUT GROUP");
+        console.log(outGroups);
+    }, [inGroups, outGroups]);
+
     return (
         <ScrollArea>
             <Button component="a" href="/api/federation/certificate" rightSection={<IconDownload size={14} />} mb="md">{t("Download Federation Certificate")}</Button>
@@ -578,13 +696,14 @@ export default function Federation () {
                     striped
                     highlightOnHover
                     records={federationConnectionsTableRows}
-                    columns={[{accessor: "display_name", title: t("Name"), sortable: true}, {accessor: "address", title: t("Address"), sortable: true},
-                        {accessor: "port", title: t("Port"), sortable: true}, {accessor: "status", title: t("Status"), sortable: true},
-                        {accessor: "reconnect_interval", title: t("Reconnect Interval"), sortable: true}, {accessor: "max_retries", title: t("Max Retries"), sortable: true},
-                        {accessor: "federate.name", title: t("Federate"), sortable: true}, {accessor: "protocol_version", title: t("Protocol Version"), sortable: true},
-                        {accessor: "enabled_switch", title: t("Enabled"), sortable: true}, {accessor: "status_indicator", title: t("Connected"), sortable: true},
-                        {accessor: "last_error", title: t("Last Error"), sortable: true}, {accessor: "groups_button", title: t("Groups"), sortable: false},
-                        {accessor: "edit_button", title: t("Edit"), sortable: false}, {accessor: "delete_button", title: t("Delete"), sortable: false}
+                    columns={[{accessor: "display_name", title: t("Name")}, {accessor: "address", title: t("Address")},
+                        {accessor: "port", title: t("Port")}, {accessor: "status", title: t("Status")},
+                        {accessor: "reconnect_interval", title: t("Reconnect Interval")}, {accessor: "max_retries", title: t("Max Retries")},
+                        {accessor: "federate.name", title: t("Federate")}, {accessor: "protocol_version", title: t("Protocol Version")},
+                        {accessor: "enabled_switch", title: t("Enabled")}, {accessor: "status_indicator", title: t("Connected")},
+                        {accessor: "last_error", title: t("Last Error")}, {accessor: "groups_button", title: t("Groups")},
+                        {accessor: "federate_group_mapping_button", title: t("Group Mapping")},
+                        {accessor: "edit_button", title: t("Edit")}, {accessor: "delete_button", title: t("Delete")},
                     ]}
                     page={0}
                     onPageChange={() => {}}
@@ -612,8 +731,8 @@ export default function Federation () {
                     highlightOnHover
                     records={federates}
                     columns={[{accessor: "name", title: t("Name"), sortable: true}, {accessor: "shared_alerts_switch", title: t("Shared Alerts"), sortable: true},
-                        {accessor: "archive_switch", title: t("Archive"), sortable: true}, {accessor: "federate_group_matching_switch", title: t("Federate Group Matching"), sortable: true},
-                        {accessor: "automatic_group_matching_switch", title: t("Automatic Group Matching"), sortable: true}, {accessor: "fallback_group_matching_switch", title: t("Fallback Group Matching"), sortable: true},
+                        {accessor: "archive_switch", title: t("Archive"), sortable: true}, {accessor: "federate_group_mapping_switch", title: t("Federate Group Mapping"), sortable: true},
+                        {accessor: "automatic_group_mapping_switch", title: t("Automatic Group Mapping"), sortable: true}, {accessor: "fallback_group_mapping_switch", title: t("Fallback Group Mapping"), sortable: true},
                         {accessor: "max_hops", title: t("Max Hops"), sortable: true}, {accessor: "group_hop_limiting_switch", title: t("Group Hop Limiting"), sortable: true},
                         {accessor: "notes", title: t("Notes"), sortable: true}, {accessor: "issuer", title: t("Issuer"), sortable: true},
                         {accessor: "subject", title: t("Subject"), sortable: true}, {accessor: "serial_number", title: t("Serial Number"), sortable: true}, {accessor: "common_name", title: t("Common Name"), sortable: true},
@@ -644,7 +763,7 @@ export default function Federation () {
                 <Select defaultValue={federationConnection.federate_id} required label={t("Federate")} onChange={(value, option) => {setFederationConnection(prevState => ({...prevState, federate_id: value}))}} data={allFederates} placeholder={t("Choose Federate")} nothingFoundMessage={t("Nothing found...")} mb="md"></Select>
                 {/*<Select label={t("Fallback Connection")} placeholder={t("Choose Fallback Connection")} data={allFederationConnections} nothingFoundMessage={t("Nothing found...")} mb="md"></Select>*/}
                 <Switch defaultChecked={federationConnection.use_token_auth} label={t("Use Token Auth")} onChange={(e) => {setFederationConnection(prevState => ({ ...prevState, use_token_auth : e.target.checked }))}} mb="md" />
-                <Radio.Group defaultValue={federationConnection.auth_token_type} name="auth_token_type" label={t("Auth Token Type")} disabled={federationConnection.use_token_auth} onChange={(e) => setFederationConnection(prevState => ({...prevState, auth_token_type: e}))} mb="md">
+                <Radio.Group defaultValue={federationConnection.auth_token_type} name="auth_token_type" label={t("Auth Token Type")} disabled={!federationConnection.use_token_auth} onChange={(e) => setFederationConnection(prevState => ({...prevState, auth_token_type: e}))} mb="md">
                     <Group>
                         <Radio label={t("Automatic Token")} value="automatic" />
                         <Radio label={t("Manual Token")} value="manual" />
@@ -659,8 +778,8 @@ export default function Federation () {
                 <TextInput required defaultValue={federateToEdit != undefined ? federateToEdit.name : ""} error={nameError} label={t("Name")} onChange={e => { setNewFederate(prevState => ({ ...prevState, name: e.target.value })); setNameError(false)}} mb="md" />
                 <Switch defaultChecked={federateToEdit != undefined ? federateToEdit.shared_alerts : true} label={t("Shared Alerts")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, shared_alerts : e.target.checked }))}} mb="md" />
                 <Switch defaultChecked={federateToEdit != undefined ? federateToEdit.archive : false} label={t("Archive")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, archive : e.target.checked }))}} mb="md" />
-                <Switch defaultChecked={federateToEdit != undefined ? federateToEdit.automatic_group_matching : true} label={t("Automatic Group Matching")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, automatic_group_matching : e.target.checked }))}} mb="md" />
-                <Switch defaultChecked={federateToEdit != undefined ? federateToEdit.fallback_group_matching : false} label={t("Fallback Group Matching")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, fallback_group_matching : e.target.checked }))}} mb="md" />
+                <Switch defaultChecked={federateToEdit != undefined ? federateToEdit.automatic_group_mapping : true} label={t("Automatic Group Mapping")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, automatic_group_mapping : e.target.checked }))}} mb="md" />
+                <Switch defaultChecked={federateToEdit != undefined ? federateToEdit.fallback_group_mapping : false} label={t("Fallback Group Mapping")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, fallback_group_mapping : e.target.checked }))}} mb="md" />
                 <NumberInput defaultValue={federateToEdit != undefined ? federateToEdit.max_hops : -1} label={t("Max Hops")} onChange={e => { setNewFederate(prevState => ({ ...prevState, max_hops: +e }))}} mb="md" min={-1} />
                 <Switch defaultChecked={federateToEdit != undefined ? federateToEdit.use_group_hop_limiting : false} label={t("Use Group Hop Limiting")} onChange={(e) => {setNewFederate(prevState => ({ ...prevState, use_group_hop_limiting : e.target.checked }))}} mb="md" />
                 <TextInput defaultValue={federateToEdit != undefined ? federateToEdit.notes : ""} label={t("Notes")} onChange={e => { setNewFederate(prevState => ({ ...prevState, notes: e.target.value }))}} mb="md" />
@@ -763,6 +882,17 @@ export default function Federation () {
                     ]}
                     minHeight={120}
                 />
+            </Modal>
+            <Modal size="lg" opened={groupMappingModalOpen} onClose={() => setGroupMappingModalOpen(false)} title={t("Manage Group Mappings for {{federation}}", {"federation": federationConnection.display_name})}>
+                <Paper withBorder p="md" mb="md">
+                    <Select required label={t("Federate Group")} onChange={(value, option) => {setNewGroupMapping(prevState => ({...prevState, federate_group_id: Number(value)}))}} data={federateGroups} placeholder={t("Choose Federate Group")} nothingFoundMessage={t("Nothing found...")} mb="md"></Select>
+                    <Select required label={t("Local Group")} onChange={(value, option) => {setNewGroupMapping(prevState => ({...prevState, group_id: Number(value)}))}} data={allGroups} placeholder={t("Choose Local Group")} nothingFoundMessage={t("Nothing found...")} mb="md"></Select>
+                    <Button onClick={() => {newFederateGroupMapping()}}>{t("Add")}</Button>
+                </Paper>
+                <Title order={4} mb="md">{t("Group Mappings")}</Title>
+                <Table.ScrollContainer minWidth="100%">
+                    <Table data={federateGroupMappings} stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" highlightOnHover withTableBorder mt="md" mb="md" />
+                </Table.ScrollContainer>
             </Modal>
         </ScrollArea>
     )

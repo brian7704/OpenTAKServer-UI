@@ -73,4 +73,6 @@ export const apiRoutes = {
   allFederates: '/api/federation/federate/all',
   allFederationConnections: '/api/federation/all',
   federationGroups: '/api/federation/groups',
+  federationGroupMappings: '/api/federation/group_mapping',
+  federateGroups: '/api/federation/federate_groups',
 };
