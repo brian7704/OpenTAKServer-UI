@@ -293,10 +293,10 @@ export default function Federation () {
                     const delete_button = <Button
                         color="red"
                         onClick={() => {
-                            //removeUserFromGroup(row.username, name, row.direction);
+                            removeGroupMapping(group_mapping.group_id, group_mapping.federation_id, group_mapping.federate_group_id);
                         }}
                         rightSection={<IconUserMinus size={14} />}
-                    >Remove
+                    >{t("Remove")}
                     </Button>;
 
 
@@ -628,6 +628,23 @@ export default function Federation () {
                     icon: <IconX />,
                     color: 'red',
                 })
+        })
+    }
+
+    function removeGroupMapping(group_id: number | undefined, federation_id: number | undefined, federate_group_id: number | undefined) {
+        axios.delete(apiRoutes.federationGroupMappings, {params: {group_id, federate_group_id}})
+            .then(r => {
+                if (r.status === 200) {
+                    getGroupMappings(federation_id);
+                }
+            }).catch(err => {
+            console.log(err);
+            notifications.show({
+                title: t('Failed remove group mapping'),
+                message: err.response.data.error,
+                icon: <IconX />,
+                color: 'red',
+            })
         })
     }
 
