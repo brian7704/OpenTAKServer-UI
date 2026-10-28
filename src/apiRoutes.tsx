@@ -66,4 +66,13 @@ export const apiRoutes = {
   takgovIcon: '/api/takgov/icon',
   takgovPlugin: '/api/takgov/plugin',
   language: '/api/language',
+  federation: '/api/federation',
+  federationCertificate: '/api/federation/certificate',
+  federationToken: '/api/federation/token',
+  federate: '/api/federation/federate',
+  allFederates: '/api/federation/federate/all',
+  allFederationConnections: '/api/federation/all',
+  federationGroups: '/api/federation/groups',
+  federationGroupMappings: '/api/federation/group_mapping',
+  federateGroups: '/api/federation/federate_groups',
 };

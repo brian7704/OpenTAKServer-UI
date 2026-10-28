@@ -203,7 +203,7 @@ export default function VideoRecordings() {
                         {accessor: "path", title: t("Path"), sortable: true}, {accessor: "formatted_file_size", title: t("File Size"), sortable: true},
                         {accessor: "video_codec", title: t("Video Codec"), sortable: true}, {accessor: "formatted_video_bitrate", title: t("Video Bitrate"), sortable: true},
                         {accessor: "audio_codec", title: t("Audio Codec"), sortable: true}, {accessor: "formatted_audio_bitrate", title: t("Audio Bitrate"), sortable: true},
-                        {accessor: "watch_button", title: t("Watch")}, {accessor: "download_button", title: t("Download")}
+                        {accessor: "watch_button", title: t("Watch")}, {accessor: "download_button", title: t("Download")}, {accessor: "delete_button", title: t("Delete")}
                     ]}
                     page={activePage}
                     onPageChange={(p) => setPage(p)}
@@ -237,7 +237,7 @@ export default function VideoRecordings() {
             </Modal>
 
             <AspectRatio ratio={16 / 9} h="100%" display={showVideo ? 'block' : 'none'} mt="md" pb={100} mb="xl">
-                <ReactPlayer style={{ position: 'relative' }} controls src={videoUrl} width="100%" height="100%" />
+                <ReactPlayer playing={showVideo} style={{ position: 'relative' }} controls src={videoUrl} width="100%" height="100%" />
                 <Button
                     fullWidth
                     onClick={() => {
@@ -245,7 +245,7 @@ export default function VideoRecordings() {
                         setVideoUrl('');
                     }}
 
-                >Close Stream</Button>
+                >{t("Close Stream")}</Button>
             </AspectRatio>
 
         </>

@@ -215,14 +215,14 @@ export default function Plugin() {
 
                 <Tabs.Panel value="about">
                     <ScrollArea style={{width:'100%'}}>
-                        <Text size="md"><Text span inherit fw={700}>{t("Name:")}</Text> {about?.name}</Text>
-                        <Text size="md"><Text span inherit fw={700}>{t("Author:")}</Text> {about?.author}</Text>
-                        <Text size="md"><Text span inherit fw={700}>{t("Author Email:")}</Text> {about?.author_email}</Text>
-                        <Text size="md"><Text span inherit fw={700}>{t("License:")}</Text> {about?.license}</Text>
-                        <Text size="md"><Text span inherit fw={700}>{t("Version:")}</Text> {about?.version}</Text>
-                        <Text size="md"><Text span inherit fw={700}>{t("Documentation:")}</Text> <Link to={docUrl}>{docUrl}</Link></Text>
-                        <Text size="md"><Text span inherit fw={700}>{t("Repository:")}</Text> <Link to={repoUrl}>{repoUrl}</Link></Text>
-                        <Switch styles={{ label: {fontWeight: 700}}} label={t("Enabled:")} labelPosition="left" size="md" checked={enabled} onChange={() => togglePlugin()} />
+                        <Text size="md"><Text span inherit fw={700}>{t("Name")}</Text> {about?.name}</Text>
+                        <Text size="md"><Text span inherit fw={700}>{t("Author")}</Text> {about?.author}</Text>
+                        <Text size="md"><Text span inherit fw={700}>{t("Author Email")}</Text> {about?.author_email}</Text>
+                        <Text size="md"><Text span inherit fw={700}>{t("License")}</Text> {about?.license}</Text>
+                        <Text size="md"><Text span inherit fw={700}>{t("Version")}</Text> {about?.version}</Text>
+                        <Text size="md"><Text span inherit fw={700}>{t("Documentation")}</Text> <Link to={docUrl}>{docUrl}</Link></Text>
+                        <Text size="md"><Text span inherit fw={700}>{t("Repository")}</Text> <Link to={repoUrl}>{repoUrl}</Link></Text>
+                        <Switch styles={{ label: {fontWeight: 700}}} label={t("Enabled")} labelPosition="left" size="md" checked={enabled} onChange={() => togglePlugin()} />
                         <Divider mt="md" />
                         <Markdown>{about?.description}</Markdown>
                     </ScrollArea>

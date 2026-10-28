@@ -9,7 +9,7 @@ import {
     LoadingOverlay,
     Center,
     Select,
-    Flex, Modal, Group, Divider, Box
+    Flex, Modal, Group, Divider, Box, TextInput, FocusTrap
 } from "@mantine/core";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
@@ -45,8 +45,9 @@ export default function LinkTakGov() {
     const [userCode, setUserCode] = useState<string|null>(null);
     const [loading, setLoading] = useState(false);
     const [product, setProduct] = useState<string|null>("ATAK-CIV");
-    const [productVersion, setProductVersion] = useState<string|null>("5.5.0");
+    const [productVersion, setProductVersion] = useState<string|null>("5.8.0");
     const [showUnlink, setShowUnlink] = useState(false);
+    const [customVersion, setCustomVersion] = useState<string|null>(null);
     const [plugins, setPlugins] = useState<TableData>({
         caption: '',
         head: [t('Name'), t('Description'), t('Version'), t('TAK Prerequisite'), t('Size')],
@@ -72,9 +73,13 @@ export default function LinkTakGov() {
         })
     }
 
-    function get_plugin_list() {
+    function get_plugin_list(product_version: string | null) {
+        if (product_version === null) {
+            return;
+        }
+
         setLoading(true);
-        axios.get(apiRoutes.takgovPlugins, {params:{product: product, "product_version": productVersion}}).then((r) => {
+        axios.get(apiRoutes.takgovPlugins, {params:{product: product, "product_version": product_version}}).then((r) => {
             setLoading(false);
             if (r.status === 200) {
 
@@ -89,7 +94,7 @@ export default function LinkTakGov() {
                         let download_button = <Button
                             rightSection={<IconDownload size={14} />}
                             onClick={() => {
-                                plugin.atak_version = productVersion;
+                                plugin.atak_version = product_version;
                                 download_plugin(plugin);
                             }}
                         >
@@ -216,7 +221,7 @@ export default function LinkTakGov() {
 
     useEffect(() => {
         if (linked) {
-            get_plugin_list();
+            get_plugin_list(productVersion);
         }
         else {
             // show instructions for linking
@@ -224,8 +229,8 @@ export default function LinkTakGov() {
     }, [linked]);
 
     useEffect(() => {
-        if (linked)
-            get_plugin_list();
+        if (linked && productVersion !== "Custom Version")
+            get_plugin_list(productVersion);
     }, [productVersion, product]);
 
     return (
@@ -255,9 +260,11 @@ export default function LinkTakGov() {
                                 display={linked ? "block" : "none"}
                                 pb="md"
                                 value={productVersion}
-                                data={["5.0.0", "5.1.0", "5.2.0", "5.3.0", "5.4.0", "5.5.0", "5.5.1", "5.6.0", "5.7.0", "5.8.0"]}
+                                data={["5.6.0", "5.7.0", "5.8.0", "5.9.0", "5.10.0", {label: t("Custom Version"), value: "Custom Version"}]}
                                 onChange={(value) => {setProductVersion(value);}}
                             />
+                            <FocusTrap active={productVersion === "Custom Version"}><TextInput display={linked ? "flex" : "none"} disabled={productVersion !== "Custom Version"} required placeholder={t("Custom Version")} onChange={e => {setCustomVersion(e.target.value)}} mb="md"/></FocusTrap>
+                            <Button display={linked ? "flex" : "none"} disabled={productVersion !== "Custom Version"} onClick={() => get_plugin_list(customVersion)}>{t("Submit")}</Button>
                             <Button display={linked ? "flex" : "none"} onClick={() => setShowUnlink(true)} color="red" rightSection={<IconCircleMinus size={14} />}>{t("Unlink Account")}</Button>
                         </Group>
                     )}

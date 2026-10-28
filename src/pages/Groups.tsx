@@ -268,7 +268,7 @@ export default function Groups() {
                 <Paper withBorder p="md" mb="md">
                     <Grid align="flex-end" justify="space-between">
                         <Grid.Col span={10}>
-                            <Title order={6} mb="md">Direction: IN</Title>
+                            <Title order={6} mb="md">{t("DirectionIN")}</Title>
                             <MultiSelect
                                 placeholder="Search"
                                 searchable
@@ -283,10 +283,10 @@ export default function Groups() {
                         </Grid.Col>
                     </Grid>
                 </Paper>
-                <Paper withBorder title={t("Direction: OUT")} mb="md" p="md">
+                <Paper withBorder title={t("DirectionOUT")} mb="md" p="md">
                     <Grid align="flex-end" justify="space-between">
                         <Grid.Col span={10}>
-                            <Title order={6} mb="md">Direction: OUT</Title>
+                            <Title order={6} mb="md">{t("DirectionOUT")}</Title>
                             <MultiSelect
                                 placeholder="Search"
                                 searchable

@@ -91,7 +91,7 @@ export default function Missions() {
                     setInviting(false);
                     notifications.show({
                         title: t('Success'),
-                        message: `Successfully invited ${inviteEud.label}`,
+                        message: t("Successfully invited {{label}}", {"label": inviteEud.label}),
                         icon: <IconCheck/>,
                         color: 'green',
                     })
@@ -226,7 +226,7 @@ export default function Missions() {
                     setDeleteMissionOpen(false);
                     notifications.show({
                         title: t('Success'),
-                        message: `Successfully deleted ${missionToDelete}`,
+                        message: t("Successfully deleted {{missionToDelete}}", {"missionToDelete": missionToDelete}),
                         icon: <IconCheck/>,
                         color: 'green',
                     })
@@ -297,7 +297,7 @@ export default function Missions() {
                     get_missions();
                     notifications.show({
                         title: t('Success'),
-                        message: `Successfully added mission ${missionProperties.name}`,
+                        message: t("Successfully added mission {{name}}", {"name": missionProperties.name}),
                         icon: <IconCheck/>,
                         color: 'green',
                     })
@@ -377,7 +377,7 @@ export default function Missions() {
                     </Paper>
                 </Center>
             </Modal>
-            <Modal opened={showInvite} onClose={() => setShowInvite(false)} title={`Invite EUD to ${inviteMission}`}>
+            <Modal opened={showInvite} onClose={() => setShowInvite(false)} title={t("Invite EUD to {{inviteMission}}", {"inviteMission": inviteMission})}>
                 <Select
                     placeholder={t("Search")}
                     searchable
@@ -393,7 +393,7 @@ export default function Missions() {
                 }
                 <Button onClick={() => {setInviting(true); send_invitation();}} loading={inviting}>Invite</Button>
             </Modal>
-            <Modal opened={deleteMissionOpen} onClose={() => setDeleteMissionOpen(false)} title={`Are you sure you want to delete ${missionToDelete}?`}>
+            <Modal opened={deleteMissionOpen} onClose={() => setDeleteMissionOpen(false)} title={t("Are you sure you want to delete {{missionToDelete}}?", {"missionToDelete": missionToDelete})}>
                 <Center>
                     <Button mr="md" onClick={() => delete_mission()}>Yes</Button>
                     <Button onClick={() => setDeleteMissionOpen(false)}>No</Button>
@@ -443,7 +443,7 @@ export default function Missions() {
                     name: "",
                     description: "",
                     creator_uid: "",
-                    tool: "",
+                    tool: "public",
                     default_role: "MISSION_SUBSCRIBER",
                     password: "",
                     hash_tags: "",

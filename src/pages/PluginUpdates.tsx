@@ -7,7 +7,7 @@ import {
     useComputedColorScheme,
     FileInput,
     Button,
-    Pagination, Center, Image, Switch,
+    Pagination, Center, Image, Switch, FocusTrap,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import { IconCheck, IconCircleMinus, IconUpload, IconX } from '@tabler/icons-react';
@@ -45,6 +45,7 @@ export default function PluginUpdates() {
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [deletePackage, setDeletePackage] = useState<any>();
     const [deleteName, setDeleteName] = useState<string | null>();
+    const [customAtakVersion, setCustomAtakVersion] = useState<string>("");
     const [packages, setPackages] = useState<TableData>({
         caption: '',
         head: [t('Icon'), t('Name'), t('Description'), t('Version'), t('ATAK Version'), t('Platform'), t('OS Requirement'), t('Revision Code'), t('Install on Enrollment'), t('Install on Connection'), t('Delete')],
@@ -141,7 +142,10 @@ export default function PluginUpdates() {
         body.append('description', description);
         body.append('platform', "Android");
         body.append('plugin_type', pluginType);
-        body.append('atak_version', atakVersion);
+        if (atakVersion !== null && atakVersion !== "Custom Version")
+            body.append('atak_version', atakVersion);
+        else if (atakVersion === "Custom Version")
+            body.append('atak_version', customAtakVersion);
 
         axios.post(apiRoutes.pluginPackage,
             body
@@ -216,7 +220,7 @@ export default function PluginUpdates() {
                     value={atakVersion}
                     label="ATAK Version"
                     clearable
-                    data={[{value: "", label: t("5.4 or lower")}, "5.5.0", "5.5.1", "5.6.0", "5.7.0", "5.8.0"]}
+                    data={[{value: "", label: t("54 or lower")}, "5.5.0", "5.5.1", "5.6.0", "5.7.0", "5.8.0", "5.9.0", {label: t("Custom Version"), value: "Custom Version"}]}
                     onChange={(value) => {
                         if (value && value !== "Any")
                             setAtakVersion(value);
@@ -225,6 +229,7 @@ export default function PluginUpdates() {
                     }
                 }
                 />
+                <FocusTrap active={atakVersion === "Custom Version"}><TextInput disabled={atakVersion !== "Custom Version"} required placeholder={t("Custom Version")} onChange={e => {setCustomAtakVersion(e.target.value)}} mb="md"/></FocusTrap>
                 <Button loading={uploading} onClick={(e) => { upload_plugin(e); }}>Upload Plugin</Button>
             </Modal>
             <Modal opened={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} title={t("Are you sure you want to delete {{deleteName}}?", {"deleteName": deleteName})}>
