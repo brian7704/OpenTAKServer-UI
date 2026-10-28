@@ -18,7 +18,7 @@ import {
     Box,
     useComputedColorScheme,
 } from '@mantine/core';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { upperFirst } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
@@ -27,6 +27,13 @@ import { Header } from '../../components/Header';
 import { apiRoutes } from '../../apiRoutes';
 import axios from '../../axios_config';
 import Logo from '../../images/ots-logo.png';
+
+type CurrentUser = {
+    email?: string;
+    roles?: Array<{ name: string }>;
+    token?: string;
+    username?: string;
+};
 
 export default function Login(props: PaperProps) {
     const navigate = useNavigate();
@@ -38,79 +45,104 @@ export default function Login(props: PaperProps) {
     const [emailEnabled, setEmailEnabled] = useState(false);
     const [authCode, setAuthCode] = useState<string>();
     const [ldapEnabled, setLdapEnabled] = useState(false);
+    const [oidcEnabled, setOidcEnabled] = useState(false);
     const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true });
 
-    useEffect(() => {
-        try {
-            axios.get(
-                apiRoutes.login,
-                {
-                    headers: { 'Content-Type': 'application/json' },
-                },
-            ).then(r => {
-                setEmailEnabled(r.data.response.identity_attributes.includes('email'));
-                setLdapEnabled(r.data.response.identity_attributes.includes('ldap'));
-                localStorage.setItem('emailEnabled', r.data.response.identity_attributes.includes('email'));
-                axios.interceptors.request.use((config) => {
-                    if (['post', 'delete', 'patch', 'put'].includes(config.method!)) {
-                        if (r.data.response.csrf_token !== '') {
-                            config.headers['X-XSRF-Token'] = r.data.response.csrf_token;
-                            axios.defaults.headers.common = { 'X-XSRF-Token': r.data.response.csrf_token };
-                        }
-                    }
-                    return config;
-                }, (error) => Promise.reject(error));
+    const hydrateLoggedInUser = useCallback((user: CurrentUser) => {
+        const roles = user.roles ?? [];
+        const isAdministrator = roles.some((role) => role.name === 'administrator');
 
-                setCsrfToken(r.data.response.csrf_token);
-            });
-        } catch (err) {
-            console.log(err);
-        }
+        localStorage.setItem('loggedIn', 'true');
+        localStorage.setItem('username', user.username ?? '');
+        localStorage.setItem('email', user.email ?? '');
+        localStorage.setItem('token', user.token ?? '');
+        localStorage.setItem('administrator', String(isAdministrator));
     }, []);
 
-    const getUser = () => {
+    const getUser = useCallback(() => {
         axios.get(
-            apiRoutes.me
+            apiRoutes.me,
         ).then(r => {
             if (r.status === 200) {
-                const user = r.data;
-                const { roles } = user;
+                hydrateLoggedInUser(r.data);
+                navigate('/dashboard');
+            }
+        });
+    }, [hydrateLoggedInUser, navigate]);
 
-                localStorage.setItem('email', user.email);
-                localStorage.setItem('token', user.token)
+    useEffect(() => {
+        axios.get(
+            apiRoutes.login,
+            {
+                headers: { 'Content-Type': 'application/json' },
+            },
+        ).then(r => {
+            const identityAttributes = r.data.response.identity_attributes ?? [];
+            const isEmailEnabled = identityAttributes.includes('email');
+            const isLdapEnabled = identityAttributes.includes('ldap');
+            const isOidcEnabled = identityAttributes.includes('oidc');
 
-                for (let i = 0; i < roles.length; i += 1) {
-                    if (roles[i].name === 'administrator') {
-                        localStorage.setItem('administrator', 'true');
-                        break;
+            setEmailEnabled(isEmailEnabled);
+            setLdapEnabled(isLdapEnabled);
+            setOidcEnabled(isOidcEnabled);
+            localStorage.setItem('emailEnabled', String(isEmailEnabled));
+
+            axios.interceptors.request.use((config) => {
+                if (['post', 'delete', 'patch', 'put'].includes(config.method!)) {
+                    if (r.data.response.csrf_token !== '') {
+                        config.headers['X-XSRF-Token'] = r.data.response.csrf_token;
+                        axios.defaults.headers.common = { 'X-XSRF-Token': r.data.response.csrf_token };
                     }
                 }
-            }
-            navigate('/dashboard');
+                return config;
+            }, (error) => Promise.reject(error));
+
+            setCsrfToken(r.data.response.csrf_token);
+        }).catch(err => {
+            console.log(err);
         });
-    };
+
+        axios.get(
+            apiRoutes.me,
+        ).then(r => {
+            if (r.status === 200) {
+                hydrateLoggedInUser(r.data);
+                navigate('/dashboard');
+            }
+        }).catch(() => {
+            // Ignore unauthenticated requests on the login page.
+        });
+    }, [hydrateLoggedInUser, navigate]);
 
     function handleLogin(e:any) {
         e.preventDefault();
 
+        if (oidcEnabled) {
+            window.location.assign(`${apiRoutes.oidcLogin}?next=/login`);
+            return;
+        }
+
         let loginUrl = apiRoutes.login;
-        if (ldapEnabled)
+        if (ldapEnabled) {
             loginUrl = apiRoutes.ldapLogin;
+        }
 
         axios.post(
             loginUrl,
-            JSON.stringify({ username, password, submit: 'Login', csrf_token: csrfToken })
+            JSON.stringify({ username, password, submit: 'Login', csrf_token: csrfToken }),
         ).then(r => {
             if (r.status === 200) {
-                localStorage.setItem('loggedIn', 'true');
-                localStorage.setItem('username', username);
                 if (Object.hasOwn(r.data.response, 'tf_required') && r.data.response.tf_required) {
+                    localStorage.setItem('loggedIn', 'true');
+                    localStorage.setItem('username', username);
                     if (r.data.response.tf_method === 'authenticator') {
                         setType('authenticator');
                     } else if (r.data.response.tf_method === 'email') {
                         setType('email');
                     }
-                } else {getUser();}
+                } else {
+                    getUser();
+                }
             }
         }).catch(err => {
             notifications.show({
@@ -120,13 +152,13 @@ export default function Login(props: PaperProps) {
                 icon: <IconX />,
             });
         });
-}
+    }
 
     function handleRegister(e:any) {
         e.preventDefault();
         axios.post(
             apiRoutes.register,
-            { username, password, email }
+            { username, password, email },
         ).then(r => {
             if (r.status === 200) {
                 notifications.show({
@@ -149,7 +181,7 @@ export default function Login(props: PaperProps) {
         e.preventDefault();
         axios.post(
             apiRoutes.tfValidate,
-            { code: authCode }
+            { code: authCode },
         ).then(r => {
             if (r.status === 200) {
                 notifications.show({
@@ -174,7 +206,7 @@ export default function Login(props: PaperProps) {
         e.preventDefault();
         axios.post(
             apiRoutes.resetPassword,
-            { email }
+            { email },
         ).then(r => {
             if (r.status === 200) {
                 notifications.show({
@@ -183,7 +215,7 @@ export default function Login(props: PaperProps) {
                     icon: <IconCheck />,
                 });
             }
-        }).catch(err => {
+        }).catch(() => {
             notifications.show({
                 message: 'Failed to send password reset instructions',
                 color: 'red',
@@ -220,7 +252,11 @@ export default function Login(props: PaperProps) {
                             />
                         )}
 
-                        {(type === 'register' || type === 'login') && (
+                        {type === 'login' && oidcEnabled && (
+                            <Text ta="center">Continue to sign in with the configured OpenID Connect provider.</Text>
+                        )}
+
+                        {(type === 'register' || (type === 'login' && !oidcEnabled)) && (
                             <div>
                                 <TextInput
                                   required
@@ -240,10 +276,10 @@ export default function Login(props: PaperProps) {
                                   radius="md"
                                 />
                             </div>
-                    )}
+                        )}
 
                         {(type === 'authenticator') && (
-                                <Text ta="center">Please check your authenticator app for an auth code</Text>
+                            <Text ta="center">Please check your authenticator app for an auth code</Text>
                         )}
                         {(type === 'email') && (
                             <Text ta="center">Please check your email for an auth code</Text>
@@ -269,13 +305,13 @@ export default function Login(props: PaperProps) {
 
                     </Stack>
 
-                    {type === 'login' ?
+                    {(type === 'login' && !oidcEnabled) ?
                         <Group justify="space-between" mt="lg">
                             <Checkbox label="Remember me" />
                             {emailEnabled ?
-                            <Anchor component="button" size="sm" onClick={() => setType('Reset Password')}>
-                                Forgot password?
-                            </Anchor> : ''}
+                                <Anchor component="button" size="sm" onClick={() => setType('Reset Password')}>
+                                    Forgot password?
+                                </Anchor> : ''}
                         </Group>
                     : ''}
                     <Group justify="space-between" mt="xl">
@@ -284,9 +320,9 @@ export default function Login(props: PaperProps) {
                           type="button"
                           c="dimmed"
                           onClick={() => {
-                            if (type === 'login') {setType('register');}
-                            else if (type === 'register') {setType('login');}
-                            else if (type === 'Reset Password') {setType('login');}
+                            if (type === 'login') { setType('register'); }
+                            else if (type === 'register') { setType('login'); }
+                            else if (type === 'Reset Password') { setType('login'); }
                         }}
                           size="xs"
                         >
@@ -300,13 +336,13 @@ export default function Login(props: PaperProps) {
                         <Button
                           radius="xl"
                           onClick={(e) => {
-                            if (type === 'login') {handleLogin(e);}
-                            else if (type === 'register') {handleRegister(e);}
-                            else if (type === 'Reset Password') {handleReset(e);}
+                            if (type === 'login') { handleLogin(e); }
+                            else if (type === 'register') { handleRegister(e); }
+                            else if (type === 'Reset Password') { handleReset(e); }
                           }}
                           display={type === 'login' || type === 'register' || type === 'Reset Password' ? 'block' : 'None'}
                         >
-                            {upperFirst(type)}
+                            {type === 'login' && oidcEnabled ? 'Continue' : upperFirst(type)}
                         </Button>
                     </Group>
                 </Paper>
