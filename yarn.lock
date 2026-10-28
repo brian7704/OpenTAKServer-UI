@@ -7759,10 +7759,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lru-cache@npm:^11.3.5, lru-cache@npm:^11.3.6":
+"lru-cache@npm:^11.3.5":
   version: 11.3.6
   resolution: "lru-cache@npm:11.3.6"
   checksum: 10c0/3afe3e3000e424c18b640dcea5776b5c1de8684b7dac9718d58792dff1a4692b38cc14e263cbb41bdab98ffcf5408f003b33133b179ce5d271284be72a3ff2a9
+  languageName: node
+  linkType: hard
+
+"lru-cache@npm:^11.5.3":
+  version: 11.5.3
+  resolution: "lru-cache@npm:11.5.3"
+  checksum: 10c0/2ad9bce6343a3544a1fd15364d8b35609aa52b2593d21fdc4877cabfe003b0f3deca4f9d6e9d13262f06e9e3d159de45c0a2f3edfc3adb46192333b5f146d8ed
   languageName: node
   linkType: hard
 
@@ -8693,7 +8700,7 @@ __metadata:
     leaflet.marker.slideto: "npm:^0.3.0"
     lodash: "npm:^4.18.1"
     lodash.sortby: "npm:^4.7.0"
-    lru-cache: "npm:^11.3.6"
+    lru-cache: "npm:^11.5.3"
     mantine-datatable: "npm:^9.2.0"
     milsymbol: "npm:^3.0.4"
     minimatch: "npm:^10.2.5"

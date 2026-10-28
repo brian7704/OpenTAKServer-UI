@@ -48,7 +48,7 @@
     "leaflet.marker.slideto": "^0.3.0",
     "lodash": "^4.18.1",
     "lodash.sortby": "^4.7.0",
-    "lru-cache": "^11.3.6",
+    "lru-cache": "^11.5.3",
     "mantine-datatable": "^9.2.0",
     "milsymbol": "^3.0.4",
     "minimatch": "^10.2.5",
