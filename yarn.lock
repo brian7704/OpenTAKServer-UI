@@ -7479,7 +7479,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"leaflet.fullscreen@npm:*, leaflet.fullscreen@npm:^5.3.1":
+"leaflet.fullscreen@npm:*":
   version: 5.3.1
   resolution: "leaflet.fullscreen@npm:5.3.1"
   peerDependencies:
@@ -7492,6 +7492,15 @@ __metadata:
   version: 4.0.0
   resolution: "leaflet.fullscreen@npm:4.0.0"
   checksum: 10c0/6c99b4a7fbc587d47ee78a7b7f996aa42408d581f25f89d718b84b63fa3062db6810e7c30e5d94f1268f09cee779e1a4f17e0b12f788e2d8a827c3ef2060e4ed
+  languageName: node
+  linkType: hard
+
+"leaflet.fullscreen@npm:^5.3.3":
+  version: 5.3.3
+  resolution: "leaflet.fullscreen@npm:5.3.3"
+  peerDependencies:
+    leaflet: ^1.7.0 || >=2.0.0-alpha.1
+  checksum: 10c0/a37882eb47be1eade5f49107b00979daf06c5e307b5c46ef335136a06042efc8b2b6f14f769fa4bf10c0551ad0e02aa53f6c1e89404828596d0341779ec795a5
   languageName: node
   linkType: hard
 
@@ -8680,7 +8689,7 @@ __metadata:
     keyv: "npm:^5.6.0"
     leaflet: "npm:^1.9.4"
     leaflet-rotatedmarker: "npm:^0.2.0"
-    leaflet.fullscreen: "npm:^5.3.1"
+    leaflet.fullscreen: "npm:^5.3.3"
     leaflet.marker.slideto: "npm:^0.3.0"
     lodash: "npm:^4.18.1"
     lodash.sortby: "npm:^4.7.0"
