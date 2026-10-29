@@ -113,7 +113,7 @@
     "prop-types": "^15.8.1",
     "react-leaflet": "^5.0.0",
     "react-leaflet-fullscreen": "https://github.com/eYdr1en/react-leaflet-fullscreen",
-    "storybook": "^10.4.0",
+    "storybook": "^10.6.2",
     "storybook-dark-mode": "^5.0.0",
     "stylelint": "^17.11.1",
     "typescript": "^6.0.3",
