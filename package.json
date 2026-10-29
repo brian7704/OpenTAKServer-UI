@@ -55,7 +55,7 @@
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-flags-select": "^2.5.0",
-    "react-geolocated": "^4.4.0",
+    "react-geolocated": "^4.5.1",
     "react-grid-layout": "^2.2.3",
     "react-i18next": "^17.0.8",
     "react-markdown": "^10.1.0",
