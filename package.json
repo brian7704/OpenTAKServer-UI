@@ -50,7 +50,7 @@
     "lodash.sortby": "^4.7.0",
     "lru-cache": "^11.5.3",
     "mantine-datatable": "^9.2.0",
-    "milsymbol": "^3.0.4",
+    "milsymbol": "^3.0.5",
     "minimatch": "^10.2.5",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
