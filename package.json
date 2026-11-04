@@ -62,7 +62,7 @@
     "react-player": "^3.4.0",
     "react-qr-code": "^2.0.21",
     "react-qrcode-logo": "^4.1.0",
-    "react-resizable": "^4.0.1",
+    "react-resizable": "^4.0.2",
     "react-router": "^8.5.0",
     "recharts": "3.10.1",
     "screenfull": "^6.0.2",
