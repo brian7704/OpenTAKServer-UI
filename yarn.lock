@@ -2855,21 +2855,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-links@npm:^10.4.0":
-  version: 10.4.0
-  resolution: "@storybook/addon-links@npm:10.4.0"
+"@storybook/addon-links@npm:^10.6.5":
+  version: 10.6.5
+  resolution: "@storybook/addon-links@npm:10.6.5"
   dependencies:
     "@storybook/global": "npm:^5.0.0"
   peerDependencies:
     "@types/react": ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-    storybook: ^10.4.0
+    storybook: ^10.6.5
   peerDependenciesMeta:
     "@types/react":
       optional: true
     react:
       optional: true
-  checksum: 10c0/a29c315a4181337d20ad3da45f79fff9b73ba664ebc5cbb4c958b4b0098bc90aa6af03143d3c14ece00a14705de52ae98e12912fb0c708c9fed73d40f09f8533
+  checksum: 10c0/1d44fbe0ec856d9792ea52dba0add63f5376fe04a509b8af779dbf78de57dc1bef7d8e17cfb086a62cc7ab21f977c0029840f1b9cbfce84cb8dad8a3bcd24084
   languageName: node
   linkType: hard
 
@@ -8863,7 +8863,7 @@ __metadata:
     "@mantine/hooks": "npm:^9.6.2"
     "@mantine/notifications": "npm:^9.6.2"
     "@saithodev/ts-appversion": "npm:^2.2.0"
-    "@storybook/addon-links": "npm:^10.4.0"
+    "@storybook/addon-links": "npm:^10.6.5"
     "@storybook/react": "npm:^10.4.0"
     "@storybook/react-vite": "npm:10.4.0"
     "@tabler/icons-react": "npm:^3.44.0"
