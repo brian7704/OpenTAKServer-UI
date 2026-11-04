@@ -8934,7 +8934,7 @@ __metadata:
     react-player: "npm:^3.4.0"
     react-qr-code: "npm:^2.0.21"
     react-qrcode-logo: "npm:^4.1.0"
-    react-resizable: "npm:^4.0.1"
+    react-resizable: "npm:^4.0.2"
     react-router: "npm:^8.5.0"
     recharts: "npm:3.10.1"
     screenfull: "npm:^6.0.2"
@@ -9874,7 +9874,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-resizable@npm:*, react-resizable@npm:^4.0.1":
+"react-resizable@npm:*":
   version: 4.0.1
   resolution: "react-resizable@npm:4.0.1"
   dependencies:
@@ -9897,6 +9897,19 @@ __metadata:
     react: ">= 16.3"
     react-dom: ">= 16.3"
   checksum: 10c0/b589bca0b1135dc4bf875f09dd677821bfe4b468e5c9ec7e37d91a06ca49281f3dec289d5aa41a7cc0f4603872610b0c5d1d077287c3fef73a5c9339d3216598
+  languageName: node
+  linkType: hard
+
+"react-resizable@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "react-resizable@npm:4.0.2"
+  dependencies:
+    prop-types: "npm:15.x"
+    react-draggable: "npm:^4.5.0"
+  peerDependencies:
+    react: ">= 16.3"
+    react-dom: ">= 16.3"
+  checksum: 10c0/e8a47ee5c9c8c308a88c1eb79194574aa4d0d745ced95c29e4ebe72db3011d77fc238fee9691e2a52eff9d1f5b3424a757548a93217355056954645ae67fc266
   languageName: node
   linkType: hard
 
