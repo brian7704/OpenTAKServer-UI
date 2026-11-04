@@ -8484,10 +8484,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"milsymbol@npm:^3.0.4":
-  version: 3.0.4
-  resolution: "milsymbol@npm:3.0.4"
-  checksum: 10c0/dca1bfca5d5ac467b10d8fc82a8b9ead7aa8f5bd94410bdd6a752399d22a33c865d19a1d090e46179c50aa2b43d20f19f30df632b59947e86f5676a6387ed214
+"milsymbol@npm:^3.0.5":
+  version: 3.0.5
+  resolution: "milsymbol@npm:3.0.5"
+  checksum: 10c0/0f2ed60a59e91a9b3018b9aebb9da3bcb496cbe38d66be9d135fb07d37b9705c6df1a9e5754dbdf54bf855a81ea2578d13193cdcf15937a87018ee5ab0888286
   languageName: node
   linkType: hard
 
@@ -8915,7 +8915,7 @@ __metadata:
     lodash.sortby: "npm:^4.7.0"
     lru-cache: "npm:^11.5.3"
     mantine-datatable: "npm:^9.2.0"
-    milsymbol: "npm:^3.0.4"
+    milsymbol: "npm:^3.0.5"
     minimatch: "npm:^10.2.5"
     postcss: "npm:^8.5.23"
     postcss-preset-mantine: "npm:1.18.0"
