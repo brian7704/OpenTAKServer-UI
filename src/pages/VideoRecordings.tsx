@@ -226,9 +226,9 @@ export default function VideoRecordings() {
                             deleteVideoRecording();
                             setDeleteRecordingOpen(false);
                         }}
-                    >Yes
+                    >{t("Yes")}
                     </Button>
-                    <Button onClick={() => setDeleteRecordingOpen(false)}>No</Button>
+                    <Button onClick={() => setDeleteRecordingOpen(false)}>{t("No")}</Button>
                 </Center>
             </Modal>
 

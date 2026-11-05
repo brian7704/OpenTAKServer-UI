@@ -164,7 +164,7 @@ export default function Missions() {
                                 })
                                 setSelectedGroups(selected_groups);
                             }}
-                        >Edit</Button>
+                        >{t("Edit")}</Button>
 
                         const invitation_button = <Button
                             rightSection={<IconMail size={14} /> }
@@ -183,7 +183,7 @@ export default function Missions() {
                             key={`${row.name}_delete`}
                             rightSection={<IconCircleMinus size={14} />}
                             color="red"
-                        >Delete
+                        >{t("Delete")}
                         </Button>;
 
                         let missionProps: MissionProperties = {
@@ -395,8 +395,8 @@ export default function Missions() {
             </Modal>
             <Modal opened={deleteMissionOpen} onClose={() => setDeleteMissionOpen(false)} title={t("Are you sure you want to delete {{missionToDelete}}?", {"missionToDelete": missionToDelete})}>
                 <Center>
-                    <Button mr="md" onClick={() => delete_mission()}>Yes</Button>
-                    <Button onClick={() => setDeleteMissionOpen(false)}>No</Button>
+                    <Button mr="md" onClick={() => delete_mission()}>{t("Yes")}</Button>
+                    <Button onClick={() => setDeleteMissionOpen(false)}>{t("No")}</Button>
                 </Center>
             </Modal>
             <Modal opened={showAddMission} onClose={() => {setShowAddMission(false);}} title={addEditTitle}>

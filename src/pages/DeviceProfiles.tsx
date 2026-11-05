@@ -216,7 +216,7 @@ export default function DeviceProfiles() {
 
     return (
         <>
-            <Button onClick={() => setAddProfile(true)} variant="filled" leftSection={<IconUpload size={14} />} mb="md">Add Device Profile</Button>
+            <Button onClick={() => setAddProfile(true)} variant="filled" leftSection={<IconUpload size={14} />} mb="md">{t("Add Device Profile")}</Button>
             <Table.ScrollContainer minWidth="100%">
                 <Table stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" data={profiles} highlightOnHover withTableBorder mb="md" />
             </Table.ScrollContainer>
@@ -238,11 +238,11 @@ export default function DeviceProfiles() {
                 <Switch label={t("Install on Enrollment")} onChange={(e) => setNewProfile({ ...newProfile, enrollment: e.target.checked })} mb="md" />
                 <Switch label={t("Install on Connection")} onChange={(e) => setNewProfile({ ...newProfile, connection: e.target.checked })} mb="md" />
                 <Switch label="Active" onChange={(e) => setNewProfile({ ...newProfile, active: e.target.checked })} mb="md" />
-                <Button onClick={(e) => { add_profile(e, newProfile); }}>Add Device Profile</Button>
+                <Button onClick={(e) => { add_profile(e, newProfile); }}>{t("Add Device Profile")}</Button>
             </Modal>
             <Modal opened={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} title={`Are you sure you want to delete ${deleteProfile?.preference_key}?`}>
-                <Button onClick={() => delete_profile()} mr="md">Yes</Button>
-                <Button onClick={() => setDeleteModalOpen(false)}>No</Button>
+                <Button onClick={() => delete_profile()} mr="md">{t("Yes")}</Button>
+                <Button onClick={() => setDeleteModalOpen(false)}>{t("No")}</Button>
             </Modal>
         </>
     );

@@ -16,6 +16,7 @@ import Logo from '../images/ots-logo.png';
 import classes from './Header.module.css';
 import axios from '../axios_config';
 import { apiRoutes } from '../apiRoutes';
+import {t} from "i18next";
 
 export const Header = () => {
     const { setColorScheme } = useMantineColorScheme();
@@ -48,7 +49,7 @@ export const Header = () => {
                           onClick={() => {
                             logout();
                         }}
-                        >Log Out
+                        >{t("Log Out")}
                         </Button>
                         <ActionIcon
                           onClick={() => setColorScheme(computedColorScheme === 'light' ? 'dark' : 'light')}

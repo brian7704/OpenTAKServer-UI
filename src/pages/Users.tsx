@@ -325,7 +325,7 @@ export default function Users() {
 
     return (
         <>
-            <Button onClick={() => { setAddUserOpen(true); }} mb="md" leftSection={<IconUserPlus size={14} />}>Add User</Button>
+            <Button onClick={() => { setAddUserOpen(true); }} mb="md" leftSection={<IconUserPlus size={14} />}>{t("Add User")}</Button>
             <DataTable
                 withTableBorder
                 borderRadius="md"
@@ -538,7 +538,7 @@ export default function Users() {
                   mb="md"
                   onChange={(_value, option) => { setRole(_value || ""); }}
                 />
-                <Button onClick={(e) => { addUser(e); }}>Add User</Button>
+                <Button onClick={(e) => { addUser(e); }}>{t("Add User")}</Button>
             </Modal>
             <Modal opened={showResetPassword} onClose={() => setShowResetPassword(false)} title={t("Reset password for {{username}}?", {username})}>
                 <PasswordInput

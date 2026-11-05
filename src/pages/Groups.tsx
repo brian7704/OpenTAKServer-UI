@@ -209,7 +209,7 @@ export default function Groups() {
                             }}
                             key={`${row.username}_remove`}
                             rightSection={<IconUserMinus size={14} />}
-                        >Remove
+                        >{t("Remove")}
                         </Button>;
 
                         tableData.body.push([row.username, row.direction, active_switch, delete_button]);
@@ -252,7 +252,7 @@ export default function Groups() {
 
     return (
         <>
-            <Button onClick={() => setShowAddGroup(true)}>Add Group</Button>
+            <Button onClick={() => setShowAddGroup(true)}>{t("Add Group")}</Button>
             <Modal opened={showAddGroup} onClose={() => setShowAddGroup(false)} title={t("Add Group")}>
                 <TextInput required label={t("Name")} onChange={e => { newGroupProperties.name = e.target.value; }} mb="md" />
                 <TextInput required label={t("Description")} onChange={e => { newGroupProperties.description = e.target.value; }} mb="md" />
@@ -261,10 +261,10 @@ export default function Groups() {
                     onClick={e => {
                         addGroup();
                     }}
-                >Add Group
+                >{t("Add Group")}
                 </Button>
             </Modal>
-            <Modal size="xl" opened={showAddUserToGroup} onClose={() => setShowAddUserToGroup(false)} title={`Manage ${group} Members`}>
+            <Modal size="xl" opened={showAddUserToGroup} onClose={() => setShowAddUserToGroup(false)} title={t("Manage {{group}} Members", {group})}>
                 <Paper withBorder p="md" mb="md">
                     <Grid align="flex-end" justify="space-between">
                         <Grid.Col span={10}>
@@ -313,7 +313,7 @@ export default function Groups() {
                             deleteGroup(groupToDelete);
                             setDeleteGroupOpen(false);
                         }}
-                    >Yes
+                    >{t("Yes")}
                     </Button>
                     <Button onClick={() => setDeleteGroupOpen(false)}>{t("No")}</Button>
                 </Center>
@@ -344,7 +344,7 @@ export default function Groups() {
                                         setShowAddUserToGroup(true);
                                     }}
                                     rightSection={<IconUserCog size={14} />}
-                                >Manage Users</Button>
+                                >{t("Manage Users")}</Button>
                             ),
                         },
                         {
@@ -359,7 +359,7 @@ export default function Groups() {
                                     }}
                                     disabled={row.name === "__ANON__"}
                                     rightSection={<IconCircleMinus size={14} />}
-                                >Delete</Button>
+                                >{t("Delete")}</Button>
                             ),
                         },
                     ]}

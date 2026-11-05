@@ -107,8 +107,7 @@ export default function TFASetup() {
     }
         return (
             <div>
-                <Title ta="center" order={2}>Two-factor authentication adds an extra layer of security to your
-                    account
+                <Title ta="center" order={2}>{t("Two-factor authentication adds an extra layer of security to your account")}
                 </Title>
                 <Text ta="center">In addition to your username and password, you'll need to use a code.</Text>
                 <Text ta="center">Current 2FA method enabled for this account: <Badge
@@ -165,7 +164,7 @@ export default function TFASetup() {
                                   onChange={(e) => setAuthCode(e)}
                                   radius="md"
                                 />
-                                <Button onClick={() => submitCode()}>Submit Code</Button>
+                                <Button onClick={() => submitCode()}>{t("Submit Code")}</Button>
                             </Stack>
                         </Paper>
                     </Center>

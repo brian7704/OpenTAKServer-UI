@@ -27,6 +27,7 @@ import { Header } from '../../components/Header';
 import { apiRoutes } from '../../apiRoutes';
 import axios from '../../axios_config';
 import Logo from '../../images/ots-logo.png';
+import {t} from "i18next";
 
 export default function Login(props: PaperProps) {
     const navigate = useNavigate();
@@ -202,8 +203,8 @@ export default function Login(props: PaperProps) {
 
                 {type === 'Reset Password' && (
                     <Stack align="center">
-                        <Title order={2}>Forgot your password?</Title>
-                        <Text>Enter your email to get a reset link</Text>
+                        <Title order={2}>{t("Forgot your password?")}</Title>
+                        <Text>{t("Enter your email to get a reset link")}</Text>
                     </Stack>
                 )}
 
@@ -224,7 +225,7 @@ export default function Login(props: PaperProps) {
                             <div>
                                 <TextInput
                                   required
-                                  label="Username"
+                                  label={t("Username")}
                                   placeholder="Username"
                                   value={username}
                                   onChange={(event) => setUsername(event.currentTarget.value)}
@@ -233,7 +234,7 @@ export default function Login(props: PaperProps) {
 
                                 <PasswordInput
                                   required
-                                  label="Password"
+                                  label={t("Password")}
                                   placeholder="Your password"
                                   value={password}
                                   onChange={(event) => setPassword(event.currentTarget.value)}
@@ -243,10 +244,10 @@ export default function Login(props: PaperProps) {
                     )}
 
                         {(type === 'authenticator') && (
-                                <Text ta="center">Please check your authenticator app for an auth code</Text>
+                                <Text ta="center">{t("Please check your authenticator app for an auth code")}</Text>
                         )}
                         {(type === 'email') && (
-                            <Text ta="center">Please check your email for an auth code</Text>
+                            <Text ta="center">{t("Please check your email for an auth code")}</Text>
                         )}
 
                         <div style={{ display: (type === 'email' || type === 'authenticator' ? 'block' : 'none') }}>
@@ -271,7 +272,7 @@ export default function Login(props: PaperProps) {
 
                     {type === 'login' ?
                         <Group justify="space-between" mt="lg">
-                            <Checkbox label="Remember me" />
+                            <Checkbox label={t("Remember me")} />
                             {emailEnabled ?
                             <Anchor component="button" size="sm" onClick={() => setType('Reset Password')}>
                                 Forgot password?

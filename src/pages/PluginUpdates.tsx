@@ -198,14 +198,14 @@ export default function PluginUpdates() {
 
     const plugin_type = <Select
         value={pluginType}
-        label="Plugin Type"
+        label={t("Plugin Type")}
         data={[{ value: 'plugin', label: t('Plugin') }, { value: 'app', label: t('App') }]}
         onChange={(value, option) => setPluginType(value || "")}
     />;
 
     return (
         <>
-            <Button onClick={() => setUploadPluginOpen(true)} variant="filled" leftSection={<IconUpload size={14} />} mb="md">Upload Plugin</Button>
+            <Button onClick={() => setUploadPluginOpen(true)} variant="filled" leftSection={<IconUpload size={14} />} mb="md">{t("Upload Plugin")}</Button>
             <Table.ScrollContainer minWidth="100%">
                 <Table stripedColor={computedColorScheme === 'light' ? 'gray.2' : 'dark.8'} highlightOnHoverColor={computedColorScheme === 'light' ? 'gray.4' : 'dark.6'} striped="odd" data={packages} highlightOnHover withTableBorder mb="md" />
             </Table.ScrollContainer>
@@ -218,7 +218,7 @@ export default function PluginUpdates() {
                 <Select
                     pb="md"
                     value={atakVersion}
-                    label="ATAK Version"
+                    label={t("ATAK Version")}
                     clearable
                     data={[{value: "", label: t("54 or lower")}, "5.5.0", "5.5.1", "5.6.0", "5.7.0", "5.8.0", "5.9.0", {label: t("Custom Version"), value: "Custom Version"}]}
                     onChange={(value) => {
@@ -230,11 +230,11 @@ export default function PluginUpdates() {
                 }
                 />
                 <FocusTrap active={atakVersion === "Custom Version"}><TextInput disabled={atakVersion !== "Custom Version"} required placeholder={t("Custom Version")} onChange={e => {setCustomAtakVersion(e.target.value)}} mb="md"/></FocusTrap>
-                <Button loading={uploading} onClick={(e) => { upload_plugin(e); }}>Upload Plugin</Button>
+                <Button loading={uploading} onClick={(e) => { upload_plugin(e); }}>{t("Upload Plugin")}</Button>
             </Modal>
             <Modal opened={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} title={t("Are you sure you want to delete {{deleteName}}?", {"deleteName": deleteName})}>
-                <Button onClick={() => delete_plugin()} mr="md">Yes</Button>
-                <Button onClick={() => setDeleteModalOpen(false)}>No</Button>
+                <Button onClick={() => delete_plugin()} mr="md">{t("Yes")}</Button>
+                <Button onClick={() => setDeleteModalOpen(false)}>{t("No")}</Button>
             </Modal>
         </>
     );
