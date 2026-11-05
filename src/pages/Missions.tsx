@@ -428,7 +428,7 @@ export default function Missions() {
                     nothingFoundMessage={t("Nothing found...")}
                     label={t("Creator")}
                     description={t("The callsign of the EUD that owns this mission")}
-                    onChange={(value, option) => {missionProperties.creator_uid = option.value;}}
+                    onChange={(value, option) => {missionProperties.creator_uid = value || "";}}
                     data={callsigns}
                     defaultValue={missionProperties.creator_uid}
                     allowDeselect={false}

@@ -350,7 +350,7 @@ export default function Users() {
                             : (
                                 <Select
                                     value={row.roles[0]?.name}
-                                    onChange={(_value, option) => { changeRole(row.username, option.value); }}
+                                    onChange={(_value, option) => { changeRole(row.username, _value || ""); }}
                                     data={[{ value: 'administrator', label: 'Administrator' }, { value: 'user', label: 'User' }]}
                                     placeholder="Role"
                                 />
@@ -432,7 +432,7 @@ export default function Users() {
                                     setUsername(row.username);
                                     setShowDeleteUser(true);
                                 }}
-                            >Delete User</Button>
+                            >{t("Delete User")}</Button>
                         ),
                     },
                 ]}
@@ -536,11 +536,11 @@ export default function Users() {
                   placeholder="Role"
                   data={['user', 'administrator']}
                   mb="md"
-                  onChange={(_value, option) => { setRole(option.value); }}
+                  onChange={(_value, option) => { setRole(_value || ""); }}
                 />
                 <Button onClick={(e) => { addUser(e); }}>Add User</Button>
             </Modal>
-            <Modal opened={showResetPassword} onClose={() => setShowResetPassword(false)} title={t("Reset password for {{username}}?")}>
+            <Modal opened={showResetPassword} onClose={() => setShowResetPassword(false)} title={t("Reset password for {{username}}?", {username})}>
                 <PasswordInput
                   label={t("Password")}
                   placeholder="Password"
@@ -550,9 +550,9 @@ export default function Users() {
                   onChange={(e) => setPassword(e.target.value)}
                   value={password}
                 />
-                <Button onClick={(e) => { resetPassword(e); }}>Change Password</Button>
+                <Button onClick={(e) => { resetPassword(e); }}>{t("Change Password")}</Button>
             </Modal>
-            <Modal opened={showDeleteUser} onClose={() => setShowDeleteUser(false)} title={t("Are you sure you want to delete {{username}}?")}>
+            <Modal opened={showDeleteUser} onClose={() => setShowDeleteUser(false)} title={t("Are you sure you want to delete {{username}}?", {username})}>
                 <Center>
                     <Button
                       mr="md"
@@ -560,9 +560,9 @@ export default function Users() {
                         deleteUser();
                         setShowDeleteUser(false);
                     }}
-                    >Yes
+                    >{t("Yes")}
                     </Button>
-                    <Button onClick={() => setShowDeleteUser(false)}>No</Button>
+                    <Button onClick={() => setShowDeleteUser(false)}>{t("No")}</Button>
                 </Center>
             </Modal>
         </>

@@ -208,7 +208,7 @@ export default function DeviceProfiles() {
       value={newProfile.value_class}
       data={['String', 'Boolean', 'Float', 'Integer']}
       defaultValue="String"
-      onChange={(value, option) => setNewProfile({ ...newProfile, value_class: option.label })}
+      onChange={(value, option) => setNewProfile({ ...newProfile, value_class: option?.label })}
       mb="md"
       allowDeselect={false}
       required

@@ -200,7 +200,7 @@ export default function PluginUpdates() {
         value={pluginType}
         label="Plugin Type"
         data={[{ value: 'plugin', label: t('Plugin') }, { value: 'app', label: t('App') }]}
-        onChange={(value, option) => setPluginType(option.value)}
+        onChange={(value, option) => setPluginType(value || "")}
     />;
 
     return (
