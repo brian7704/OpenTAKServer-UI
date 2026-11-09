@@ -51,7 +51,7 @@
     "lru-cache": "^11.5.3",
     "mantine-datatable": "^9.2.0",
     "milsymbol": "^3.0.5",
-    "minimatch": "11.0.1",
+    "minimatch": "11.0.5",
     "react": "^19.3.1",
     "react-dom": "^19.2.7",
     "react-flags-select": "^2.5.0",
