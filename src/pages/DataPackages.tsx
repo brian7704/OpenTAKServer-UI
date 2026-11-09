@@ -244,9 +244,9 @@ export default function DataPackages() {
     return (
         <>
             <FileButton onChange={setFile}>
-                {(props) => <Button mr="md" {...props}>Upload Data Package</Button>}
+                {(props) => <Button mr="md" {...props}>{t("Upload Data Package")}</Button>}
             </FileButton>
-            <Button onClick={() => generateDataPackage()} loading={generatingDataPackage}>Generate Configuration Data Package</Button>
+            <Button onClick={() => generateDataPackage()} loading={generatingDataPackage}>{t("Generate Configuration Data Package")}</Button>
             <Modal opened={deleteDataPackageOpen} onClose={() => setDeleteDataPackageOpen(false)} title={t("Are you sure you want to delete this data package?")}>
                 <Center>
                     <Button
@@ -255,9 +255,9 @@ export default function DataPackages() {
                             deleteDataPackage();
                             setDeleteDataPackageOpen(false);
                         }}
-                    >Yes
+                    >{t("Yes")}
                     </Button>
-                    <Button onClick={() => setDeleteDataPackageOpen(false)}>No</Button>
+                    <Button onClick={() => setDeleteDataPackageOpen(false)}>{t("No")}</Button>
                 </Center>
             </Modal>
             <Modal title={qrTitle} opened={showQrCode} onClose={() => setShowQrCode(false)} p="md" pb="lg">

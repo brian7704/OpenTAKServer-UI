@@ -124,7 +124,7 @@ export default function VideoStreams() {
                       key={`${row.path}_delete`}
                       rightSection={<IconCircleMinus size={14} />}
                       color="red"
-                    >Delete
+                    >{t("Delete")}
                                           </Button>;
 
                     row.watch_button = <Button
@@ -134,7 +134,7 @@ export default function VideoStreams() {
                         setShowVideo(true);
                         setPath(row.path);
                     }}
-                    >Watch
+                    >{t("Watch")}
                                          </Button>;
                     if (row.ready) {
                         row.ready_icon = <IconCheck size={14} color="green" />;
@@ -263,14 +263,14 @@ export default function VideoStreams() {
         <>
             <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2, fixed: true }} />
 
-            <Button onClick={() => { setAddVideoOpened(true); }} mb="md" mr="md" leftSection={<IconPlus size={14} />}>Add Video</Button>
+            <Button onClick={() => { setAddVideoOpened(true); }} mb="md" mr="md" leftSection={<IconPlus size={14} />}>{t("Add Video")}</Button>
             <Tooltip
               multiline
               w={220}
               withArrow
               label={t("Start streaming in the browser using your device's camera")}
             >
-                <Button onClick={() => { startStreaming(); }} mb="md" leftSection={<IconVideo size={14} />}>Start Streaming</Button>
+                <Button onClick={() => { startStreaming(); }} mb="md" leftSection={<IconVideo size={14} />}>{t("Start Streaming")}</Button>
             </Tooltip>
             <Table.ScrollContainer minWidth="100%">
                 <DataTable
@@ -311,9 +311,9 @@ export default function VideoStreams() {
                         deleteVideoStream();
                         setDeleteVideoOpened(false);
                     }}
-                    >Yes
+                    >{t("Yes")}
                     </Button>
-                    <Button onClick={() => setDeleteVideoOpened(false)}>No</Button>
+                    <Button onClick={() => setDeleteVideoOpened(false)}>{t("No")}</Button>
                 </Center>
             </Modal>
             <Modal opened={thumbnailOpened} onClose={() => setThumbnailOpened(false)} title={t("Thumbnail")} size="xl">

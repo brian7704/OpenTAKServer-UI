@@ -9,6 +9,7 @@ import axios from '../../axios_config';
 import { apiRoutes } from '../../apiRoutes';
 import bytes_formatter from '../../bytes_formatter';
 import '@mantine/charts/styles.css';
+import {t} from "i18next";
 
 export default function Dashboard() {
     const [tcpEnabled, setTcpEnabled] = useState(true);
@@ -107,29 +108,29 @@ export default function Dashboard() {
     return (
         <ScrollArea>
             <Center>
-                <Title mb="xl" order={2}>Server Status</Title>
+                <Title mb="xl" order={2}>{t("Server Status")}</Title>
             </Center>
             <Center mb="xl">
                 <Flex direction={{ base: 'column', xs: 'row' }}>
                     <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md">
-                        <Center mb="md"><Title order={4}>CPU Usage</Title></Center>
+                        <Center mb="md"><Title order={4}>{t("CPU Usage")}</Title></Center>
                         <Center>
                             <DonutChart
                               data={[
-                                    { name: 'Used Percentage', value: serverStatus.cpu_percent, color: 'blue' },
-                                    { name: 'Idle Percentage', value: 100 - serverStatus.cpu_percent, color: 'gray.6' },
+                                    { name: t('Used Percentage'), value: serverStatus.cpu_percent, color: 'blue' },
+                                    { name: t('Idle Percentage'), value: 100 - serverStatus.cpu_percent, color: 'gray.6' },
                                 ]}
                             />
                         </Center>
                         <Center><Text fw={700} size="md" c="green.9">{`${serverStatus.cpu_percent}%`}</Text></Center>
                     </Paper>
                     <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md">
-                        <Center mb="md"><Title order={4}>Disk Usage</Title></Center>
+                        <Center mb="md"><Title order={4}>{t("Disk Usage")}</Title></Center>
                         <Center>
                             <DonutChart
                               data={[
-                                    { name: 'Used Percentage', value: disk.percent, color: 'blue' },
-                                    { name: 'Free Percentage', value: 100 - disk.percent, color: 'gray.6' },
+                                    { name: t('Used Percentage'), value: disk.percent, color: 'blue' },
+                                    { name: t('Free Percentage'), value: 100 - disk.percent, color: 'gray.6' },
                                 ]}
                             />
                         </Center>
@@ -137,12 +138,12 @@ export default function Dashboard() {
                         <Center><Text fw={700} size="md" c="green.9">Used Space: {`${bytes_formatter(disk.used)}`}</Text></Center>
                     </Paper>
                     <Paper withBorder shadow="xl" radius="md" p="xl" mr="md" mb="md">
-                        <Center mb="md"><Title order={4}>Memory Usage</Title></Center>
+                        <Center mb="md"><Title order={4}>{t("Memory Usage")}</Title></Center>
                         <Center>
                             <DonutChart
                               data={[
-                                { name: 'Used Percentage', value: memory.percent, color: 'blue' },
-                                { name: 'Free Percentage', value: 100 - memory.percent, color: 'gray.6' },
+                                { name: t('Used Percentage'), value: memory.percent, color: 'blue' },
+                                { name: t('Free Percentage'), value: 100 - memory.percent, color: 'gray.6' },
                             ]}
                             />
                         </Center>
@@ -150,7 +151,7 @@ export default function Dashboard() {
                         <Center><Text fw={700} size="md" c="green.9">Used Memory: {`${bytes_formatter(memory.used)}`}</Text></Center>
                     </Paper>
                     <Paper shadow="xl" withBorder radius="md" p="xl" mr="md" mb="md">
-                        <Center mb="md"><Title order={4}>Uptime</Title></Center>
+                        <Center mb="md"><Title order={4}>{t("Uptime")}</Title></Center>
                         <Flex><Text fw={700}>Uptime:</Text><Space w="md" /><Text>{formatDuration(intervalToDuration({ start: 0, end: uptime.uptime * 1000 }))}</Text></Flex>
                         <Flex><Text fw={700}>Boot Time:</Text><Space w="md" />{parseISO(uptime.boot_time).toLocaleString()}</Flex>
                     </Paper>

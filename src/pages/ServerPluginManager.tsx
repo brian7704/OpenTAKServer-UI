@@ -15,6 +15,7 @@ import {Link} from "react-router";
 import Markdown from "react-markdown";
 import CodeMirror from "@uiw/react-codemirror";
 import {ViewPlugin} from "@codemirror/view";
+import {t} from "i18next";
 
 interface About {
     author: string;
@@ -348,11 +349,11 @@ export default function ServerPluginManager() {
         <>
             <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
 
-            <Button mb="md" onClick={() => setShowUploadModal(true)}>Upload Plugin</Button>
+            <Button mb="md" onClick={() => setShowUploadModal(true)}>{t("Upload Plugin")}</Button>
             <Modal title="Upload Plugin" w="50vw" size="xl" opened={showUploadModal} onClose={() => setShowUploadModal(false)} closeOnEscape={!installingPlugin} closeOnClickOutside={!installingPlugin} withCloseButton={!installingPlugin}>
                 <FileInput mb="md" clearable={!installingPlugin} disabled={installingPlugin} label="Select your zip, whl, or tar.gz file" onChange={(file) => {setInstallingPlugin(true); setPlugin({...plugin, 'plugin_file': file, 'action': 'install_local', 'plugin_file_name': file?.name})}} />
                 <CodeMirror basicSetup={{ lineNumbers: false }} extensions={[scrollBottom]} lang="shell" maxHeight="60vh" value={commandOutput} height="100%" theme={computedColorScheme} readOnly />
-                <Center><Button mt="md" disabled={installingPlugin} onClick={() => window.location.reload()}>Refresh Browser</Button></Center>
+                <Center><Button mt="md" disabled={installingPlugin} onClick={() => window.location.reload()}>{t("Refresh Browser")}</Button></Center>
             </Modal>
 
             <Table.ScrollContainer minWidth="100%">
@@ -374,8 +375,8 @@ export default function ServerPluginManager() {
 
             <Modal withCloseButton={showModelClose} title={commandOutputTitle} closeOnClickOutside={false} closeOnEscape={false} w="50vw" size="xl" opened={showCommandOutput} onClose={() => {setShowCommandOutput(false); setCommandOutput("")}}>
                 <CodeMirror extensions={[scrollBottom]} lang="shell" maxHeight="60vh" value={commandOutput} height="100%" theme={computedColorScheme} readOnly />
-                <Text mt="md" ta="center" fw={700} display={refreshButtonDisabled ? "none" : "block"}>Please restart OpenTAKServer and refresh your browser.</Text>
-                <Center><Button mt="md" disabled={refreshButtonDisabled} onClick={() => window.location.reload()}>Refresh Browser</Button></Center>
+                <Text mt="md" ta="center" fw={700} display={refreshButtonDisabled ? "none" : "block"}>{t("Please restart OpenTAKServer and refresh your browser.")}</Text>
+                <Center><Button mt="md" disabled={refreshButtonDisabled} onClick={() => window.location.reload()}>{t("Refresh Browser")}</Button></Center>
             </Modal>
         </>
     );

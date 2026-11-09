@@ -142,7 +142,7 @@ export default function UserProfile() {
                 onClick={() => {removeUserFromGroup(user?.username, membership.group_name, membership.direction);}}
                 key={`${membership.group_name}_remove`}
                 rightSection={<IconUsersMinus size={14} />}
-            >Remove</Button>;
+            >{t("Remove")}</Button>;
 
             const active_switch = <Tooltip refProp="rootRef" label={t("This membership can be activated or deactivated from the user's EUD")}>
                 <Switch

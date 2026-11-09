@@ -236,7 +236,7 @@ export default function Meshtastic() {
                                 )}
                                      </CopyButton>;
                     } else {
-                        row.psk_button = <Button disabled>Encryption Disabled</Button>;
+                        row.psk_button = <Button disabled>{t("Encryption Disabled")}</Button>;
                     }
 
                     rows.push(row);
@@ -296,9 +296,9 @@ export default function Meshtastic() {
                       onClick={() => {
                           deleteChannel();
                       }}
-                    >Yes
+                    >{t("Yes")}
                     </Button>
-                    <Button onClick={() => setDeleteChanelOpen(false)}>No</Button>
+                    <Button onClick={() => setDeleteChanelOpen(false)}>{t("No")}</Button>
                 </Center>
             </Modal>
             <Modal opened={showAddChannel} onClose={() => setShowAddChannel(false)} title={t("Add Existing Channel")}>

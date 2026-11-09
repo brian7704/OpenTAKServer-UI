@@ -1557,6 +1557,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@isaacs/nonrecursive-glob-match@npm:^1.0.1":
+  version: 1.0.3
+  resolution: "@isaacs/nonrecursive-glob-match@npm:1.0.3"
+  checksum: 10c0/dc2eb2b9cffc8d4b22b0de8beb8ecdc903b7bef1cb094d83fe0a7e454f0c7e1a8bcb4a168f66299eb17e1620fdf3c8cdf69545d11933845a122a10393b86c40a
+  languageName: node
+  linkType: hard
+
 "@joshwooding/vite-plugin-react-docgen-typescript@npm:^0.7.0":
   version: 0.7.0
   resolution: "@joshwooding/vite-plugin-react-docgen-typescript@npm:0.7.0"
@@ -3585,12 +3592,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^19.2.3":
-  version: 19.2.3
-  resolution: "@types/react-dom@npm:19.2.3"
+"@types/react-dom@npm:^19.3.0":
+  version: 19.3.0
+  resolution: "@types/react-dom@npm:19.3.0"
   peerDependencies:
-    "@types/react": ^19.2.0
-  checksum: 10c0/b486ebe0f4e2fb35e2e108df1d8fc0927ca5d6002d5771e8a739de11239fe62d0e207c50886185253c99eb9dedfeeb956ea7429e5ba17f6693c7acb4c02f8cd1
+    "@types/react": ^19.3.0
+  checksum: 10c0/ce0066d28b62bc6afdd17ca84756b8fbe0f6ffc0c8b1e60739abc30e81510da2edbc1007e6ab3d974d30f5a8c25bb0f7de8d7ce09736c909fe84c0f9aed0b946
   languageName: node
   linkType: hard
 
@@ -4468,6 +4475,15 @@ __metadata:
     balanced-match: "npm:^1.0.0"
     concat-map: "npm:0.0.1"
   checksum: 10c0/8f0a68a720f9cb28c2ecaea5cdaf15fafd686d6b6e4e722a81c9d4bd2f68c1fd0619731cac05875d842221eaf4d97d564d329a12eb3c4c22137502fb3c65be8b
+  languageName: node
+  linkType: hard
+
+"brace-expansion@npm:^5.0.12":
+  version: 5.0.12
+  resolution: "brace-expansion@npm:5.0.12"
+  dependencies:
+    balanced-match: "npm:^4.0.2"
+  checksum: 10c0/a40ac64d3bdb5bb222456514d3633c1f627f03b844f509c69e70f98b78be0ce85e21b44bbfecdd0ddd4cc0855ca4242b41ea96ddccf88c7c3c7a84405474bb3a
   languageName: node
   linkType: hard
 
@@ -8528,6 +8544,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"minimatch@npm:11.0.1":
+  version: 11.0.1
+  resolution: "minimatch@npm:11.0.1"
+  dependencies:
+    "@isaacs/nonrecursive-glob-match": "npm:^1.0.1"
+    brace-expansion: "npm:^5.0.12"
+  checksum: 10c0/a3e744fec30c3bfd9cf32e998dbb5d1276f3a83f467f84bc62bc75e1b978e3c319953575286a45d85217c3dc693d565f0f93d3a365e5f33de00658482b63b5f4
+  languageName: node
+  linkType: hard
+
 "minimatch@npm:^10.2.2, minimatch@npm:^10.2.5":
   version: 10.2.5
   resolution: "minimatch@npm:10.2.5"
@@ -8877,7 +8903,7 @@ __metadata:
     "@types/lodash.sortby": "npm:^4.7.9"
     "@types/node": "npm:^25.8.0"
     "@types/react": "npm:^19.3.0"
-    "@types/react-dom": "npm:^19.2.3"
+    "@types/react-dom": "npm:^19.3.0"
     "@types/react-grid-layout": "npm:^2.1.0"
     "@types/react-resizable": "npm:^4.0.0"
     "@types/video-react": "npm:^0.15.8"
@@ -8916,14 +8942,14 @@ __metadata:
     lru-cache: "npm:^11.5.3"
     mantine-datatable: "npm:^9.2.0"
     milsymbol: "npm:^3.0.5"
-    minimatch: "npm:^10.2.5"
+    minimatch: "npm:11.0.1"
     postcss: "npm:^8.5.23"
     postcss-preset-mantine: "npm:1.18.0"
     postcss-simple-vars: "npm:^7.0.1"
     prettier: "npm:^3.8.3"
     prop-types: "npm:^15.8.1"
     react: "npm:^19.3.1"
-    react-dom: "npm:^19.2.6"
+    react-dom: "npm:^19.2.7"
     react-flags-select: "npm:^2.5.0"
     react-geolocated: "npm:^4.5.1"
     react-grid-layout: "npm:^2.2.3"
@@ -8941,7 +8967,7 @@ __metadata:
     semver: "npm:^7.8.0"
     semver-parser: "npm:^4.1.8"
     socket.io-client: "npm:^4.8.3"
-    storybook: "npm:^10.6.2"
+    storybook: "npm:^10.6.5"
     storybook-dark-mode: "npm:^5.0.0"
     styled-components: "npm:^6.4.1"
     stylelint: "npm:^17.11.1"
@@ -9596,14 +9622,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^19.2.6":
-  version: 19.2.6
-  resolution: "react-dom@npm:19.2.6"
+"react-dom@npm:^19.2.7":
+  version: 19.3.1
+  resolution: "react-dom@npm:19.3.1"
   dependencies:
-    scheduler: "npm:^0.27.0"
+    scheduler: "npm:^0.28.0"
   peerDependencies:
-    react: ^19.2.6
-  checksum: 10c0/dbf2aef67857c03a612bc9316a4562e5066f43fa04bf28f7f0734963fc1350da2c9f8eb973930655453281079f30cc8222bab383dbec4b5097084e2c081e3334
+    react: ^19.3.1
+  checksum: 10c0/382700916313b2ebc46acee80642f300bb8601eac6a9e7fefade5b8b30e66b05bf3aaa56a3c964589fcd578d27b486e847470c2697d879264e766661ff49fac7
   languageName: node
   linkType: hard
 
@@ -10444,10 +10470,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"scheduler@npm:^0.27.0":
-  version: 0.27.0
-  resolution: "scheduler@npm:0.27.0"
-  checksum: 10c0/4f03048cb05a3c8fddc45813052251eca00688f413a3cee236d984a161da28db28ba71bd11e7a3dd02f7af84ab28d39fb311431d3b3772fed557945beb00c452
+"scheduler@npm:^0.28.0":
+  version: 0.28.0
+  resolution: "scheduler@npm:0.28.0"
+  checksum: 10c0/783c8e5ce89d41273a02ed6dc0e3d24bd60e05c9e8f7e3adfc6c82e7c69935500d90e343f1ee26d592fc7504e8a2532573c6368def3e93bfe812391fa53efaf4
   languageName: node
   linkType: hard
 
@@ -10742,9 +10768,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"storybook@npm:^10.6.2":
-  version: 10.6.2
-  resolution: "storybook@npm:10.6.2"
+"storybook@npm:^10.6.5":
+  version: 10.6.5
+  resolution: "storybook@npm:10.6.5"
   dependencies:
     "@storybook/global": "npm:^5.0.0"
     "@storybook/icons": "npm:^2.0.2"
@@ -10776,7 +10802,7 @@ __metadata:
       optional: true
   bin:
     storybook: ./dist/bin/dispatcher.js
-  checksum: 10c0/e3b8562754dca0a7157469924b0462b9a90491b95f340355b019e780653c0e5016f226261a76a2a65e842e2735b083ff1c81599abaa210c7640afaf9ce1dafea
+  checksum: 10c0/3d910898f70f64315c119fbdcb3e944bf9566465041f181daadb73f1c9f966e49cb2de8aab008a78faafc2b6ad7781d2389548ef103eded3a46b80fcae89b066
   languageName: node
   linkType: hard
 
