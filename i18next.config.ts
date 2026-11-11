@@ -20,7 +20,8 @@ export default defineConfig({
     "sv",
     "th",
     "zh_Hans",
-    "hu"
+    "hu",
+    "cs"
   ],
   extract: {
     input: "src/**/*.{js,jsx,ts,tsx}",
