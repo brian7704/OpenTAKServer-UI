@@ -8039,16 +8039,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mantine-datatable@npm:^9.2.0":
-  version: 9.2.0
-  resolution: "mantine-datatable@npm:9.2.0"
+"mantine-datatable@npm:^9.4.0":
+  version: 9.4.0
+  resolution: "mantine-datatable@npm:9.4.0"
   peerDependencies:
     "@mantine/core": ">=9.0"
     "@mantine/hooks": ">=9.0"
     clsx: ">=2"
     react: ">=19"
     react-dom: ">=19"
-  checksum: 10c0/3d4ce8f2c13fc941fe8837132ebd1ecc50ea5e660db2d67d0ef326e720fdd9711607fed3e979fbde5f4ea4472ab1cdd2e013e675ae9c432574db14521a333c1c
+  checksum: 10c0/c41a0e0f3dcff1ce2e73f66752e2440d47f40613da2d9d03bb44ce7484351e98a26d1100003b165553d492d0e9bb6ae33e7c474dbfd4dfcae855468dd660b46d
   languageName: node
   linkType: hard
 
@@ -8940,7 +8940,7 @@ __metadata:
     lodash: "npm:^4.18.1"
     lodash.sortby: "npm:^4.7.0"
     lru-cache: "npm:^11.5.3"
-    mantine-datatable: "npm:^9.2.0"
+    mantine-datatable: "npm:^9.4.0"
     milsymbol: "npm:^3.0.5"
     minimatch: "npm:11.0.1"
     postcss: "npm:^8.5.23"
