@@ -8965,7 +8965,7 @@ __metadata:
     recharts: "npm:3.10.1"
     screenfull: "npm:^6.0.2"
     semver: "npm:^7.8.0"
-    semver-parser: "npm:^4.1.8"
+    semver-parser: "npm:^4.2.2"
     socket.io-client: "npm:^4.8.3"
     storybook: "npm:^10.6.5"
     storybook-dark-mode: "npm:^5.0.0"
@@ -10484,10 +10484,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver-parser@npm:^4.1.8":
-  version: 4.1.8
-  resolution: "semver-parser@npm:4.1.8"
-  checksum: 10c0/ffb7e9577735f677489e3f2b6a81188e74600f1ddce7f61deecc73c34d4d2244d4ce9cba7dbe3f62bd79ad878ead217b91577a8a90edf7489cbafe1b5185738c
+"semver-parser@npm:^4.2.2":
+  version: 4.2.2
+  resolution: "semver-parser@npm:4.2.2"
+  checksum: 10c0/ffeee17848b11105159e3f558db43669ba67b61039bc3e70b1a0d470569812a8af5b0d42d613e6beaa884f7cd799877b70167f769b8c384c7de2a787d2a65044
   languageName: node
   linkType: hard
 
