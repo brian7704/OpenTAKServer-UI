@@ -78,7 +78,7 @@
     "@saithodev/ts-appversion": "^2.2.0",
     "@storybook/addon-links": "^10.6.5",
     "@storybook/react": "^10.4.0",
-    "@storybook/react-vite": "10.4.0",
+    "@storybook/react-vite": "10.6.7",
     "@tabler/icons-react": "^3.44.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
