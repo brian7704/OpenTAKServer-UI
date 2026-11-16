@@ -3962,9 +3962,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uiw/codemirror-extensions-basic-setup@npm:4.25.9":
-  version: 4.25.9
-  resolution: "@uiw/codemirror-extensions-basic-setup@npm:4.25.9"
+"@uiw/codemirror-extensions-basic-setup@npm:4.25.12":
+  version: 4.25.12
+  resolution: "@uiw/codemirror-extensions-basic-setup@npm:4.25.12"
   dependencies:
     "@codemirror/autocomplete": "npm:^6.0.0"
     "@codemirror/commands": "npm:^6.0.0"
@@ -3981,7 +3981,7 @@ __metadata:
     "@codemirror/search": ">=6.0.0"
     "@codemirror/state": ">=6.0.0"
     "@codemirror/view": ">=6.0.0"
-  checksum: 10c0/5833a5e3ff8a156ea1f2f624f6ca3d4244ce5421622ccf192f6ce34fa5039b8549c86243ad95e3b93c7485807d1feb9475c8bb3210996f8772869168d68e9a41
+  checksum: 10c0/b93a451da605be947ab5e858f3c8f4df7f391c300215315491d68e335a1406965791c6b9bf173ddfb276a938508069805ebcf73a2d24a12fed2639a8b48d22eb
   languageName: node
   linkType: hard
 
@@ -4060,15 +4060,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uiw/react-codemirror@npm:^4.25.9":
-  version: 4.25.9
-  resolution: "@uiw/react-codemirror@npm:4.25.9"
+"@uiw/react-codemirror@npm:^4.25.12":
+  version: 4.25.12
+  resolution: "@uiw/react-codemirror@npm:4.25.12"
   dependencies:
     "@babel/runtime": "npm:^7.18.6"
     "@codemirror/commands": "npm:^6.1.0"
     "@codemirror/state": "npm:^6.1.1"
     "@codemirror/theme-one-dark": "npm:^6.0.0"
-    "@uiw/codemirror-extensions-basic-setup": "npm:4.25.9"
+    "@uiw/codemirror-extensions-basic-setup": "npm:4.25.12"
     codemirror: "npm:^6.0.0"
   peerDependencies:
     "@babel/runtime": ">=7.11.0"
@@ -4078,7 +4078,7 @@ __metadata:
     codemirror: ">=6.0.0"
     react: ">=17.0.0"
     react-dom: ">=17.0.0"
-  checksum: 10c0/a3f9ac6230ac406d38bc9fd6772ff577b1ff24270d1017d931e877cc1c39517a52d04913a0f7d2a12e4d248799c9395fc5fb8a65337e7f720b5264095b068074
+  checksum: 10c0/454cbe6e9068432175e20451f6a2d88531a4ea911353d073dece12a726eacefbedae88d17a2feddace1dcf87902e3ac9dfa5b59557df52bf3be2ba73472b45c4
   languageName: node
   linkType: hard
 
@@ -9050,7 +9050,7 @@ __metadata:
     "@uiw/codemirror-extensions-color": "npm:^4.25.9"
     "@uiw/codemirror-extensions-langs": "npm:^4.25.9"
     "@uiw/codemirror-theme-basic": "npm:^4.25.9"
-    "@uiw/react-codemirror": "npm:^4.25.9"
+    "@uiw/react-codemirror": "npm:^4.25.12"
     "@vitejs/plugin-react": "npm:^6.1.2"
     axios: "npm:1.21.0"
     clsx: "npm:^2.1.1"
